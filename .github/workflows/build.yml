@@ -52,5 +52,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm install -g npm@latest
+      - run: npm cache clean --force
+      - run: rm -rf node_modules
       - run: npm install
       - run: npm run test
