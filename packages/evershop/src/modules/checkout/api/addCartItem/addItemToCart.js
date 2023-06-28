@@ -1,13 +1,13 @@
 const { select } = require('@evershop/postgres-query-builder');
-const { setContextValue } = require('../../../graphql/services/contextHelper');
-const { getCartByUUID } = require('../../services/getCartByUUID');
-const { saveCart } = require('../../services/saveCart');
 const {
   INVALID_PAYLOAD,
   INTERNAL_SERVER_ERROR,
-  OK
+  OK,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
+const { setContextValue } = require('../../../graphql/services/contextHelper');
+const { getCartByUUID } = require('../../services/getCartByUUID');
+const { saveCart } = require('../../services/saveCart');
 
 module.exports = async (request, response, delegate, next) => {
   try {
@@ -21,8 +21,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid cart id'
-        }
+          message: 'Invalid cart id',
+        },
       });
       return;
     }
@@ -39,8 +39,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Product not found'
-        }
+          message: 'Product not found',
+        },
       });
       return;
     }
@@ -48,7 +48,7 @@ module.exports = async (request, response, delegate, next) => {
     // If everything is fine, add the product to the cart
     const item = await cart.addItem({
       product_id: product.product_id,
-      qty: parseInt(qty, 10)
+      qty: parseInt(qty, 10),
     });
     await saveCart(cart);
     // Set the new cart id to the context, so next middleware can use it
@@ -58,8 +58,8 @@ module.exports = async (request, response, delegate, next) => {
       data: {
         item: item.export(),
         count: cart.getItems().length,
-        cartId: cart.getData('uuid')
-      }
+        cartId: cart.getData('uuid'),
+      },
     };
     next();
   } catch (error) {
@@ -67,8 +67,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: error.message
-      }
+        message: error.message,
+      },
     });
   }
 };

@@ -5,25 +5,25 @@ describe('test scanRouteComponents function', () => {
   const modules = [
     {
       path: path.resolve(__dirname, './__mocks__/modules/firstModule'),
-      name: 'firstModule'
+      name: 'firstModule',
     },
     {
       path: path.resolve(__dirname, './__mocks__/modules/secondModule'),
-      name: 'secondModule'
-    }
+      name: 'secondModule',
+    },
   ];
 
   const extensions = [
     {
       path: path.resolve(__dirname, './__mocks__/extensions/secondExtension'),
       name: 'secondExtension',
-      priority: 2
+      priority: 2,
     },
     {
       path: path.resolve(__dirname, './__mocks__/extensions/firstExtension'),
       name: 'firstExtension',
-      priority: 1
-    }
+      priority: 1,
+    },
   ];
 
   const themePath = path.resolve(__dirname, './__mocks__/themes/justathemes');
@@ -32,7 +32,7 @@ describe('test scanRouteComponents function', () => {
     const components = scanRouteComponents(
       { id: 'home', isAdmin: false },
       [...modules, ...extensions],
-      themePath
+      themePath,
     );
 
     console.log(components);
@@ -44,7 +44,7 @@ describe('test scanRouteComponents function', () => {
     const components = scanRouteComponents(
       { id: 'home', isAdmin: false },
       [...modules, ...extensions],
-      themePath
+      themePath,
     );
 
     console.log(components);
@@ -52,16 +52,16 @@ describe('test scanRouteComponents function', () => {
     expect(components).toEqual({
       'all/Menu.jsx': path.resolve(
         __dirname,
-        './__mocks__/modules/firstModule/pages/frontStore/all/Menu.jsx'
+        './__mocks__/modules/firstModule/pages/frontStore/all/Menu.jsx',
       ),
       'all/Banner.jsx': path.resolve(
         __dirname,
-        './__mocks__/extensions/firstExtension/pages/frontStore/all/Banner.jsx'
+        './__mocks__/extensions/firstExtension/pages/frontStore/all/Banner.jsx',
       ),
       'all/CommentList.jsx': path.resolve(
         __dirname,
-        './__mocks__/extensions/firstExtension/pages/frontStore/all/CommentList.jsx'
-      )
+        './__mocks__/extensions/firstExtension/pages/frontStore/all/CommentList.jsx',
+      ),
     });
   });
 
@@ -69,7 +69,7 @@ describe('test scanRouteComponents function', () => {
     const components = scanRouteComponents(
       { id: 'productView', isAdmin: false },
       [...modules, ...extensions],
-      themePath
+      themePath,
     );
 
     console.log(components);
@@ -77,8 +77,8 @@ describe('test scanRouteComponents function', () => {
     expect(components['productView/Price.jsx']).toEqual(
       path.resolve(
         __dirname,
-        './__mocks__/extensions/firstExtension/pages/frontStore/productView/Price.jsx'
-      )
+        './__mocks__/extensions/firstExtension/pages/frontStore/productView/Price.jsx',
+      ),
     );
   });
 
@@ -86,7 +86,7 @@ describe('test scanRouteComponents function', () => {
     const components = scanRouteComponents(
       { id: 'productView', isAdmin: false },
       [...modules, ...extensions],
-      themePath
+      themePath,
     );
 
     console.log(components);
@@ -94,8 +94,8 @@ describe('test scanRouteComponents function', () => {
     expect(components['productView/Name.jsx']).toEqual(
       path.resolve(
         __dirname,
-        './__mocks__/extensions/firstExtension/pages/frontStore/productView/Name.jsx'
-      )
+        './__mocks__/extensions/firstExtension/pages/frontStore/productView/Name.jsx',
+      ),
     );
   });
 
@@ -103,7 +103,7 @@ describe('test scanRouteComponents function', () => {
     const components = scanRouteComponents(
       { id: 'productView', isAdmin: false },
       [...modules, ...extensions],
-      path.resolve(__dirname, './__mocks__/themes/justatheme')
+      path.resolve(__dirname, './__mocks__/themes/justatheme'),
     );
 
     console.log(components);
@@ -111,36 +111,36 @@ describe('test scanRouteComponents function', () => {
     expect(components['all/Shipping.jsx']).toEqual(
       path.resolve(
         __dirname,
-        './__mocks__/themes/justatheme/pages/all/Shipping.jsx'
-      )
+        './__mocks__/themes/justatheme/pages/all/Shipping.jsx',
+      ),
     );
 
     expect(components['all/CommentList.jsx']).toEqual(
       path.resolve(
         __dirname,
-        './__mocks__/themes/justatheme/pages/all/CommentList.jsx'
-      )
+        './__mocks__/themes/justatheme/pages/all/CommentList.jsx',
+      ),
     );
 
     expect(components['productView/Name.jsx']).toEqual(
       path.resolve(
         __dirname,
-        './__mocks__/themes/justatheme/pages/productView/Name.jsx'
-      )
+        './__mocks__/themes/justatheme/pages/productView/Name.jsx',
+      ),
     );
 
     expect(components['productView/Price.jsx']).toEqual(
       path.resolve(
         __dirname,
-        './__mocks__/themes/justatheme/pages/productView/Price.jsx'
-      )
+        './__mocks__/themes/justatheme/pages/productView/Price.jsx',
+      ),
     );
 
     expect(components['productView/OutOfStock.jsx']).toEqual(
       path.resolve(
         __dirname,
-        './__mocks__/themes/justatheme/pages/productView/OutOfStock.jsx'
-      )
+        './__mocks__/themes/justatheme/pages/productView/OutOfStock.jsx',
+      ),
     );
   });
 });

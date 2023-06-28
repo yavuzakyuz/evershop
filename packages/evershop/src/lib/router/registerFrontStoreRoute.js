@@ -18,7 +18,7 @@ exports.registerFrontStoreRoute = (
   isApi = false,
   folder = '',
   payloadSchema = null,
-  access = 'private'
+  access = 'private',
 ) => {
   // const route = validateRoute(id, method, path);
   const route = {
@@ -26,7 +26,7 @@ exports.registerFrontStoreRoute = (
     method,
     path,
     payloadSchema,
-    access
+    access,
   };
   route.isAdmin = false;
   route.isApi = isApi;

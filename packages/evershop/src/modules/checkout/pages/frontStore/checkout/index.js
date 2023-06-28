@@ -1,13 +1,13 @@
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   setContextValue,
-  getContextValue
+  getContextValue,
 } = require('../../../../graphql/services/contextHelper');
 const { getCustomerCart } = require('../../../services/getCustomerCart');
 
 module.exports = async (request, response, delegate, next) => {
   const cart = await getCustomerCart(
-    getContextValue(request, 'customerTokenPayload', {})
+    getContextValue(request, 'customerTokenPayload', {}),
   );
   if (!cart) {
     response.redirect(302, buildUrl('cart'));
@@ -20,7 +20,7 @@ module.exports = async (request, response, delegate, next) => {
   } else {
     setContextValue(request, 'pageInfo', {
       title: 'Checkout',
-      description: 'Checkout'
+      description: 'Checkout',
     });
     setContextValue(request, 'cart_id', cart.getData('uuid'));
     next();

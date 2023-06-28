@@ -10,6 +10,6 @@ module.exports = {
         .orderBy('shipping_method_id', 'DESC')
         .execute(pool);
       return shippingMethods.map((row) => camelCase(row));
-    }
-  }
+    },
+  },
 };

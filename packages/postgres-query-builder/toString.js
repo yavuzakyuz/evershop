@@ -5,7 +5,6 @@ exports.toString = function toString(value) {
   if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
     // If value is an array, return a string with comma separated values
     return JSON.stringify(value);
-  } else {
-    return value;
   }
+  return value;
 };

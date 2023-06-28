@@ -22,7 +22,7 @@ module.exports = async (request, response, delegate, next) => {
 
     /** If a rejected middleware called next(error) without throwing an error */
     if (isErrorHandlerTriggered(response)) {
-      return;
+
     } else {
       const route = request.currentRoute;
       // eslint-disable-next-line max-len
@@ -36,20 +36,20 @@ module.exports = async (request, response, delegate, next) => {
           path: route.path,
           method: route.method,
           isApi: route.isApi,
-          isAdmin: route.isAdmin
+          isAdmin: route.isAdmin,
         };
         if (
-          (isDevelopmentMode() &&
-            request.query &&
-            request.query.fashRefresh === 'true') ||
-          (request.query && request.query.ajax === 'true')
+          (isDevelopmentMode()
+            && request.query
+            && request.query.fashRefresh === 'true')
+          || (request.query && request.query.ajax === 'true')
         ) {
           response.json({
             success: true,
             eContext: {
               graphqlResponse: get(response, 'locals.graphqlResponse', {}),
-              propsMap: get(response, 'locals.propsMap', {})
-            }
+              propsMap: get(response, 'locals.propsMap', {}),
+            },
           });
         } else {
           render(request, response);

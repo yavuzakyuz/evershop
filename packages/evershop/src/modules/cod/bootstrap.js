@@ -6,15 +6,13 @@ module.exports = () => {
     const paymentMethod = this.dataSource?.payment_method ?? null;
     if (paymentMethod !== 'cod') {
       return previousValue;
-    } else {
-      // Validate the payment method
-      const codStatus = await getSetting('codPaymentStatus');
-      if (parseInt(codStatus, 10) !== 1) {
-        return previousValue;
-      } else {
-        delete this.errors.payment_method;
-        return paymentMethod;
-      }
     }
+    // Validate the payment method
+    const codStatus = await getSetting('codPaymentStatus');
+    if (parseInt(codStatus, 10) !== 1) {
+      return previousValue;
+    }
+    delete this.errors.payment_method;
+    return paymentMethod;
   });
 };

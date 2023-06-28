@@ -2,12 +2,12 @@ const { select } = require('@evershop/postgres-query-builder');
 const smallestUnit = require('zero-decimal-currencies');
 const stripePayment = require('stripe');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
-const { getSetting } = require('../../../setting/services/setting');
 const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
 const {
   OK,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
+const { getSetting } = require('../../../setting/services/setting');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = async (request, response, delegate, next) => {
@@ -24,8 +24,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INVALID_PAYLOAD,
-        message: 'Invalid order'
-      }
+        message: 'Invalid order',
+      },
     });
   } else {
     const stripeConfig = getConfig('system.stripe', {});
@@ -43,15 +43,15 @@ module.exports = async (request, response, delegate, next) => {
       currency: order.currency,
       metadata: {
         // eslint-disable-next-line camelcase
-        orderId: order_id
-      }
+        orderId: order_id,
+      },
     });
 
     response.status(OK);
     response.json({
       data: {
-        clientSecret: paymentIntent.client_secret
-      }
+        clientSecret: paymentIntent.client_secret,
+      },
     });
   }
 };

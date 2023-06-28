@@ -3,13 +3,12 @@ const { camelCase } = require('@evershop/evershop/src/lib/util/camelCase');
 
 module.exports = {
   Product: {
-    attributeIndex: async (product, _, { pool }) =>
-      (
-        await select()
-          .from('product_attribute_value_index')
-          .where('product_id', '=', product.productId)
-          .execute(pool)
-      ).map((row) => camelCase(row)),
+    attributeIndex: async (product, _, { pool }) => (
+      await select()
+        .from('product_attribute_value_index')
+        .where('product_id', '=', product.productId)
+        .execute(pool)
+    ).map((row) => camelCase(row)),
     attributes: async (product, _, { pool }) => {
       const valueIndex = (
         await select()
@@ -22,6 +21,6 @@ module.exports = {
         .where('attribute_id', 'IN', valueIndex)
         .execute(pool);
       return attributes.map((a) => camelCase(a));
-    }
-  }
+    },
+  },
 };

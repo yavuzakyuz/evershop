@@ -35,7 +35,7 @@ function renderDevelopment(request, response) {
   const devMiddleware = route.webpackMiddleware;
   const contextValue = {
     graphqlResponse: get(response, 'locals.graphqlResponse', {}),
-    propsMap: get(response, 'locals.propsMap', {})
+    propsMap: get(response, 'locals.propsMap', {}),
   };
   const { stats } = devMiddleware.context;
   // let stat = jsonWebpackStats.find(st => st.compilation.name === route.id);
@@ -48,21 +48,20 @@ function renderDevelopment(request, response) {
             <!doctype html><html>
                 <head>
                   <script>var eContext = ${inspect(contextValue, {
-                    depth: 10,
-                    maxArrayLength: null
-                  })}</script>
+    depth: 10,
+    maxArrayLength: null,
+  })}</script>
                 </head>
                 <body>
                 <div id="app" className="bg-background"></div>
                  ${normalizeAssets(assetsByChunkName[route.id])
-                   .filter((p) => p.endsWith('.js'))
-                   .map(
-                     (p) =>
-                       `<script defer src="/${
-                         response.statusCode === 404 ? notFoundFile : p
-                       }"></script>`
-                   )
-                   .join('\n')}
+    .filter((p) => p.endsWith('.js'))
+    .map(
+      (p) => `<script defer src="/${
+        response.statusCode === 404 ? notFoundFile : p
+      }"></script>`,
+    )
+    .join('\n')}
                 </body >
             </html >
   `);
@@ -79,16 +78,16 @@ function renderProduction(request, response) {
   const { renderHtml } = require(path.resolve(
     getRouteBuildPath(route),
     'server',
-    'index.js'
+    'index.js',
   ));
   const assets = require(path.resolve(
     getRouteBuildPath(route),
     'client',
-    'index.json'
+    'index.json',
   ));
   const contextValue = {
     graphqlResponse: get(response, 'locals.graphqlResponse', {}),
-    propsMap: get(response, 'locals.propsMap', {})
+    propsMap: get(response, 'locals.propsMap', {}),
   };
   const source = renderHtml(assets.js, assets.css, contextValue);
   response.send(source);

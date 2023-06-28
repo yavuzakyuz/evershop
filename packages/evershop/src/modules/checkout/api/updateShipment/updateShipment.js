@@ -5,16 +5,16 @@ const {
   commit,
   select,
   update,
-  startTransaction
+  startTransaction,
 } = require('@evershop/postgres-query-builder');
 const {
   getConnection,
-  pool
+  pool,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   INVALID_PAYLOAD,
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -34,8 +34,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid order id'
-        }
+          message: 'Invalid order id',
+        },
       });
       return;
     }
@@ -49,15 +49,15 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid shipment id'
-        }
+          message: 'Invalid shipment id',
+        },
       });
       return;
     }
     await update('shipment')
       .given({
         carrier_name,
-        tracking_number
+        tracking_number,
       })
       .where('uuid', '=', shipment_id)
       .execute(connection);
@@ -67,7 +67,7 @@ module.exports = async (request, response, delegate, next) => {
       .given({
         order_activity_order_id: order.order_id,
         comment: 'Shipment information updated',
-        customer_notified: 0
+        customer_notified: 0,
       })
       .execute(connection);
 
@@ -82,7 +82,7 @@ module.exports = async (request, response, delegate, next) => {
 
     response.status(OK);
     response.json({
-      data: updatedShipment
+      data: updatedShipment,
     });
   } catch (e) {
     await rollback(connection);
@@ -90,8 +90,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

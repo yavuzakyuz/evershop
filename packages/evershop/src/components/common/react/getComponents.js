@@ -9,11 +9,10 @@ export function getComponents() {
   const componentsPath = get(useAppState(), 'componentsPath');
   if (!componentsPath) {
     return {};
-  } else {
-    return require(resolve(
-      CONSTANTS.ROOTPATH,
-      '.evershop/build/',
-      componentsPath
-    ));
   }
+  return require(resolve(
+    CONSTANTS.ROOTPATH,
+    '.evershop/build/',
+    componentsPath,
+  ));
 }

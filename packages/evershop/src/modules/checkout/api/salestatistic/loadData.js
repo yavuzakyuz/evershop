@@ -62,9 +62,9 @@ module.exports = async (request, response, stack, next) => {
       return {
         total: queryResult[0].total || 0,
         count: queryResult[0].count,
-        time: dayjs(element.to).format('MMM DD').toString()
+        time: dayjs(element.to).format('MMM DD').toString(),
       };
-    })
+    }),
   );
   response.json(results);
 };

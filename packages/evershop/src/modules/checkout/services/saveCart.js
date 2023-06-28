@@ -5,11 +5,11 @@ const {
   update,
   insert,
   rollback,
-  select
+  select,
 } = require('@evershop/postgres-query-builder');
 const {
   pool,
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 
 module.exports = exports;
@@ -34,58 +34,57 @@ exports.saveCart = async (cart) => {
       }
       await commit(connection);
       return null;
-    } else {
-      if (cart.getData('cart_id')) {
-        await update('cart')
-          .given(cart.export())
-          .where('cart_id', '=', cart.getData('cart_id'))
-          .execute(connection, false);
-        cartId = cart.getData('cart_id');
-      } else {
-        const c = await insert('cart')
-          .given(cart.export())
-          .execute(connection, false);
-        cartId = c.insertId;
-      }
-
-      // Get current items from database
-      const currentItems = await select()
-        .from('cart_item')
-        .where('cart_id', '=', cartId)
-        .execute(connection, false);
-
-      // Delete items that are not in cart
-      await Promise.all(
-        currentItems.map(async (i) => {
-          if (!cart.getItem(i.uuid)) {
-            await del('cart_item')
-              .where('cart_item_id', '=', i.cart_item_id)
-              .execute(connection, false);
-          }
-        })
-      );
-
-      await Promise.all(
-        items.map(async (item) => {
-          if (/^\d+$/.test(item.getData('cart_item_id'))) {
-            await update('cart_item')
-              .given(item.export())
-              .where('cart_item_id', '=', item.getData('cart_item_id'))
-              .execute(connection, false);
-          } else {
-            await insert('cart_item')
-              .given({
-                ...item.export(),
-                cart_id: cart.getData('cart_id') || cartId
-              })
-              .execute(connection, false);
-          }
-        })
-      );
-
-      await commit(connection);
-      return cartId;
     }
+    if (cart.getData('cart_id')) {
+      await update('cart')
+        .given(cart.export())
+        .where('cart_id', '=', cart.getData('cart_id'))
+        .execute(connection, false);
+      cartId = cart.getData('cart_id');
+    } else {
+      const c = await insert('cart')
+        .given(cart.export())
+        .execute(connection, false);
+      cartId = c.insertId;
+    }
+
+    // Get current items from database
+    const currentItems = await select()
+      .from('cart_item')
+      .where('cart_id', '=', cartId)
+      .execute(connection, false);
+
+    // Delete items that are not in cart
+    await Promise.all(
+      currentItems.map(async (i) => {
+        if (!cart.getItem(i.uuid)) {
+          await del('cart_item')
+            .where('cart_item_id', '=', i.cart_item_id)
+            .execute(connection, false);
+        }
+      }),
+    );
+
+    await Promise.all(
+      items.map(async (item) => {
+        if (/^\d+$/.test(item.getData('cart_item_id'))) {
+          await update('cart_item')
+            .given(item.export())
+            .where('cart_item_id', '=', item.getData('cart_item_id'))
+            .execute(connection, false);
+        } else {
+          await insert('cart_item')
+            .given({
+              ...item.export(),
+              cart_id: cart.getData('cart_id') || cartId,
+            })
+            .execute(connection, false);
+        }
+      }),
+    );
+
+    await commit(connection);
+    return cartId;
   } catch (error) {
     await rollback(connection);
     throw error;

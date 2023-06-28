@@ -2,10 +2,9 @@
 /* eslint-disable global-require */
 module.exports = exports = async function TranslationLoader(c) {
   const csvData = await this.getOptions().getTranslateData();
-  //console.log('csvData', csvData);
+  // console.log('csvData', csvData);
   // Use regex to find all function call `t()` in the template string
-  const regex =
-    /_\s*\(\s*(?<arg1>["'][^"']*["']|\w+)\s*(?:,\s*(?<arg2>null|\{[\s\S]*?\}|[\w\.]+)\s*)?\)/g;
+  const regex = /_\s*\(\s*(?<arg1>["'][^"']*["']|\w+)\s*(?:,\s*(?<arg2>null|\{[\s\S]*?\}|[\w\.]+)\s*)?\)/g;
   let result = c;
   // Loop through each function call and get the template string
   let match;

@@ -21,6 +21,6 @@ exports.validateRoute = (id, method, path) => {
   return {
     id: String(id),
     method,
-    path
+    path,
   };
 };

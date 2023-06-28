@@ -11,6 +11,6 @@ module.exports = exports = async (connection) => {
   "data" json,
   "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "EVENT_UUID" UNIQUE ("uuid")
-)`
+)`,
   );
 };

@@ -5,7 +5,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 module.exports = async (request, response, stack, next) => {
   response.json({
     data: {
-      cost: 900
-    }
+      cost: 900,
+    },
   });
 };

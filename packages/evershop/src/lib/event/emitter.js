@@ -5,7 +5,7 @@ module.exports.emit = async function emit(name, data) {
   await insert('event')
     .given({
       name,
-      data
+      data,
     })
     .execute(pool);
 };

@@ -1,13 +1,13 @@
 const { select, del } = require('@evershop/postgres-query-builder');
+const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { loadSubscribers } = require('./loadSubscribers');
 const { callSubscribers } = require('./callSubscibers');
-const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 
 const loadEventInterval = 5000;
 const syncEventInterval = 2000;
 const maxEvents = 10;
 let events = [];
-let subscribers = loadSubscribers();
+const subscribers = loadSubscribers();
 
 setInterval(async () => {
   // Load events
@@ -21,7 +21,7 @@ setInterval(async () => {
   // Call subscribers for each event
   events.forEach((event) => {
     if (event.status === 'done' || event.status === 'processing') {
-      return;
+
     } else {
       executeSubscribers(event);
     }
@@ -39,9 +39,7 @@ async function loadEvents(count) {
     return [];
   }
   // Only load events that have subscribers
-  const eventNames = subscribers.map((subscriber) => {
-    return subscriber.event;
-  });
+  const eventNames = subscribers.map((subscriber) => subscriber.event);
 
   const query = select().from('event');
   if (eventNames.length > 0) {
@@ -52,9 +50,7 @@ async function loadEvents(count) {
     query.and(
       'uuid',
       'NOT IN',
-      events.map((event) => {
-        return event.uuid;
-      })
+      events.map((event) => event.uuid),
     );
   }
 
@@ -66,21 +62,15 @@ async function loadEvents(count) {
 async function syncEvents() {
   // Delete the events that have been executed
   const completedEvents = events
-    .filter((event) => {
-      return event.status === 'done';
-    })
-    .map((event) => {
-      return event.uuid;
-    });
+    .filter((event) => event.status === 'done')
+    .map((event) => event.uuid);
   if (completedEvents.length === 0) {
     return;
   }
   await del('event').where('uuid', 'IN', completedEvents).execute(pool);
 
   // Remove the events from the events array
-  events = events.filter((event) => {
-    return event.status !== 'done';
-  });
+  events = events.filter((event) => event.status !== 'done');
 }
 
 async function executeSubscribers(event) {
@@ -88,12 +78,8 @@ async function executeSubscribers(event) {
   const eventData = event.data;
   // get subscribers for the event
   const matchingSubscribers = subscribers
-    .filter((subscriber) => {
-      return subscriber.event === event.name;
-    })
-    .map((subscriber) => {
-      return subscriber.subscriber;
-    });
+    .filter((subscriber) => subscriber.event === event.name)
+    .map((subscriber) => subscriber.subscriber);
   // Call subscribers
   await callSubscribers(matchingSubscribers, eventData);
   event.status = 'done';

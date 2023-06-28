@@ -8,10 +8,9 @@ module.exports = exports = {};
 function scanForComponents(path) {
   return readdirSync(resolve(path), { withFileTypes: true })
     .filter(
-      (dirent) =>
-        dirent.isFile() &&
-        /.jsx$/.test(dirent.name) &&
-        /^[A-Z]/.test(dirent.name[0])
+      (dirent) => dirent.isFile()
+        && /.jsx$/.test(dirent.name)
+        && /^[A-Z]/.test(dirent.name[0]),
     )
     .map((dirent) => resolve(path, dirent.name));
 }
@@ -27,8 +26,8 @@ function scanRouteComponents(route, modules, themePath = null) {
     // Get all folders in the rootPath
     const pages = existsSync(rootPath)
       ? readdirSync(rootPath, { withFileTypes: true })
-          .filter((dirent) => dirent.isDirectory())
-          .map((dirent) => dirent.name)
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => dirent.name)
       : [];
 
     pages.forEach((page) => {
@@ -36,14 +35,14 @@ function scanRouteComponents(route, modules, themePath = null) {
       if (page === 'all' || page === route.id) {
         moduleComponents = [
           ...moduleComponents,
-          ...scanForComponents(resolve(rootPath, page))
+          ...scanForComponents(resolve(rootPath, page)),
         ];
       }
       // Check if page include `+ page` or `page+` in the name
       if (page.includes('+') && page.includes(route.id)) {
         moduleComponents = [
           ...moduleComponents,
-          ...scanForComponents(resolve(rootPath, page))
+          ...scanForComponents(resolve(rootPath, page)),
         ];
       }
 
@@ -61,8 +60,8 @@ function scanRouteComponents(route, modules, themePath = null) {
   if (!route.isAdmin && themePath) {
     const themePages = existsSync(resolve(themePath, 'pages'))
       ? readdirSync(resolve(themePath, 'pages'), { withFileTypes: true })
-          .filter((dirent) => dirent.isDirectory())
-          .map((dirent) => dirent.name)
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => dirent.name)
       : [];
 
     themePages.forEach((page) => {
@@ -70,14 +69,14 @@ function scanRouteComponents(route, modules, themePath = null) {
       if (page === 'all' || page === route.id) {
         themeComponents = [
           ...themeComponents,
-          ...scanForComponents(resolve(themePath, 'pages', page))
+          ...scanForComponents(resolve(themePath, 'pages', page)),
         ];
       }
       // Check if page include `+ page` or `page+` in the name
       if (page.includes('+') && page.includes(route.id)) {
         themeComponents = [
           ...themeComponents,
-          ...scanForComponents(resolve(themePath, 'pages', page))
+          ...scanForComponents(resolve(themePath, 'pages', page)),
         ];
       }
 

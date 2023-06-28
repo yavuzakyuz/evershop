@@ -7,7 +7,7 @@ module.exports = async function lifetimeSales(
   request,
   response,
   delegate,
-  next
+  next,
 ) {
   const query = select();
   query
@@ -23,14 +23,14 @@ module.exports = async function lifetimeSales(
   results.forEach((result) => {
     total += parseFloat(result.total);
     if (
-      result.payment_status === 'paid' &&
-      result.shipment_status === 'delivered'
+      result.payment_status === 'paid'
+      && result.shipment_status === 'delivered'
     ) {
       completed += 1;
     }
     if (
-      result.payment_status === 'cancelled' &&
-      result.shipment_status === 'cancelled'
+      result.payment_status === 'cancelled'
+      && result.shipment_status === 'cancelled'
     ) {
       cancelled += 1;
     }
@@ -39,7 +39,7 @@ module.exports = async function lifetimeSales(
   const language = await getSetting('storeLanguage', 'en');
   const formatedTotal = new Intl.NumberFormat(language, {
     style: 'currency',
-    currency
+    currency,
   }).format(total);
 
   response.json({
@@ -48,6 +48,6 @@ module.exports = async function lifetimeSales(
     completed_percentage:
       results.length === 0 ? 0 : Math.round((completed / results.length) * 100),
     cancelled_percentage:
-      results.length === 0 ? 0 : Math.round((cancelled / results.length) * 100)
+      results.length === 0 ? 0 : Math.round((cancelled / results.length) * 100),
   });
 };

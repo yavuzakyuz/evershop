@@ -7,31 +7,14 @@ describe('Test noDublicateId function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'home'
-          }
+            routeId: 'home',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
-    ).toEqual(false);
-  });
-
-  it('It should return false if admin level middlewareID is existed', () => {
-    expect(
-      noDublicateId(
-        [
-          {
-            id: 'routeOne',
-            routeId: 'admin'
-          }
-        ],
-        {
-          id: 'routeOne',
-          routeId: 'admin'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -42,15 +25,32 @@ describe('Test noDublicateId function', () => {
           {
             id: 'routeOne',
             routeId: 'admin',
-            scope: 'admin'
-          }
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'admin'
+          routeId: 'admin',
         },
-        'admin'
-      )
+      ),
+    ).toEqual(false);
+  });
+
+  it('It should return false if admin level middlewareID is existed', () => {
+    expect(
+      noDublicateId(
+        [
+          {
+            id: 'routeOne',
+            routeId: 'admin',
+            scope: 'admin',
+          },
+        ],
+        {
+          id: 'routeOne',
+          routeId: 'admin',
+        },
+        'admin',
+      ),
     ).toEqual(false);
   });
 
@@ -60,14 +60,14 @@ describe('Test noDublicateId function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'frontStore'
-          }
+            routeId: 'frontStore',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'frontStore'
-        }
-      )
+          routeId: 'frontStore',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -77,14 +77,14 @@ describe('Test noDublicateId function', () => {
         [
           {
             id: 'routeOne',
-            routeId: null
-          }
+            routeId: null,
+          },
         ],
         {
           id: 'routeOne',
-          routeId: null
-        }
-      )
+          routeId: null,
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -94,14 +94,14 @@ describe('Test noDublicateId function', () => {
         [
           {
             id: 'routeOne',
-            routeId: null
-          }
+            routeId: null,
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -111,14 +111,14 @@ describe('Test noDublicateId function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'admin'
-          }
+            routeId: 'admin',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -128,14 +128,14 @@ describe('Test noDublicateId function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'frontStore'
-          }
+            routeId: 'frontStore',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -145,14 +145,14 @@ describe('Test noDublicateId function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'home'
-          }
+            routeId: 'home',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'category'
-        }
-      )
+          routeId: 'category',
+        },
+      ),
     ).toEqual(true);
   });
 });

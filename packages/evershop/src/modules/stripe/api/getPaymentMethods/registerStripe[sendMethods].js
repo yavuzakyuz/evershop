@@ -14,9 +14,8 @@ module.exports = async (request, response) => {
   if (parseInt(stripeStatus, 10) === 1) {
     return {
       methodCode: 'stripe',
-      methodName: await getSetting('stripeDislayName', 'Stripe')
+      methodName: await getSetting('stripeDislayName', 'Stripe'),
     };
-  } else {
-    return null;
   }
+  return null;
 };

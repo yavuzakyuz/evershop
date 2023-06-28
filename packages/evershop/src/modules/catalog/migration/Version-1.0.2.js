@@ -5,23 +5,23 @@ module.exports = exports = async (connection) => {
   // Add a category_id column to the product table
   await execute(
     connection,
-    `ALTER TABLE product ADD COLUMN category_id INT DEFAULT NULL;`
+    'ALTER TABLE product ADD COLUMN category_id INT DEFAULT NULL;',
   );
 
   // Add a foreign key constraint to the category_id column
   await execute(
     connection,
-    `ALTER TABLE product ADD CONSTRAINT "PRODUCT_CATEGORY_ID_CONSTRAINT" FOREIGN KEY ("category_id") REFERENCES "category" ("category_id") ON DELETE SET NULL;`
+    'ALTER TABLE product ADD CONSTRAINT "PRODUCT_CATEGORY_ID_CONSTRAINT" FOREIGN KEY ("category_id") REFERENCES "category" ("category_id") ON DELETE SET NULL;',
   );
 
   // Get 1 category from the product_category table and update product table with according category_id
   await execute(
     connection,
-    `UPDATE product SET category_id = (SELECT category_id FROM product_category WHERE product_id = product.product_id LIMIT 1);`
+    'UPDATE product SET category_id = (SELECT category_id FROM product_category WHERE product_id = product.product_id LIMIT 1);',
   );
 
   // Delete the product_category table
-  await execute(connection, `DROP TABLE product_category;`);
+  await execute(connection, 'DROP TABLE product_category;');
 
   // Create a function to build url_key from the name if the url_key is not provided. This function replace whitespace with dash and remove all special characters
   await execute(
@@ -43,7 +43,7 @@ module.exports = exports = async (connection) => {
       END IF;
       RETURN NEW;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to build the url_key from the name if the url_key is not provided
@@ -52,7 +52,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "BUILD_CATEGORY_URL_KEY_TRIGGER"
     BEFORE INSERT OR UPDATE ON category_description
     FOR EACH ROW
-    EXECUTE PROCEDURE build_url_key();`
+    EXECUTE PROCEDURE build_url_key();`,
   );
 
   // Create a trigger to build the url_key from the name if the url_key is not provided
@@ -61,7 +61,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "BUILD_PRODUCT_URL_KEY_TRIGGER"
     BEFORE INSERT OR UPDATE ON product_description
     FOR EACH ROW
-    EXECUTE PROCEDURE build_url_key();`
+    EXECUTE PROCEDURE build_url_key();`,
   );
 
   // Create a url_rewrite table to store the url rewrite rules
@@ -75,7 +75,7 @@ module.exports = exports = async (connection) => {
       "entity_uuid" UUID DEFAULT NULL,
       "entity_type" varchar DEFAULT NULL,
       CONSTRAINT "URL_REWRITE_PATH_UNIQUE" UNIQUE ("language", "entity_uuid")
-    )`
+    )`,
   );
 
   // Create a function to add event to the event table after a category is created
@@ -87,7 +87,7 @@ module.exports = exports = async (connection) => {
       VALUES ('category_created', row_to_json(NEW));
       RETURN NEW;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to add event to the event table after a category is created
@@ -96,7 +96,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "ADD_CATEGORY_CREATED_EVENT_TRIGGER"
     AFTER INSERT ON category
     FOR EACH ROW
-    EXECUTE PROCEDURE add_category_created_event();`
+    EXECUTE PROCEDURE add_category_created_event();`,
   );
 
   // Create a function to add event to the event table after a category is updated
@@ -108,7 +108,7 @@ module.exports = exports = async (connection) => {
       VALUES ('category_updated', row_to_json(NEW));
       RETURN NEW;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to add event to the event table after a category is updated
@@ -117,7 +117,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "ADD_CATEGORY_UPDATED_EVENT_TRIGGER"
     AFTER UPDATE ON category
     FOR EACH ROW
-    EXECUTE PROCEDURE add_category_updated_event();`
+    EXECUTE PROCEDURE add_category_updated_event();`,
   );
 
   // Create a function to add event to the event table after a category is deleted
@@ -129,7 +129,7 @@ module.exports = exports = async (connection) => {
       VALUES ('category_deleted', row_to_json(OLD));
       RETURN OLD;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to add event to the event table after a category is deleted
@@ -138,7 +138,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "ADD_CATEGORY_DELETED_EVENT_TRIGGER"
     AFTER DELETE ON category
     FOR EACH ROW
-    EXECUTE PROCEDURE add_category_deleted_event();`
+    EXECUTE PROCEDURE add_category_deleted_event();`,
   );
 
   // Create a function to add event to the event table after a product is created
@@ -150,7 +150,7 @@ module.exports = exports = async (connection) => {
       VALUES ('product_created', row_to_json(NEW));
       RETURN NEW;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to add event to the event table after a product is created
@@ -159,7 +159,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "ADD_PRODUCT_CREATED_EVENT_TRIGGER"
     AFTER INSERT ON product
     FOR EACH ROW
-    EXECUTE PROCEDURE add_product_created_event();`
+    EXECUTE PROCEDURE add_product_created_event();`,
   );
 
   // Create a function to add event to the event table after a product is updated
@@ -171,7 +171,7 @@ module.exports = exports = async (connection) => {
       VALUES ('product_updated', row_to_json(NEW));
       RETURN NEW;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to add event to the event table after a product is updated
@@ -180,7 +180,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "ADD_PRODUCT_UPDATED_EVENT_TRIGGER"
     AFTER UPDATE ON product
     FOR EACH ROW
-    EXECUTE PROCEDURE add_product_updated_event();`
+    EXECUTE PROCEDURE add_product_updated_event();`,
   );
 
   // Create a function to add event to the event table after a product is deleted
@@ -192,7 +192,7 @@ module.exports = exports = async (connection) => {
       VALUES ('product_deleted', row_to_json(OLD));
       RETURN OLD;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to add event to the event table after a product is deleted
@@ -201,7 +201,7 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "ADD_PRODUCT_DELETED_EVENT_TRIGGER"
     AFTER DELETE ON product
     FOR EACH ROW
-    EXECUTE PROCEDURE add_product_deleted_event();`
+    EXECUTE PROCEDURE add_product_deleted_event();`,
   );
 
   // Create a product_inventory table to store the inventory of the product and move the inventory from the product table to this table
@@ -215,14 +215,14 @@ module.exports = exports = async (connection) => {
       "stock_availability" BOOLEAN NOT NULL DEFAULT false,
       CONSTRAINT "PRODUCT_INVENTORY_PRODUCT_ID_CONSTANTSRAINT" FOREIGN KEY ("product_inventory_product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE,
       CONSTRAINT "PRODUCT_INVENTORY_PRODUCT_ID_UNIQUE" UNIQUE ("product_inventory_product_id")
-    )`
+    )`,
   );
 
   // Copy the inventory from the product table to the product_inventory table
   await execute(
     connection,
     `INSERT INTO product_inventory (product_inventory_product_id, qty, manage_stock, stock_availability)
-    SELECT product_id, qty, manage_stock, stock_availability FROM product;`
+    SELECT product_id, qty, manage_stock, stock_availability FROM product;`,
   );
 
   // Create a function to delete all sub categories of a category when the category is deleted
@@ -244,7 +244,7 @@ module.exports = exports = async (connection) => {
       END LOOP;
       RETURN OLD;
     END;
-    $$ LANGUAGE plpgsql;`
+    $$ LANGUAGE plpgsql;`,
   );
 
   // Create a trigger to delete all sub categories of a category when the category is deleted, this trigger will be executed after the category is deleted, make sure to avoid infinite loop
@@ -253,18 +253,18 @@ module.exports = exports = async (connection) => {
     `CREATE TRIGGER "DELETE_SUB_CATEGORIES_TRIGGER"
     AFTER DELETE ON category
     FOR EACH ROW
-    EXECUTE PROCEDURE delete_sub_categories();`
+    EXECUTE PROCEDURE delete_sub_categories();`,
   );
 
   // Load all categories and add a category_updated event to the event table
   await execute(
     connection,
-    `INSERT INTO event (name, data) SELECT 'category_updated', row_to_json(category) FROM category;`
+    'INSERT INTO event (name, data) SELECT \'category_updated\', row_to_json(category) FROM category;',
   );
 
   // Load all products and add a product_updated event to the event table
   await execute(
     connection,
-    `INSERT INTO event (name, data) SELECT 'product_updated', row_to_json(product) FROM product;`
+    'INSERT INTO event (name, data) SELECT \'product_updated\', row_to_json(product) FROM product;',
   );
 };

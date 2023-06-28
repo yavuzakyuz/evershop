@@ -12,9 +12,8 @@ module.exports = {
         .load(pool);
       if (!attribute) {
         return null;
-      } else {
-        return camelCase(attribute);
       }
+      return camelCase(attribute);
     },
     attributes: async (_, { filters: requestedFilters = [] }, { pool }) => {
       const query = select().from('attribute');
@@ -39,12 +38,12 @@ module.exports = {
         query.andWhere(
           'attribute.attribute_name',
           'LIKE',
-          `%${nameFilter.value}%`
+          `%${nameFilter.value}%`,
         );
         currentFilters.push({
           key: 'name',
           operation: '=',
-          value: nameFilter.value
+          value: nameFilter.value,
         });
       }
 
@@ -54,12 +53,12 @@ module.exports = {
         query.andWhere(
           'attribute.attribute_code',
           codeFilter.operation,
-          codeFilter.value
+          codeFilter.value,
         );
         currentFilters.push({
           key: 'code',
           operation: codeFilter.operation,
-          value: codeFilter.valueRaw
+          value: codeFilter.valueRaw,
         });
       }
 
@@ -74,12 +73,12 @@ module.exports = {
         query.andWhere(
           'attribute.attribute_id',
           'IN',
-          attributes.map((a) => a.attribute_id)
+          attributes.map((a) => a.attribute_id),
         );
         currentFilters.push({
           key: 'group',
           operation: groupFilter.operation,
-          value: groupFilter.valueRaw
+          value: groupFilter.valueRaw,
         });
       }
 
@@ -89,12 +88,12 @@ module.exports = {
         query.andWhere(
           'attribute.type',
           typeFilter.operation,
-          typeFilter.value
+          typeFilter.value,
         );
         currentFilters.push({
           key: 'type',
           operation: typeFilter.operation,
-          value: typeFilter.valueRaw
+          value: typeFilter.valueRaw,
         });
       }
 
@@ -104,12 +103,12 @@ module.exports = {
         query.andWhere(
           'attribute.is_required',
           isRequiredFilter.operation,
-          isRequiredFilter.value
+          isRequiredFilter.value,
         );
         currentFilters.push({
           key: 'isRequired',
           operation: isRequiredFilter.operation,
-          value: isRequiredFilter.valueRaw
+          value: isRequiredFilter.valueRaw,
         });
       }
 
@@ -119,25 +118,25 @@ module.exports = {
         query.andWhere(
           'attribute.is_filterable',
           isFilterableFilter.operation,
-          isFilterableFilter.value
+          isFilterableFilter.value,
         );
         currentFilters.push({
           key: 'isFilterable',
           operation: isFilterableFilter.operation,
-          value: isFilterableFilter.valueRaw
+          value: isFilterableFilter.valueRaw,
         });
       }
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
       if (sortBy && sortBy.value === 'name') {
         query.orderBy('des.name', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('attribute.attribute_id', 'DESC');
@@ -146,7 +145,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
       // Clone the main query for getting total right before doing the paging
@@ -159,21 +158,21 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
       return {
         items: (await query.execute(pool)).map((row) => camelCase(row)),
         total: (await cloneQuery.load(pool)).total,
-        currentFilters
+        currentFilters,
       };
     },
     attributeGroups: async (root, _, { pool }) => {
@@ -182,7 +181,7 @@ module.exports = {
         .execute(pool)
         .then((rs) => rs.map((r) => camelCase(r)));
       return results;
-    }
+    },
   },
   AttributeGroup: {
     attributes: async (group, _, { pool }) => {
@@ -196,12 +195,12 @@ module.exports = {
               .from('attribute_group_link')
               .where('group_id', '=', group.attributeGroupId)
               .execute(pool)
-          ).map((a) => a.attribute_id)
+          ).map((a) => a.attribute_id),
         )
         .execute(pool);
       return rows.map((row) => camelCase(row));
     },
-    updateApi: (group) => buildUrl('updateAttributeGroup', { id: group.uuid })
+    updateApi: (group) => buildUrl('updateAttributeGroup', { id: group.uuid }),
   },
 
   Attribute: {
@@ -216,7 +215,7 @@ module.exports = {
               .from('attribute_group_link')
               .where('attribute_id', '=', attribute.attributeId)
               .execute(pool)
-          ).map((g) => g.group_id)
+          ).map((g) => g.group_id),
         )
         .execute(pool);
       return results.map((result) => camelCase(result));
@@ -229,9 +228,7 @@ module.exports = {
       return results.map((result) => camelCase(result));
     },
     editUrl: ({ uuid }) => buildUrl('attributeEdit', { id: uuid }),
-    updateApi: (attribute) =>
-      buildUrl('updateAttribute', { id: attribute.uuid }),
-    deleteApi: (attribute) =>
-      buildUrl('deleteAttribute', { id: attribute.uuid })
-  }
+    updateApi: (attribute) => buildUrl('updateAttribute', { id: attribute.uuid }),
+    deleteApi: (attribute) => buildUrl('deleteAttribute', { id: attribute.uuid }),
+  },
 };

@@ -1,5 +1,5 @@
 const {
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { debug } = require('@evershop/evershop/src/lib/log/debuger');
 
@@ -26,8 +26,8 @@ module.exports = async (err, request, response, delegate, next) => {
       data: null,
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: err.message
-      }
+        message: err.message,
+      },
     });
   } else {
     response.status(500).send(err.message);

@@ -21,8 +21,7 @@ module.exports = async (request, response, route) => {
     return;
   }
 
-  const scopePath =
-    route.isAdmin === true ? `./admin/${route.id}` : `./frontStore/${route.id}`;
+  const scopePath = route.isAdmin === true ? `./admin/${route.id}` : `./frontStore/${route.id}`;
   response.context.componentsPath = `${scopePath}/components.js`;
   /** This middleware only required for development */
   if (process.env.NODE_ENV === 'production') {
@@ -30,7 +29,7 @@ module.exports = async (request, response, route) => {
     if (route.isAdmin === true) {
       const bundles = readdirSync(
         path.resolve(CONSTANTS.ROOTPATH, './.evershop/build/admin', route.id),
-        { withFileTypes: true }
+        { withFileTypes: true },
       )
         .filter((dirent) => dirent.isFile())
         .map((dirent) => dirent.name);
@@ -40,19 +39,19 @@ module.exports = async (request, response, route) => {
         }
       });
       response.context.bundleJs = buildUrl('adminStaticAsset', [
-        `${scopePath}/${hash}.js`
+        `${scopePath}/${hash}.js`,
       ]);
       response.context.bundleCss = buildUrl('adminStaticAsset', [
-        `${scopePath}/${hash}.css`
+        `${scopePath}/${hash}.css`,
       ]);
     } else {
       const bundles = readdirSync(
         path.resolve(
           CONSTANTS.ROOTPATH,
           './.evershop/build/frontStore',
-          route.id
+          route.id,
         ),
-        { withFileTypes: true }
+        { withFileTypes: true },
       )
         .filter((dirent) => dirent.isFile())
         .map((dirent) => dirent.name);
@@ -62,10 +61,10 @@ module.exports = async (request, response, route) => {
         }
       });
       response.context.bundleJs = buildUrl('staticAsset', [
-        `${scopePath}/${hash}.js`
+        `${scopePath}/${hash}.js`,
       ]);
       response.context.bundleCss = buildUrl('staticAsset', [
-        `${scopePath}/${hash}.css`
+        `${scopePath}/${hash}.css`,
       ]);
     }
     return;
@@ -74,17 +73,17 @@ module.exports = async (request, response, route) => {
   if (route.__BUILDREQUIRED__ === false) {
     if (request.isAdmin === true) {
       response.context.bundleJs = buildUrl('adminStaticAsset', [
-        `${scopePath}/${route.__BUNDLEHASH__}.js`
+        `${scopePath}/${route.__BUNDLEHASH__}.js`,
       ]);
       response.context.bundleCss = buildUrl('adminStaticAsset', [
-        `${scopePath}/${route.__BUNDLEHASH__}.css`
+        `${scopePath}/${route.__BUNDLEHASH__}.css`,
       ]);
     } else {
       response.context.bundleJs = buildUrl('staticAsset', [
-        `${scopePath}/${route.__BUNDLEHASH__}.js`
+        `${scopePath}/${route.__BUNDLEHASH__}.js`,
       ]);
       response.context.bundleCss = buildUrl('staticAsset', [
-        `${scopePath}/${route.__BUNDLEHASH__}.css`
+        `${scopePath}/${route.__BUNDLEHASH__}.css`,
       ]);
     }
     return;
@@ -103,17 +102,17 @@ module.exports = async (request, response, route) => {
           clearInterval(check);
           if (request.isAdmin === true) {
             response.context.bundleJs = buildUrl('adminStaticAsset', [
-              `${scopePath}/${route.__BUNDLEHASH__}.js`
+              `${scopePath}/${route.__BUNDLEHASH__}.js`,
             ]);
             response.context.bundleCss = buildUrl('adminStaticAsset', [
-              `${scopePath}/${route.__BUNDLEHASH__}.css`
+              `${scopePath}/${route.__BUNDLEHASH__}.css`,
             ]);
           } else {
             response.context.bundleJs = buildUrl('staticAsset', [
-              `${scopePath}/${route.__BUNDLEHASH__}.js`
+              `${scopePath}/${route.__BUNDLEHASH__}.js`,
             ]);
             response.context.bundleCss = buildUrl('staticAsset', [
-              `${scopePath}/${route.__BUNDLEHASH__}.css`
+              `${scopePath}/${route.__BUNDLEHASH__}.css`,
             ]);
           }
           resolve(1);
@@ -128,14 +127,14 @@ module.exports = async (request, response, route) => {
 
   if (
     existsSync(path.resolve(CONSTANTS.ROOTPATH, './.evershop/build', scopePath))
-  )
+  ) {
     await rmdir(
       path.resolve(CONSTANTS.ROOTPATH, './.evershop/build', scopePath),
-      { recursive: true }
+      { recursive: true },
     );
+  }
 
-  const components =
-    JSON.parse(JSON.stringify(getComponentsByRoute(route.id))) || {};
+  const components = JSON.parse(JSON.stringify(getComponentsByRoute(route.id))) || {};
   Object.keys(components).forEach((area) => {
     Object.keys(components[area]).forEach((id) => {
       components[area][
@@ -146,22 +145,22 @@ module.exports = async (request, response, route) => {
   });
   const content = `var components = module.exports = exports = ${inspect(
     components,
-    { depth: 5 }
+    { depth: 5 },
   )
     .replace(/'---/g, '')
     .replace(/---'/g, '')}`;
   await mkdir(
     path.resolve(CONSTANTS.ROOTPATH, './.evershop/build', scopePath),
-    { recursive: true }
+    { recursive: true },
   );
   await writeFile(
     path.resolve(
       CONSTANTS.ROOTPATH,
       '.evershop/build',
       scopePath,
-      'components.js'
+      'components.js',
     ),
-    content
+    content,
   );
 
   // Create a complier object
@@ -196,9 +195,9 @@ module.exports = async (request, response, route) => {
           new Error(
             stats.toString({
               errorDetails: true,
-              warnings: true
-            })
-          )
+              warnings: true,
+            }),
+          ),
         );
       } else {
         hash = stats.hash;
@@ -210,13 +209,13 @@ module.exports = async (request, response, route) => {
   const cssOutput = new CleanCss({
     level: {
       2: {
-        removeDuplicateRules: true // turns on removing duplicate rules
-      }
-    }
+        removeDuplicateRules: true, // turns on removing duplicate rules
+      },
+    },
   }).minify(
     sass.renderSync({
-      data: cssFiles
-    }).css
+      data: cssFiles,
+    }).css,
   );
 
   await writeFile(
@@ -224,25 +223,25 @@ module.exports = async (request, response, route) => {
       CONSTANTS.ROOTPATH,
       '.evershop/build',
       scopePath,
-      `${hash}.css`
+      `${hash}.css`,
     ),
-    cssOutput.styles
+    cssOutput.styles,
   );
 
   if (!response.context.bundleJs || route.id === 'notFound') {
     if (request.isAdmin === true) {
       response.context.bundleJs = buildUrl('adminStaticAsset', [
-        `${scopePath}/${hash}.js`
+        `${scopePath}/${hash}.js`,
       ]);
       response.context.bundleCss = buildUrl('adminStaticAsset', [
-        `${scopePath}/${hash}.css`
+        `${scopePath}/${hash}.css`,
       ]);
     } else {
       response.context.bundleJs = buildUrl('staticAsset', [
-        `${scopePath}/${hash}.js`
+        `${scopePath}/${hash}.js`,
       ]);
       response.context.bundleCss = buildUrl('staticAsset', [
-        `${scopePath}/${hash}.css`
+        `${scopePath}/${hash}.css`,
       ]);
     }
   }

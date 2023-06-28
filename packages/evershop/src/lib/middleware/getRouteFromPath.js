@@ -10,7 +10,7 @@ module.exports.getRouteFromPath = (path) => {
     return {
       region: 'api',
       scope: parts[1] === 'global' ? 'app' : parts[1],
-      routeId: parts[1] === 'global' ? null : parts[1]
+      routeId: parts[1] === 'global' ? null : parts[1],
     };
   }
 
@@ -26,8 +26,8 @@ module.exports.getRouteFromPath = (path) => {
   } else if (parts[1] === 'all' && ['frontStore', 'admin'].includes(parts[2])) {
     scope = routeId = parts[2];
   } else if (
-    /^[A-Za-z+.]+$/.test(parts[1]) &&
-    ['frontStore', 'admin'].includes(parts[2])
+    /^[A-Za-z+.]+$/.test(parts[1])
+    && ['frontStore', 'admin'].includes(parts[2])
   ) {
     scope = parts[2];
     const routes = parts[1].split('+');
@@ -43,6 +43,6 @@ module.exports.getRouteFromPath = (path) => {
   return {
     region,
     scope,
-    routeId
+    routeId,
   };
 };

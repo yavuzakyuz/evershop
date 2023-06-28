@@ -22,7 +22,7 @@ exports.GraphqlPlugin = class GraphqlPlugin {
       const components = getComponentsByRoute(this.route);
       compilation.emitAsset(
         this.outputFile,
-        new RawSource(JSON.stringify(parseGraphql(components)))
+        new RawSource(JSON.stringify(parseGraphql(components))),
       );
     });
   }

@@ -3,7 +3,7 @@ const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
 module.exports.calculateTaxAmount = function calculateTaxAmount(
   taxPercentage,
   price,
-  quantity
+  quantity,
 ) {
   const rounding = getConfig('pricing.tax.rounding', 'round');
   const roundingLevel = getConfig('pricing.tax.round_level', 'unit');
@@ -15,8 +15,8 @@ module.exports.calculateTaxAmount = function calculateTaxAmount(
 
   if (roundingLevel === 'unit') {
     // Calculate the tax amount
-    let taxAmountUnit = (price * taxPercentage) / 100,
-      taxAmount = 0;
+    const taxAmountUnit = (price * taxPercentage) / 100;
+    let taxAmount = 0;
     switch (rounding) {
       case 'up':
         taxAmount = Math.ceil(taxAmountUnit * precisionFix) / precisionFix;
@@ -32,23 +32,22 @@ module.exports.calculateTaxAmount = function calculateTaxAmount(
         break;
     }
     return taxAmount * quantity;
-  } else {
-    // Calculate the tax amount
-    let taxAmount = (totalPrice * taxPercentage) / 100;
-    switch (rounding) {
-      case 'up':
-        taxAmount = Math.ceil(taxAmount * precisionFix) / precisionFix;
-        break;
-      case 'down':
-        taxAmount = Math.floor(taxAmount * precisionFix) / precisionFix;
-        break;
-      case 'round':
-        taxAmount = Math.round(taxAmount * precisionFix) / precisionFix;
-        break;
-      default:
-        taxAmount = Math.round(taxAmount * precisionFix) / precisionFix;
-        break;
-    }
-    return taxAmount;
   }
+  // Calculate the tax amount
+  let taxAmount = (totalPrice * taxPercentage) / 100;
+  switch (rounding) {
+    case 'up':
+      taxAmount = Math.ceil(taxAmount * precisionFix) / precisionFix;
+      break;
+    case 'down':
+      taxAmount = Math.floor(taxAmount * precisionFix) / precisionFix;
+      break;
+    case 'round':
+      taxAmount = Math.round(taxAmount * precisionFix) / precisionFix;
+      break;
+    default:
+      taxAmount = Math.round(taxAmount * precisionFix) / precisionFix;
+      break;
+  }
+  return taxAmount;
 };

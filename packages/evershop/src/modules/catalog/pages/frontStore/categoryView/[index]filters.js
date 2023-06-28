@@ -1,7 +1,7 @@
 const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = async (request, response, delegate, next) => {
@@ -26,14 +26,14 @@ module.exports = async (request, response, delegate, next) => {
       filtersFromUrl.push({
         key: 'minPrice',
         operation: '=',
-        value: `${query[minPrice]}`
+        value: `${query[minPrice]}`,
       });
     }
     if (maxPrice) {
       filtersFromUrl.push({
         key: 'maxPrice',
         operation: '=',
-        value: `${query[maxPrice]}`
+        value: `${query[maxPrice]}`,
       });
     }
 
@@ -41,7 +41,7 @@ module.exports = async (request, response, delegate, next) => {
     Object.keys(query).forEach((key) => {
       const filter = query[key];
       const attribute = filterableAttributes.find(
-        (a) => a.attribute_code === key
+        (a) => a.attribute_code === key,
       );
       if (attribute) {
         if (Array.isArray(filter)) {
@@ -52,29 +52,28 @@ module.exports = async (request, response, delegate, next) => {
             filtersFromUrl.push({
               key,
               operation: '=',
-              value: values.join(',')
+              value: values.join(','),
             });
           }
         } else {
           filtersFromUrl.push({
             key,
             operation: '=',
-            value: filter
+            value: filter,
           });
         }
       }
     });
 
     const { sortBy } = query;
-    const sortOrder =
-      query.sortOrder && ['ASC', 'DESC'].includes(query.sortOrder.toUpperCase())
-        ? query.sortOrder.toUpperCase()
-        : 'ASC';
+    const sortOrder = query.sortOrder && ['ASC', 'DESC'].includes(query.sortOrder.toUpperCase())
+      ? query.sortOrder.toUpperCase()
+      : 'ASC';
     if (sortBy) {
       filtersFromUrl.push({
         key: 'sortBy',
         operation: '=',
-        value: sortBy
+        value: sortBy,
       });
     }
 
@@ -82,7 +81,7 @@ module.exports = async (request, response, delegate, next) => {
       filtersFromUrl.push({
         key: 'sortOrder',
         operation: '=',
-        value: sortOrder
+        value: sortOrder,
       });
     }
     // Paging

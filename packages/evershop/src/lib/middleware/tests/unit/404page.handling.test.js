@@ -16,10 +16,10 @@ describe('buildMiddlewareFunction', () => {
     const response = await axios.get(
       `http://localhost:${port}/noexistedroute`,
       {
-        validateStatus: function (status) {
+        validateStatus(status) {
           return status >= 200 && status < 500;
-        }
-      }
+        },
+      },
     );
     expect(response.status).toEqual(404);
   });
@@ -27,9 +27,9 @@ describe('buildMiddlewareFunction', () => {
   it('It should return 404 page when middleware sets status to 404', async () => {
     // Visit a url
     const response = await axios.get(`http://localhost:${port}/product/404`, {
-      validateStatus: function (status) {
+      validateStatus(status) {
         return status >= 200 && status < 500;
-      }
+      },
     });
     console.log(response.data);
     expect(response.status).toEqual(404);

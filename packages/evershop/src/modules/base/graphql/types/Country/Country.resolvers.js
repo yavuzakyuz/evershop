@@ -9,36 +9,30 @@ module.exports = {
       const list = argument?.countries || [];
       if (list.length === 0) {
         return contries;
-      } else {
-        return contries.filter((c) => list.includes(c.code));
       }
+      return contries.filter((c) => list.includes(c.code));
     },
     allowedCountries: async () => {
       const allowedCountries = await select('country')
         .from('shipping_zone')
         .execute(pool);
-      return contries.filter((c) =>
-        allowedCountries.find((p) => p.country === c.code)
-      );
-    }
+      return contries.filter((c) => allowedCountries.find((p) => p.country === c.code));
+    },
   },
   Country: {
     name: (country) => {
       if (country.name) {
         return country.name;
-      } else {
-        const c = contries.find((p) => p.code === country);
-        return c.name;
       }
+      const c = contries.find((p) => p.code === country);
+      return c.name;
     },
     code: (country) => {
       if (country.code) {
         return country.code;
-      } else {
-        return country;
       }
+      return country;
     },
-    provinces: (country) =>
-      provinces.filter((p) => p.countryCode === country.code)
-  }
+    provinces: (country) => provinces.filter((p) => p.countryCode === country.code),
+  },
 };

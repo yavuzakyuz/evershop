@@ -17,7 +17,7 @@ module.exports = async function publiStatic(request, response, next) {
       staticMiddleware(join(CONSTANTS.ROOTPATH, 'public'))(
         request,
         response,
-        next
+        next,
       );
     }
   } catch (e) {

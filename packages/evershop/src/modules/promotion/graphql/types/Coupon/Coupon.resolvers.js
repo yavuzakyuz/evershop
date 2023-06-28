@@ -25,7 +25,7 @@ module.exports = {
           currentFilters.push({
             key: 'coupon',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
         if (filter.key === 'status') {
@@ -33,7 +33,7 @@ module.exports = {
           currentFilters.push({
             key: 'status',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
         // Start date filter
@@ -52,7 +52,7 @@ module.exports = {
             query.andWhere('coupon.start_date', '<=', max);
             currentStartDateFilter = {
               key: 'startDate',
-              value: `${currentStartDateFilter.value}-${max}`
+              value: `${currentStartDateFilter.value}-${max}`,
             };
           }
           if (currentStartDateFilter) {
@@ -73,7 +73,7 @@ module.exports = {
             query.andWhere('coupon.end_date', '<=', max);
             currentEndtDateFilter = {
               key: 'endDate',
-              value: `${currentEndtDateFilter.value}-${max}`
+              value: `${currentEndtDateFilter.value}-${max}`,
             };
           }
           if (currentEndtDateFilter) {
@@ -97,7 +97,7 @@ module.exports = {
             query.andWhere('coupon.used_time', '<=', max);
             currentUsedTimeFilter = {
               key: 'usedTime',
-              value: `${currentUsedTimeFilter.value}-${max}`
+              value: `${currentUsedTimeFilter.value}-${max}`,
             };
           }
           if (currentUsedTimeFilter) {
@@ -108,14 +108,14 @@ module.exports = {
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
       if (sortBy && sortBy.value === 'coupon') {
         query.orderBy('coupon.coupon', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('coupon.coupon_id', 'DESC');
@@ -125,7 +125,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
       // Clone the main query for getting total right before doing the paging
@@ -138,78 +138,74 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
       return {
         items: (await query.execute(pool)).map((row) => camelCase(row)),
         total: (await cloneQuery.load(pool)).total,
-        currentFilters
+        currentFilters,
       };
-    }
+    },
   },
   Coupon: {
     targetProducts: ({ targetProducts }) => {
       if (!targetProducts) {
         return null;
-      } else {
-        try {
-          const result = JSON.parse(targetProducts);
-          return camelCase(result);
-        } catch (e) {
-          throw new Error('Invalid JSON in coupon targetProducts');
-        }
+      }
+      try {
+        const result = JSON.parse(targetProducts);
+        return camelCase(result);
+      } catch (e) {
+        throw new Error('Invalid JSON in coupon targetProducts');
       }
     },
     condition: ({ condition }) => {
       if (!condition) {
         return null;
-      } else {
-        try {
-          const result = JSON.parse(condition);
-          return camelCase(result);
-        } catch (e) {
-          throw new Error('Invalid JSON in coupon condition');
-        }
+      }
+      try {
+        const result = JSON.parse(condition);
+        return camelCase(result);
+      } catch (e) {
+        throw new Error('Invalid JSON in coupon condition');
       }
     },
     userCondition: ({ userCondition }) => {
       if (!userCondition) {
         return null;
-      } else {
-        try {
-          const result = JSON.parse(userCondition);
-          return camelCase(result);
-        } catch (e) {
-          throw new Error('Invalid JSON in coupon userCondition');
-        }
+      }
+      try {
+        const result = JSON.parse(userCondition);
+        return camelCase(result);
+      } catch (e) {
+        throw new Error('Invalid JSON in coupon userCondition');
       }
     },
     buyxGety: ({ buyxGety }) => {
       if (!buyxGety) {
         return [];
-      } else {
-        try {
-          const results = JSON.parse(buyxGety);
-          return results.map((result) => camelCase(result));
-        } catch (e) {
-          throw new Error('Invalid JSON in coupon buyxGety');
-        }
+      }
+      try {
+        const results = JSON.parse(buyxGety);
+        return results.map((result) => camelCase(result));
+      } catch (e) {
+        throw new Error('Invalid JSON in coupon buyxGety');
       }
     },
     editUrl: ({ uuid }) => buildUrl('couponEdit', { id: uuid }),
     updateApi: (coupon) => buildUrl('updateCoupon', { id: coupon.uuid }),
-    deleteApi: (coupon) => buildUrl('deleteCoupon', { id: coupon.uuid })
+    deleteApi: (coupon) => buildUrl('deleteCoupon', { id: coupon.uuid }),
   },
   Cart: {
-    applyCouponApi: (cart) => buildUrl('couponApply', { cart_id: cart.uuid })
-  }
+    applyCouponApi: (cart) => buildUrl('couponApply', { cart_id: cart.uuid }),
+  },
 };

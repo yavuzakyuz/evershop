@@ -1,19 +1,19 @@
 module.exports = {
-  babelrcRoots: [__dirname
+  babelrcRoots: [__dirname,
   ],
   parserOpts: {
-    allowReturnOutsideFunction: true
+    allowReturnOutsideFunction: true,
   },
   presets: [
     [
-      "@babel/preset-env",
+      '@babel/preset-env',
       {
-        "exclude": [
-          "@babel/plugin-transform-regenerator",
-          "@babel/plugin-transform-async-to-generator"
-        ]
-      }
+        exclude: [
+          '@babel/plugin-transform-regenerator',
+          '@babel/plugin-transform-async-to-generator',
+        ],
+      },
     ],
-    "@babel/preset-react"
-  ]
+    '@babel/preset-react',
+  ],
 };

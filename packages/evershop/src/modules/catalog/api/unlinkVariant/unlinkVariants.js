@@ -1,10 +1,10 @@
 const { update } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   INTERNAL_SERVER_ERROR,
-  OK
+  OK,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -16,14 +16,14 @@ module.exports = async (request, response, delegate, next) => {
       .where('product_id', '=', parseInt(`0${request.body.id}`, 10))
       .execute(connection);
     response.status(OK).json({
-      data: {}
+      data: {},
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR).json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

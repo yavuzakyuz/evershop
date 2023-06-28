@@ -24,10 +24,10 @@ module.exports = {
 
       const items = (await query.execute(pool)).map((i) => ({
         name: i.name,
-        url: i.request_path || buildUrl('categoryView', { uuid: i.uuid })
+        url: i.request_path || buildUrl('categoryView', { uuid: i.uuid }),
       }));
 
       return { items };
-    }
-  }
+    },
+  },
 };

@@ -5,7 +5,7 @@ const {
   insert,
   del,
   select,
-  update
+  update,
 } = require('@evershop/postgres-query-builder');
 const { get } = require('@evershop/evershop/src/lib/util/get');
 
@@ -55,7 +55,7 @@ module.exports = async (request, response, delegate) => {
         .given({
           option_text: option.option_text,
           attribute_id: attributeId,
-          attribute_code: get(attribute, 'attribute_code')
+          attribute_code: get(attribute, 'attribute_code'),
         })
         .where('attribute_option_id', '=', option.option_id)
         .execute(connection, false);
@@ -64,7 +64,7 @@ module.exports = async (request, response, delegate) => {
         .given({
           option_text: option.option_text,
           attribute_id: attributeId,
-          attribute_code: get(attribute, 'attribute_code')
+          attribute_code: get(attribute, 'attribute_code'),
         })
         .execute(connection, false);
     }

@@ -1,13 +1,13 @@
 const {
   commit,
   rollback,
-  select
+  select,
 } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -34,7 +34,7 @@ module.exports = async (request, response, delegate, next) => {
       .on(
         'product_description.product_description_product_id',
         '=',
-        'product.product_id'
+        'product.product_id',
       );
 
     const product = await query
@@ -49,22 +49,22 @@ module.exports = async (request, response, delegate, next) => {
             rel: 'productGrid',
             href: buildUrl('productGrid'),
             action: 'GET',
-            types: ['text/xml']
+            types: ['text/xml'],
           },
           {
             rel: 'view',
             href: buildUrl('productView', { uuid: product.uuid }),
             action: 'GET',
-            types: ['text/xml']
+            types: ['text/xml'],
           },
           {
             rel: 'edit',
             href: buildUrl('productEdit', { id: product.uuid }),
             action: 'GET',
-            types: ['text/xml']
-          }
-        ]
-      }
+            types: ['text/xml'],
+          },
+        ],
+      },
     });
   } else {
     await rollback(connection);
@@ -72,8 +72,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: rejected.reason.message
-      }
+        message: rejected.reason.message,
+      },
     });
   }
 };

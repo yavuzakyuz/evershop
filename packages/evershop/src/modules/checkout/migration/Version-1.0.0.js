@@ -35,7 +35,7 @@ module.exports = exports = async (connection) => {
   "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "CART_UUID_UNIQUE" UNIQUE ("uuid")
-)`
+)`,
   );
 
   await execute(
@@ -53,7 +53,7 @@ module.exports = exports = async (connection) => {
   "address_2" varchar DEFAULT NULL,
   CONSTRAINT "CART_ADDRESS_UUID_UNIQUE" UNIQUE ("uuid")
 )
-`
+`,
   );
 
   await execute(
@@ -84,15 +84,15 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "CART_ITEM_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_CART_ITEM" FOREIGN KEY ("cart_id") REFERENCES "cart" ("cart_id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "FK_CART_ITEM_PRODUCT" FOREIGN KEY ("product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE ON UPDATE NO ACTION
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CART_ITEM" ON "cart_item" ("cart_id")`
+    'CREATE INDEX "FK_CART_ITEM" ON "cart_item" ("cart_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CART_ITEM_PRODUCT" ON "cart_item" ("product_id")`
+    'CREATE INDEX "FK_CART_ITEM_PRODUCT" ON "cart_item" ("product_id")',
   );
 
   await execute(
@@ -133,7 +133,7 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "ORDER_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "ORDER_NUMBER_UNIQUE" UNIQUE ("order_number")
 )
-`
+`,
   );
 
   await execute(
@@ -148,11 +148,11 @@ module.exports = exports = async (connection) => {
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "ORDER_ACTIVITY_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_ORDER_ACTIVITY" FOREIGN KEY ("order_activity_order_id") REFERENCES "order" ("order_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ORDER_ACTIVITY" ON "order_activity" ("order_activity_order_id")`
+    'CREATE INDEX "FK_ORDER_ACTIVITY" ON "order_activity" ("order_activity_order_id")',
   );
 
   await execute(
@@ -169,7 +169,7 @@ module.exports = exports = async (connection) => {
   "address_1" varchar DEFAULT NULL,
   "address_2" varchar DEFAULT NULL,
   CONSTRAINT "ORDER_ADDRESS_UUID_UNIQUE" UNIQUE ("uuid")
-)`
+)`,
   );
 
   await execute(
@@ -199,11 +199,11 @@ module.exports = exports = async (connection) => {
   "requested_data" text DEFAULT NULL,
   CONSTRAINT "ORDER_ITEM_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_ORDER" FOREIGN KEY ("order_item_order_id") REFERENCES "order" ("order_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ORDER" ON "order_item" ("order_item_order_id")`
+    'CREATE INDEX "FK_ORDER" ON "order_item" ("order_item_order_id")',
   );
 
   await execute(
@@ -222,11 +222,11 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "PAYMENT_TRANSACTION_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "UNQ_PAYMENT_TRANSACTION_ID_ORDER_ID" UNIQUE ("payment_transaction_order_id","transaction_id"),
   CONSTRAINT "FK_PAYMENT_TRANSACTION_ORDER" FOREIGN KEY ("payment_transaction_order_id") REFERENCES "order" ("order_id") ON DELETE CASCADE ON UPDATE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PAYMENT_TRANSACTION_ORDER" ON "payment_transaction" ("payment_transaction_order_id")`
+    'CREATE INDEX "FK_PAYMENT_TRANSACTION_ORDER" ON "payment_transaction" ("payment_transaction_order_id")',
   );
 
   await execute(
@@ -241,11 +241,11 @@ module.exports = exports = async (connection) => {
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "SHIPMENT_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_ORDER_SHIPMENT" FOREIGN KEY ("shipment_order_id") REFERENCES "order" ("order_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ORDER_SHIPMENT" ON "shipment" ("shipment_order_id")`
+    'CREATE INDEX "FK_ORDER_SHIPMENT" ON "shipment" ("shipment_order_id")',
   );
 
   // Reduce product stock when order is placed if product manage stock is true
@@ -260,12 +260,12 @@ module.exports = exports = async (connection) => {
         UPDATE product SET qty = qty - NEW.qty WHERE product_id = NEW.product_id AND manage_stock = TRUE;
         RETURN NEW;
       END
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "TRIGGER_AFTER_INSERT_ORDER_ITEM" AFTER INSERT ON "order_item" FOR EACH ROW
     EXECUTE PROCEDURE reduce_product_stock_when_order_placed();
-    `
+    `,
   );
 };

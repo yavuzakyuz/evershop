@@ -11,5 +11,5 @@ exports.CONSTANTS = Object.freeze({
   NODEMODULEPATH: path.resolve(rootPath, 'node_modules'),
   THEMEPATH: path.resolve(rootPath, 'themes'),
   CACHEPATH: path.resolve(rootPath, '.evershop'),
-  BUILDPATH: path.resolve(rootPath, '.evershop', 'build')
+  BUILDPATH: path.resolve(rootPath, '.evershop', 'build'),
 });

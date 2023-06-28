@@ -13,11 +13,10 @@ module.exports = exports = {};
  */
 exports.noDublicateId = function noDublicateId(
   registeredMiddlewares,
-  newMiddleware
+  newMiddleware,
 ) {
   if (findDublicatedMiddleware(registeredMiddlewares, newMiddleware) !== -1) {
     return false;
-  } else {
-    return true;
   }
+  return true;
 };

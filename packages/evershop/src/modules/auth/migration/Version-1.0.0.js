@@ -15,7 +15,7 @@ module.exports = exports = async (connection) => {
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "ADMIN_USER_EMAIL_UNIQUE" UNIQUE ("email"),
   CONSTRAINT "ADMIN_USER_UUID_UNIQUE" UNIQUE ("uuid")
-);`
+);`,
   );
 
   await execute(
@@ -29,6 +29,6 @@ module.exports = exports = async (connection) => {
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "USER_TOKEN_SID_UNIQUE" UNIQUE ("sid"),
   CONSTRAINT "USER_TOKEN_SECRET_UNIQUE" UNIQUE ("secret")
-);`
+);`,
   );
 };

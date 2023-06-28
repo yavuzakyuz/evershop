@@ -22,7 +22,7 @@ exports.Tailwindcss = class Tailwindcss {
       compilation.hooks.processAssets.tap(
         {
           name: 'Tailwindcss',
-          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS // see below for more stages
+          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS, // see below for more stages
         },
         (assets) => {
           try {
@@ -31,14 +31,14 @@ exports.Tailwindcss = class Tailwindcss {
             Object.entries(assets).forEach((asset) => {
               const [pathname] = asset;
               if (
-                pathname.endsWith('.css') &&
-                pathname.includes(`${this.chunks}/`)
+                pathname.endsWith('.css')
+                && pathname.includes(`${this.chunks}/`)
               ) {
                 cssAsset = asset;
               }
               if (
-                pathname.endsWith('.js') &&
-                pathname.includes(`${this.chunks}/`)
+                pathname.endsWith('.js')
+                && pathname.includes(`${this.chunks}/`)
               ) {
                 jsAsset = asset;
               }
@@ -47,12 +47,12 @@ exports.Tailwindcss = class Tailwindcss {
               const mergedTailwindConfig = getTailwindConfig(this.route);
               mergedTailwindConfig.content = [
                 {
-                  raw: jsAsset[1].source()
-                }
+                  raw: jsAsset[1].source(),
+                },
               ];
               const css = cssAsset[1].source();
               let tailwind = css.match(
-                /\/\*beginTailwind\*\/(.*)\/\*endTailwind\*\//s
+                /\/\*beginTailwind\*\/(.*)\/\*endTailwind\*\//s,
               );
               if (tailwind) {
                 tailwind = tailwind[1];
@@ -61,32 +61,31 @@ exports.Tailwindcss = class Tailwindcss {
               const tailWindCss = new CleanCSS().minify(
                 postcss([
                   tailwindcss(mergedTailwindConfig),
-                  autoprefixer
+                  autoprefixer,
                 ]).process(tailwind, {
-                  from: undefined
-                }).css
+                  from: undefined,
+                }).css,
               );
 
               // match any characters between /*beginTailwind*/
               // and /*endTailwind*/ including line breaks
               compilation.updateAsset(
                 cssAsset[0],
-                (source) =>
-                  new sources.RawSource(
-                    source
-                      .source()
-                      .replace(
-                        /\/\*beginTailwind\*\/(.*?)\/\*endTailwind\*\//s,
-                        tailWindCss.styles
-                      )
-                  )
+                (source) => new sources.RawSource(
+                  source
+                    .source()
+                    .replace(
+                      /\/\*beginTailwind\*\/(.*?)\/\*endTailwind\*\//s,
+                      tailWindCss.styles,
+                    ),
+                ),
               );
             }
           } catch (e) {
             // eslint-disable-next-line no-console
             console.log(e);
           }
-        }
+        },
       );
     });
   }

@@ -4,7 +4,7 @@ const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
 const { getCoreModules } = require('@evershop/evershop/bin/lib/loadModules');
 
-var extensions = [];
+let extensions = [];
 
 function loadExtensions() {
   const coreModules = getCoreModules();
@@ -12,24 +12,24 @@ function loadExtensions() {
   const extensions = [];
   list.forEach((extension) => {
     if (
-      coreModules.find((module) => module.name === extension.name) ||
-      extensions.find((e) => e.name === extension.name)
+      coreModules.find((module) => module.name === extension.name)
+      || extensions.find((e) => e.name === extension.name)
     ) {
       throw new Error(
-        `Extension ${extension.name} is invalid. extension name must be unique.`
+        `Extension ${extension.name} is invalid. extension name must be unique.`,
       );
     }
     if (
-      extension.enabled === true &&
-      existsSync(resolve(CONSTANTS.ROOTPATH, extension.resolve))
+      extension.enabled === true
+      && existsSync(resolve(CONSTANTS.ROOTPATH, extension.resolve))
     ) {
       extensions.push({
         ...extension,
-        path: resolve(CONSTANTS.ROOTPATH, extension.resolve)
+        path: resolve(CONSTANTS.ROOTPATH, extension.resolve),
       });
     } else {
       console.log(
-        `Extension ${extension.name} is either disabled or the path is not existed.`
+        `Extension ${extension.name} is either disabled or the path is not existed.`,
       );
     }
   });

@@ -1,6 +1,6 @@
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 const { getSetting } = require('../../../../setting/services/setting');
 
@@ -9,9 +9,9 @@ module.exports = async (request, response, delegate, next) => {
     title: await getSetting('storeName', 'EverShop'),
     description: await getSetting(
       'storeDescription',
-      'An e-commerce platform with Node and MySQL'
+      'An e-commerce platform with Node and MySQL',
     ),
-    url: buildUrl('homepage')
+    url: buildUrl('homepage'),
   });
 
   next();

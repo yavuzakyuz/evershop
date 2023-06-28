@@ -7,7 +7,7 @@ function refreshable() {
   const watcher = chokidar.watch('./packages/evershop/src/lib/response/*', {
     ignored: /node_modules[\\/]/,
     ignoreInitial: true,
-    persistent: true
+    persistent: true,
   });
   watcher.add('./packages/evershop/src/lib/util/*');
   watcher.on('all', (event, path) => {

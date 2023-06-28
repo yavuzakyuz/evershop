@@ -13,8 +13,8 @@ module.exports = {
       const language = getConfig('shop.language', 'en');
       return new Intl.NumberFormat(language, {
         style: 'currency',
-        currency: curr
+        currency: curr,
       }).format(price);
-    }
-  }
+    },
+  },
 };

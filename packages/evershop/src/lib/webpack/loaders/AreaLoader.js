@@ -17,8 +17,7 @@ module.exports = exports = function AreaLoader(c) {
     }
     const source = fs.readFileSync(module, 'utf8');
     // Regex matching 'export const layout = { ... }'
-    const layoutRegex =
-      /export\s+const\s+layout\s*=\s*{\s*areaId\s*:\s*['"]([^'"]+)['"],\s*sortOrder\s*:\s*(\d+)\s*,*\s*}/;
+    const layoutRegex = /export\s+const\s+layout\s*=\s*{\s*areaId\s*:\s*['"]([^'"]+)['"],\s*sortOrder\s*:\s*(\d+)\s*,*\s*}/;
     const match = source.match(layoutRegex);
     if (match) {
       // Remove everything before '{' from the beginning of the match
@@ -28,13 +27,13 @@ module.exports = exports = function AreaLoader(c) {
       try {
         const layout = JSON5.parse(check);
         const id = Buffer.from(module.replace(CONSTANTS.ROOTPATH, '')).toString(
-          'base64'
+          'base64',
         );
         areas[layout.areaId] = areas[layout.areaId] || {};
         areas[layout.areaId][id] = {
           id,
           sortOrder: layout.sortOrder,
-          component: `---require('${module}')---`
+          component: `---require('${module}')---`,
         };
       } catch (e) {
         // eslint-disable-next-line no-console

@@ -3,7 +3,7 @@ const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { default: axios } = require('axios');
 const { select } = require('@evershop/postgres-query-builder');
@@ -24,8 +24,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Cart not found'
-        }
+          message: 'Cart not found',
+        },
       });
       return;
     }
@@ -35,8 +35,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Shipping country and province are required'
-        }
+          message: 'Shipping country and province are required',
+        },
       });
       return;
     }
@@ -47,7 +47,7 @@ module.exports = async (request, response, delegate, next) => {
       .on(
         'shipping_zone_province.zone_id',
         '=',
-        'shipping_zone.shipping_zone_id'
+        'shipping_zone.shipping_zone_id',
       );
     zoneQuery
       .where('shipping_zone_province.province', '=', province)
@@ -60,19 +60,19 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: `No shipping zone available for ${country} - ${province}`
-        }
+          message: `No shipping zone available for ${country} - ${province}`,
+        },
       });
       return;
     }
 
-    let methodsQuery = select().from('shipping_method');
+    const methodsQuery = select().from('shipping_method');
     methodsQuery
       .leftJoin('shipping_zone_method')
       .on(
         'shipping_zone_method.method_id',
         '=',
-        'shipping_method.shipping_method_id'
+        'shipping_method.shipping_method_id',
       );
     methodsQuery
       .where('shipping_zone_method.zone_id', '=', zone.shipping_zone_id)
@@ -85,14 +85,14 @@ module.exports = async (request, response, delegate, next) => {
       }
       if (method.condition_type === 'price') {
         return (
-          toPrice(method.min) <= cart.sub_total &&
-          cart.sub_total <= toPrice(method.max)
+          toPrice(method.min) <= cart.sub_total
+          && cart.sub_total <= toPrice(method.max)
         );
       }
       if (method.condition_type === 'weight') {
         return (
-          toPrice(method.min) <= cart.total_weight &&
-          cart.total_weight <= toPrice(method.max)
+          toPrice(method.min) <= cart.total_weight
+          && cart.total_weight <= toPrice(method.max)
         );
       }
     });
@@ -106,31 +106,30 @@ module.exports = async (request, response, delegate, next) => {
           try {
             api += buildUrl(method.calculate_api, {
               cart_id,
-              method_id: method.uuid
+              method_id: method.uuid,
             });
           } catch (e) {
             throw new Error(
-              `Your shipping calculate API ${method.calculate_api} is invalid`
+              `Your shipping calculate API ${method.calculate_api} is invalid`,
             );
           }
           const response = await axios.get(api);
           // Detect if the API returns an error base on the http status
           if (response.status >= 400) {
             throw new Error(
-              `Error calculating shipping cost for method ${method.name}`
+              `Error calculating shipping cost for method ${method.name}`,
             );
           }
           return {
             ...method,
-            cost: toPrice(response.data.data.cost, true)
-          };
-        } else {
-          return {
-            ...method,
-            cost: toPrice(method.cost, true)
+            cost: toPrice(response.data.data.cost, true),
           };
         }
-      })
+        return {
+          ...method,
+          cost: toPrice(method.cost, true),
+        };
+      }),
     );
 
     response.status(OK);
@@ -140,9 +139,9 @@ module.exports = async (request, response, delegate, next) => {
           id: method.uuid,
           code: method.uuid,
           name: method.name,
-          cost: method.cost
-        }))
-      }
+          cost: method.cost,
+        })),
+      },
     };
     next();
   } catch (e) {
@@ -150,8 +149,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

@@ -5,14 +5,14 @@ module.exports.getContextValue = function getContextValue(
   request,
   key,
   defaultValue = undefined,
-  toString = false
+  toString = false,
 ) {
   // We check if the request have it, if not we try to get it from the app
   // So if you set a context which already available in app, the old one will be overwited
   const value = get(
     request,
     `locals.context.${key}`,
-    get(request.app.locals, `context.${key}`, defaultValue)
+    get(request.app.locals, `context.${key}`, defaultValue),
   );
   return toString ? value.toString() : value;
 };
@@ -24,7 +24,7 @@ module.exports.getContextValue = function getContextValue(
 module.exports.setContextValue = function setContextValue(
   requestOrApp,
   key,
-  value
+  value,
 ) {
   requestOrApp.locals = requestOrApp.locals || {};
   requestOrApp.locals.context = requestOrApp.locals.context || {};

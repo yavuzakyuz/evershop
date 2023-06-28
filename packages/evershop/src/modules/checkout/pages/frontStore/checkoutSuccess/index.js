@@ -2,7 +2,7 @@ const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = async (request, response, stack, next) => {
@@ -16,7 +16,7 @@ module.exports = async (request, response, stack, next) => {
     setContextValue(request, 'orderId', orderId);
     setContextValue(request, 'pageInfo', {
       title: 'Checkout success',
-      description: 'Checkout success'
+      description: 'Checkout success',
     });
     next();
   }

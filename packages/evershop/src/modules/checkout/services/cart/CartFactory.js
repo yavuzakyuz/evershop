@@ -10,8 +10,8 @@ CartFactory.init = function init(request, response) {
   this.carts = {
     [customerTokenPayload.sid]: {
       request,
-      response
-    }
+      response,
+    },
   };
 
   // Subscribe to the 'finish' event of the response
@@ -32,7 +32,7 @@ CartFactory.getCart = async function getCart(sid) {
   } else {
     if (this.carts[sid]?.cart === undefined) {
       this.carts[sid].cart = getCustomerCart(
-        getContextValue(this.carts[sid].request, 'customerTokenPayload')
+        getContextValue(this.carts[sid].request, 'customerTokenPayload'),
       );
     }
 

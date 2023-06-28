@@ -19,7 +19,7 @@ module.exports = {
         .where('uuid', '=', id)
         .load(pool);
       return camelCase(shippingZone);
-    }
+    },
   },
   ShippingZone: {
     methods: async (parent) => {
@@ -29,7 +29,7 @@ module.exports = {
         .on(
           'shipping_method.shipping_method_id',
           '=',
-          'shipping_zone_method.method_id'
+          'shipping_zone_method.method_id',
         );
 
       query.where('zone_id', '=', parent.shippingZoneId);
@@ -43,15 +43,9 @@ module.exports = {
         .execute(pool);
       return provinces.map((row) => row.province);
     },
-    updateApi: async ({ uuid }) => {
-      return buildUrl('updateShippingZone', { id: uuid });
-    },
-    addMethodApi: async ({ uuid }) => {
-      return buildUrl('addShippingZoneMethod', { id: uuid });
-    },
-    removeMethodApi: async ({ uuid }) => {
-      return buildUrl('removeShippingZoneMethod', { id: uuid });
-    }
+    updateApi: async ({ uuid }) => buildUrl('updateShippingZone', { id: uuid }),
+    addMethodApi: async ({ uuid }) => buildUrl('addShippingZoneMethod', { id: uuid }),
+    removeMethodApi: async ({ uuid }) => buildUrl('removeShippingZoneMethod', { id: uuid }),
   },
   ShippingMethodByZone: {
     updateApi: async ({ uuid, zoneId }) => {
@@ -62,8 +56,8 @@ module.exports = {
 
       return buildUrl('updateShippingZoneMethod', {
         zone_id: zone.uuid,
-        method_id: uuid
+        method_id: uuid,
       });
-    }
-  }
+    },
+  },
 };

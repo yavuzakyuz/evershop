@@ -6,11 +6,13 @@ module.exports = async (request, response, delegate, next) => {
   try {
     const customerTokenPayload = getContextValue(
       request,
-      'customerTokenPayload'
+      'customerTokenPayload',
     );
     const {
       sid,
-      customer: { fullName, email, customerId, groupId }
+      customer: {
+        fullName, email, customerId, groupId,
+      },
     } = customerTokenPayload;
     // Check if there is any cart with the same sid
     const cart = await select()
@@ -24,7 +26,7 @@ module.exports = async (request, response, delegate, next) => {
           customer_group_id: groupId,
           customer_id: customerId,
           customer_full_name: fullName,
-          customer_email: email
+          customer_email: email,
         })
         .where('cart_id', '=', cart.cart_id)
         .execute(pool);

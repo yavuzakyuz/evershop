@@ -14,9 +14,9 @@ describe('test API middleware', () => {
 
   it('It should execute the valid middleware functions', async () => {
     const response = await axios.post(`http://localhost:${port}/api/as`, {
-      validateStatus: function (status) {
+      validateStatus(status) {
         return status >= 200 && status < 600;
-      }
+      },
     });
     console.log('response', response);
     const createA = require('../app/modules/api/api/createA/index');

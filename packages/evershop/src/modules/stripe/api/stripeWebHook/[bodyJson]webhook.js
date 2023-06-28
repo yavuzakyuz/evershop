@@ -5,10 +5,10 @@ const {
   update,
   commit,
   rollback,
-  select
+  select,
 } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
 const { getSetting } = require('../../../setting/services/setting');
@@ -61,7 +61,7 @@ module.exports = async (request, response, stack, next) => {
             payment_action:
               paymentIntent.capture_method === 'automatic'
                 ? 'Capture'
-                : 'Authorize'
+                : 'Authorize',
           })
           .execute(connection);
 
@@ -76,7 +76,7 @@ module.exports = async (request, response, stack, next) => {
           .given({
             order_activity_order_id: order.order_id,
             comment: `Customer paid by using credit card. Transaction ID: ${paymentIntent.id}`,
-            customer_notified: 0
+            customer_notified: 0,
           })
           .execute(connection);
         break;

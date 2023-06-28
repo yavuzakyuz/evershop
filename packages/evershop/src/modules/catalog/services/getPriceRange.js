@@ -1,7 +1,7 @@
 const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
-  getProductsByCategoryBaseQuery
+  getProductsByCategoryBaseQuery,
 } = require('./getProductsByCategoryBaseQuery');
 
 module.exports.getPriceRange = async function getPriceRange(categoryId) {
@@ -11,7 +11,7 @@ module.exports.getPriceRange = async function getPriceRange(categoryId) {
   // Base on this list, we will find all attribute,
   // category and price can be appeared in the filter table
   const allIds = (await productsQuery.execute(pool)).map(
-    (row) => row.product_id
+    (row) => row.product_id,
   );
   const priceRange = await select()
     .select('MIN(price)', 'min')

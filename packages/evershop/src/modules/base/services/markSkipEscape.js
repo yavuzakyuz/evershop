@@ -3,7 +3,7 @@ const secret = require('./secret');
 module.exports = function markSkipEscape(obj, path) {
   const keys = path.split('/');
   let result = obj;
-  let lastKeyIndex = keys.length - 1;
+  const lastKeyIndex = keys.length - 1;
   for (let i = 0; i < lastKeyIndex; i++) {
     const key = keys[i];
     if (key === '') {

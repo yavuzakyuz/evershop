@@ -3,32 +3,32 @@ const { existsSync } = require('fs');
 const { resolve } = require('path');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const { Handler } = require('@evershop/evershop/src/lib/middleware/Handler');
+const { red } = require('kleur');
 const { updateApp } = require('../startUp');
 const { broadcash } = require('./broadcash');
-const { red } = require('kleur');
 
 function watchMR() {
   const watcher = chokidar.watch(
     resolve(CONSTANTS.ROOTPATH, 'extensions/*/controllers/**'),
     {
-      //ignored: /node_modules[\\/]/,
+      // ignored: /node_modules[\\/]/,
       ignoreInitial: true,
-      persistent: true
-    }
+      persistent: true,
+    },
   );
   watcher.add(resolve(CONSTANTS.ROOTPATH, 'extensions/*/apiControllers/**'));
   if (existsSync(resolve(CONSTANTS.ROOTPATH, 'packages'))) {
     watcher.add(
       resolve(
         CONSTANTS.ROOTPATH,
-        'packages/evershop/src/modules/*/controllers/**'
-      )
+        'packages/evershop/src/modules/*/controllers/**',
+      ),
     );
     watcher.add(
       resolve(
         CONSTANTS.ROOTPATH,
-        'packages/evershop/src/modules/*/apiControllers/**'
-      )
+        'packages/evershop/src/modules/*/apiControllers/**',
+      ),
     );
   }
   watcher.on('change', (path) => {
@@ -63,7 +63,7 @@ function watchMR() {
     }
   });
 
-  /** Implement routing update*/
+  /** Implement routing update */
   watcher.on('change', (path) => {
     if (!path.endsWith('route')) {
       return;

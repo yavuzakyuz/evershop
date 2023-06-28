@@ -3,17 +3,17 @@ const {
   update,
   startTransaction,
   commit,
-  rollback
+  rollback,
 } = require('@evershop/postgres-query-builder');
 const uniqid = require('uniqid');
 const {
   pool,
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -34,8 +34,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid variant group'
-        }
+          message: 'Invalid variant group',
+        },
       });
       return;
     }
@@ -52,15 +52,15 @@ module.exports = async (request, response, delegate, next) => {
         error: {
           status: INVALID_PAYLOAD,
           message:
-            'The product is either not exist or using different attribute group'
-        }
+            'The product is either not exist or using different attribute group',
+        },
       });
       return;
     }
 
     await update('product')
       .given({
-        variant_group_id: group.variant_group_id
+        variant_group_id: group.variant_group_id,
       })
       .where('uuid', '=', product_id)
       .execute(connection, false);
@@ -70,7 +70,7 @@ module.exports = async (request, response, delegate, next) => {
       attributeTwo: group.attribute_two,
       attributeThree: group.attribute_three,
       attributeFour: group.attribute_four,
-      attributeFive: group.attribute_five
+      attributeFive: group.attribute_five,
     }).filter((a) => a !== null);
 
     // Get product attribute values
@@ -80,18 +80,18 @@ module.exports = async (request, response, delegate, next) => {
       .on(
         'attribute.attribute_id',
         '=',
-        'product_attribute_value_index.attribute_id'
+        'product_attribute_value_index.attribute_id',
       );
     query
       .where(
         'product_attribute_value_index.product_id',
         '=',
-        product.product_id
+        product.product_id,
       )
       .and(
         'product_attribute_value_index.attribute_id',
         'in',
-        variantAttributeIds
+        variantAttributeIds,
       );
 
     const attributes = await query.execute(connection, false);
@@ -103,10 +103,10 @@ module.exports = async (request, response, delegate, next) => {
         attributes: attributes.map((a) => ({
           attribute_id: a.attribute_id,
           attribute_code: a.attribute_code,
-          option_id: a.option_id
+          option_id: a.option_id,
         })),
-        product
-      }
+        product,
+      },
     });
   } catch (e) {
     await rollback(connection);
@@ -114,8 +114,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

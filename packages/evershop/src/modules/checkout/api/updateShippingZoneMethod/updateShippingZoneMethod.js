@@ -4,14 +4,14 @@ const {
   commit,
   startTransaction,
   select,
-  update
+  update,
 } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -26,7 +26,7 @@ module.exports = async (request, response, deledate, next) => {
     is_enabled,
     calculate_api,
     min,
-    max
+    max,
   } = request.body;
   try {
     // Load the shipping zone
@@ -40,8 +40,8 @@ module.exports = async (request, response, deledate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid zone id'
-        }
+          message: 'Invalid zone id',
+        },
       });
       return;
     }
@@ -52,7 +52,7 @@ module.exports = async (request, response, deledate, next) => {
       .on(
         'shipping_method.shipping_method_id',
         '=',
-        'shipping_zone_method.method_id'
+        'shipping_zone_method.method_id',
       );
     zoneMethodQuery
       .where('shipping_zone_method.zone_id', '=', shippingZone.shipping_zone_id)
@@ -64,8 +64,8 @@ module.exports = async (request, response, deledate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid method id'
-        }
+          message: 'Invalid method id',
+        },
       });
       return;
     }
@@ -87,7 +87,7 @@ module.exports = async (request, response, deledate, next) => {
         calculate_api,
         condition_type,
         max,
-        min
+        min,
       })
       .where('method_id', '=', zoneMethod.shipping_method_id)
       .and('zone_id', '=', shippingZone.shipping_zone_id)
@@ -95,7 +95,7 @@ module.exports = async (request, response, deledate, next) => {
     await commit(connection);
     response.status(OK);
     response.json({
-      data: updateZoneMethod
+      data: updateZoneMethod,
     });
   } catch (e) {
     await rollback(connection);
@@ -103,8 +103,8 @@ module.exports = async (request, response, deledate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

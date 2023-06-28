@@ -9,11 +9,11 @@ module.exports = async function graphql(request, response, delegate, next) {
       .given({
         product_id,
         user_name,
-        comment
+        comment,
       })
       .execute(pool);
     response.json({ success: true });
   } catch (error) {
     next(error);
   }
-}
+};

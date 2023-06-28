@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 const { del, select } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 module.exports = async (request, response, delegate, next) => {
@@ -23,8 +23,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Attribute group not found'
-        }
+          message: 'Attribute group not found',
+        },
       });
       return;
     }
@@ -34,8 +34,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Can not delete the default attribute group'
-        }
+          message: 'Can not delete the default attribute group',
+        },
       });
       return;
     }
@@ -44,15 +44,15 @@ module.exports = async (request, response, delegate, next) => {
 
     response.status(OK);
     response.json({
-      data: attributeGroup
+      data: attributeGroup,
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

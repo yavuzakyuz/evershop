@@ -1,6 +1,6 @@
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -18,14 +18,14 @@ module.exports = async (request, response, delegate, next) => {
     const results = response.payload || [];
 
     response.status(OK).json({
-      data: { payload: results }
+      data: { payload: results },
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR).json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

@@ -3,14 +3,14 @@ const {
   rollback,
   insert,
   commit,
-  startTransaction
+  startTransaction,
 } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -21,13 +21,13 @@ module.exports = async (request, response, deledate, next) => {
   try {
     const taxClass = await insert('tax_class')
       .given({
-        name
+        name,
       })
       .execute(connection);
     await commit(connection);
     response.status(OK);
     response.json({
-      data: taxClass
+      data: taxClass,
     });
   } catch (e) {
     await rollback(connection);
@@ -35,8 +35,8 @@ module.exports = async (request, response, deledate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

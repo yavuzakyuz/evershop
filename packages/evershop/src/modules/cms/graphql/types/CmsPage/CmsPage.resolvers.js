@@ -11,7 +11,7 @@ module.exports = {
         .on(
           'cms_page.cms_page_id',
           '=',
-          'cms_page_description.cms_page_description_cms_page_id'
+          'cms_page_description.cms_page_description_cms_page_id',
         );
       query.where('cms_page_id', '=', id);
 
@@ -25,7 +25,7 @@ module.exports = {
         .on(
           'cms_page.cms_page_id',
           '=',
-          'cms_page_description.cms_page_description_cms_page_id'
+          'cms_page_description.cms_page_description_cms_page_id',
         );
       const currentFilters = [];
 
@@ -35,12 +35,12 @@ module.exports = {
           query.andWhere(
             'cms_page_description.name',
             'LIKE',
-            `%${filter.value}%`
+            `%${filter.value}%`,
           );
           currentFilters.push({
             key: 'name',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
         if (filter.key === 'status') {
@@ -48,14 +48,14 @@ module.exports = {
           currentFilters.push({
             key: 'status',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
       });
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
 
       if (sortBy && sortBy.value === 'name') {
@@ -63,7 +63,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('cms_page.cms_page_id', 'DESC');
@@ -73,7 +73,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
       // Clone the main query for getting total right before doing the paging
@@ -86,28 +86,28 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
       return {
         items: (await query.execute(pool)).map((row) => camelCase(row)),
         total: (await cloneQuery.load(pool)).total,
-        currentFilters
+        currentFilters,
       };
-    }
+    },
   },
   CmsPage: {
     url: ({ urlKey }) => buildUrl('cmsPageView', { url_key: urlKey }),
     editUrl: ({ uuid }) => buildUrl('cmsPageEdit', { id: uuid }),
     updateApi: (page) => buildUrl('updateCmsPage', { id: page.uuid }),
-    deleteApi: (page) => buildUrl('deleteCmsPage', { id: page.uuid })
-  }
+    deleteApi: (page) => buildUrl('deleteCmsPage', { id: page.uuid }),
+  },
 };

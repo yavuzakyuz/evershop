@@ -4,7 +4,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 module.exports = async (request, response, delegate, next) => {
@@ -16,7 +16,7 @@ module.exports = async (request, response, delegate, next) => {
       .on(
         'category_description.category_description_category_id',
         '=',
-        'category.category_id'
+        'category.category_id',
       );
 
     const category = await query.where('uuid', '=', id).load(pool);
@@ -26,8 +26,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Category not found'
-        }
+          message: 'Category not found',
+        },
       });
       return;
     }
@@ -35,15 +35,15 @@ module.exports = async (request, response, delegate, next) => {
     await del('category').where('uuid', '=', id).execute(pool);
     response.status(OK);
     response.json({
-      data: category
+      data: category,
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

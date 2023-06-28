@@ -27,12 +27,11 @@ exports.toPrice = function toPrice(value, forDisplay = false) {
   }
   if (!forDisplay) {
     return price;
-  } else {
-    const currency = getConfig('shop.currency', 'USD');
-    const language = getConfig('shop.language', 'en');
-    return new Intl.NumberFormat(language, {
-      style: 'currency',
-      currency
-    }).format(price);
   }
+  const currency = getConfig('shop.currency', 'USD');
+  const language = getConfig('shop.language', 'en');
+  return new Intl.NumberFormat(language, {
+    style: 'currency',
+    currency,
+  }).format(price);
 };

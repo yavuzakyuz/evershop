@@ -3,15 +3,12 @@ const { existsSync, rmdirSync } = require('fs');
 const { writeFile, mkdir } = require('fs').promises;
 const { inspect } = require('util');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
-const { loadModules } = require('../../serve/loadModules');
 const ora = require('ora');
 const { red, green } = require('kleur');
 const boxen = require('boxen');
-const { loadModuleRoutes } = require('../../serve/loadModuleRoutes');
-const { loadModuleComponents } = require('../../serve/loadModuleComponents');
 const { getRoutes } = require('@evershop/evershop/src/lib/router/routes');
 const {
-  getComponentsByRoute
+  getComponentsByRoute,
 } = require('@evershop/evershop/src/lib/componee/getComponentByRoute');
 const webpack = require('webpack');
 
@@ -19,7 +16,7 @@ const modules = loadModules(path.resolve(__dirname, '../../../src', 'modules'));
 
 const spinner = ora({
   text: green('Starting server build'),
-  spinner: 'dots12'
+  spinner: 'dots12',
 }).start();
 spinner.start();
 
@@ -58,15 +55,19 @@ spinner.text = `Start building ☕☕☕☕☕\n${Array(total).fill('▒').join(
 
 if (existsSync(path.resolve(CONSTANTS.ROOTPATH, './.evershop/build'))) {
   rmdirSync(path.resolve(CONSTANTS.ROOTPATH, './.evershop/build'), {
-    recursive: true
+    recursive: true,
   });
 }
 const start = Date.now();
 
 // Run building vendor first
 const {
-  createVendorConfig
+  createVendorConfig,
 } = require('@evershop/evershop/src/lib/webpack/configProvider');
+const { loadModuleComponents } = require('../../serve/loadModuleComponents');
+const { loadModuleRoutes } = require('../../serve/loadModuleRoutes');
+const { loadModules } = require('../../serve/loadModules');
+
 const vendorComplier = webpack(createVendorConfig(webpack));
 const webpackVendorPromise = new Promise((resolve, reject) => {
   vendorComplier.run((err, stats) => {
@@ -77,9 +78,9 @@ const webpackVendorPromise = new Promise((resolve, reject) => {
         new Error(
           stats.toString({
             errorDetails: true,
-            warnings: true
-          })
-        )
+            warnings: true,
+          }),
+        ),
       );
     } else {
       resolve(stats);
@@ -104,32 +105,30 @@ webpackVendorPromise.then(async () => {
         });
       });
 
-      const buildPath =
-        route.isAdmin === true
-          ? `./admin/${route.id}`
-          : `./frontStore/${route.id}`;
+      const buildPath = route.isAdmin === true
+        ? `./admin/${route.id}`
+        : `./frontStore/${route.id}`;
       let content = `var components = module.exports = exports = ${inspect(
         components,
-        { depth: 5 }
+        { depth: 5 },
       )
         .replace(/'---/g, '')
         .replace(/---'/g, '')}`;
       content += '\r\n';
       await mkdir(
         path.resolve(CONSTANTS.ROOTPATH, './.evershop/build', buildPath),
-        { recursive: true }
+        { recursive: true },
       );
       await writeFile(
         path.resolve(
           CONSTANTS.ROOTPATH,
           '.evershop/build',
           buildPath,
-          'components.js'
+          'components.js',
         ),
-        content
+        content,
       );
-      const name =
-        route.isAdmin === true ? `admin/${route.id}` : `frontStore/${route.id}`;
+      const name = route.isAdmin === true ? `admin/${route.id}` : `frontStore/${route.id}`;
       const entry = {};
       entry[name] = [
         path.resolve(
@@ -137,13 +136,13 @@ webpackVendorPromise.then(async () => {
           '.evershop',
           'build',
           buildPath,
-          'components.js'
+          'components.js',
         ),
         path.resolve(
           CONSTANTS.LIBPATH,
           '../components/common/react/server',
-          'render.js'
-        )
+          'render.js',
+        ),
       ];
       const compiler = webpack({
         mode: 'production', // "production" | "development" | "none"
@@ -151,7 +150,7 @@ webpackVendorPromise.then(async () => {
           rules: [
             {
               test: /\/views|components|context\/(.*).js?$/,
-              //test: /\.js?$/,
+              // test: /\.js?$/,
               exclude: /(bower_components)/,
               use: {
                 loader: 'babel-loader?cacheDirectory',
@@ -164,14 +163,14 @@ webpackVendorPromise.then(async () => {
                       {
                         exclude: [
                           '@babel/plugin-transform-regenerator',
-                          '@babel/plugin-transform-async-to-generator'
-                        ]
-                      }
+                          '@babel/plugin-transform-async-to-generator',
+                        ],
+                      },
                     ],
-                    '@babel/preset-react'
-                  ]
-                }
-              }
+                    '@babel/preset-react',
+                  ],
+                },
+              },
             },
             {
               test: /getComponents\.js/,
@@ -179,20 +178,20 @@ webpackVendorPromise.then(async () => {
                 {
                   loader: path.resolve(
                     CONSTANTS.LIBPATH,
-                    'webpack/getComponentLoader.js'
+                    'webpack/getComponentLoader.js',
                   ),
                   options: {
                     componentsPath: path.resolve(
                       CONSTANTS.ROOTPATH,
                       './.evershop/build',
                       buildPath,
-                      'components.js'
-                    )
-                  }
-                }
-              ]
-            }
-          ]
+                      'components.js',
+                    ),
+                  },
+                },
+              ],
+            },
+          ],
         },
         // name: 'main',
         target: 'node12.18',
@@ -202,25 +201,25 @@ webpackVendorPromise.then(async () => {
             CONSTANTS.ROOTPATH,
             './.evershop/build',
             buildPath,
-            'server'
+            'server',
           ),
           libraryTarget: 'commonjs2',
           globalObject: 'this',
-          filename: 'index.js'
+          filename: 'index.js',
         },
         resolve: {
           alias: {
-            react: path.resolve(CONSTANTS.NODEMODULEPATH, 'react')
-          }
+            react: path.resolve(CONSTANTS.NODEMODULEPATH, 'react'),
+          },
         },
         plugins: [
           new webpack.DllReferencePlugin({
             manifest: path.resolve(
               CONSTANTS.ROOTPATH,
-              './.evershop/build/vendor-manifest.json'
-            )
-          })
-        ]
+              './.evershop/build/vendor-manifest.json',
+            ),
+          }),
+        ],
       });
 
       const webpackPromise = new Promise((resolve, reject) => {
@@ -232,9 +231,9 @@ webpackVendorPromise.then(async () => {
               new Error(
                 stats.toString({
                   errorDetails: true,
-                  warnings: true
-                })
-              )
+                  warnings: true,
+                }),
+              ),
             );
           } else {
             resolve(stats);
@@ -255,14 +254,14 @@ webpackVendorPromise.then(async () => {
   await Promise.all(promises)
     .then(() => {
       spinner.succeed(
-        green('Building completed!!!\n') +
-          boxen(green('Please run "npm run start" to start your website'), {
+        green('Building completed!!!\n')
+          + boxen(green('Please run "npm run start" to start your website'), {
             title: 'EverShop',
             titleAlignment: 'center',
             padding: 1,
             margin: 1,
-            borderColor: 'green'
-          })
+            borderColor: 'green',
+          }),
       );
       const end = Date.now();
       console.log(`Execution time: ${end - start} ms`);

@@ -16,7 +16,7 @@ exports.registerAdminRoute = (id, method, path, isApi = false, folder = '') => {
   const route = {
     id: String(id),
     method,
-    path
+    path,
   };
   route.isAdmin = true;
   route.isApi = isApi;

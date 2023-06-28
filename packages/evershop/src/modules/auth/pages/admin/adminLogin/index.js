@@ -1,7 +1,7 @@
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   getContextValue,
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = (request, response, delegate, next) => {
@@ -13,7 +13,7 @@ module.exports = (request, response, delegate, next) => {
   } else {
     setContextValue(request, 'pageInfo', {
       title: 'Admin Login',
-      description: 'Admin Login'
+      description: 'Admin Login',
     });
     next();
   }

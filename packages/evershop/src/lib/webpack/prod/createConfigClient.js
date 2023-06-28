@@ -19,7 +19,7 @@ module.exports.createConfigClient = function createConfigClient(routes) {
     }
     const subPath = getRouteBuildSubPath(route);
     entry[subPath] = [
-      path.resolve(CONSTANTS.BUILDPATH, subPath, 'client', 'entry.jsx')
+      path.resolve(CONSTANTS.BUILDPATH, subPath, 'client', 'entry.jsx'),
     ];
     plugins.push(
       new HtmlWebpackPlugin({
@@ -28,19 +28,19 @@ module.exports.createConfigClient = function createConfigClient(routes) {
           const cssFiles = htmlWebpackPlugin.files.css;
           return JSON.stringify({
             js: isFiles,
-            css: cssFiles
+            css: cssFiles,
           });
         },
         filename: path.resolve(
           getRouteBuildPath(route),
           'client',
-          'index.json'
+          'index.json',
         ),
         chunks: [subPath],
         chunksSortMode: 'manual',
         inject: false,
-        publicPath: '/assets/'
-      })
+        publicPath: '/assets/',
+      }),
     );
 
     plugins.push(new Tailwindcss(subPath, route));
@@ -54,25 +54,25 @@ module.exports.createConfigClient = function createConfigClient(routes) {
       {
         loader: 'css-loader',
         options: {
-          url: false
-        }
+          url: false,
+        },
       },
       {
         loader: path.resolve(
           CONSTANTS.LIBPATH,
-          'webpack/loaders/TailwindLoader.js'
+          'webpack/loaders/TailwindLoader.js',
         ),
-        options: {}
+        options: {},
       },
-      'sass-loader'
-    ]
+      'sass-loader',
+    ],
   });
 
   plugins.push(new WebpackBar({ name: 'Client' }));
   plugins.push(
     new MiniCssExtractPlugin({
-      filename: '[name]/client/[fullhash].css'
-    })
+      filename: '[name]/client/[fullhash].css',
+    }),
   );
   // plugins.push(new HtmlWebpackPlugin({
   //   filename: 'index.json',

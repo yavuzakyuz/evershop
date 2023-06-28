@@ -1,13 +1,15 @@
 class Factory {
   static processors = {};
+
   static values = {};
+
   static raws = {};
 
   static async create(name, value) {
     // If the value is already created, throw an error
     if (this.values[name]) {
       throw new Error(
-        `Value ${name} is already created. Please use another name.`
+        `Value ${name} is already created. Please use another name.`,
       );
     }
 
@@ -20,14 +22,12 @@ class Factory {
     }
 
     // Sort the processors by priority
-    this.processors[name].sort((a, b) => {
-      return a.priority - b.priority;
-    });
+    this.processors[name].sort((a, b) => a.priority - b.priority);
 
     const processors = this.processors[name];
     // Call the list of processors, returned value will be passed to the next processor. Start with the value
     for (let i = 0; i < processors.length; i++) {
-      const callback = processors[i].callback;
+      const { callback } = processors[i];
       value = await callback(value);
     }
 
@@ -54,7 +54,7 @@ class Factory {
     // Add the callback to the processors, respect the priority
     this.processors[name].push({
       callback,
-      priority
+      priority,
     });
   }
 
@@ -74,5 +74,5 @@ module.exports = {
   },
   forceRaw(name) {
     return Factory.forceRaw(name);
-  }
+  },
 };

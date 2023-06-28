@@ -11,9 +11,8 @@ module.exports = {
       const order = await query.load(pool);
       if (!order) {
         return null;
-      } else {
-        return camelCase(order);
       }
+      return camelCase(order);
     },
     orders: async (_, { filters = [] }, { pool }) => {
       const query = select().from('order');
@@ -26,7 +25,7 @@ module.exports = {
           currentFilters.push({
             key: 'orderNumber',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
         // Order Date filter
@@ -45,7 +44,7 @@ module.exports = {
             query.andWhere('order.created_at', '<=', max);
             currentCreatedAtFilter = {
               key: 'createdAt',
-              value: `${currentCreatedAtFilter.value}-${max}`
+              value: `${currentCreatedAtFilter.value}-${max}`,
             };
           }
           if (currentCreatedAtFilter) {
@@ -59,7 +58,7 @@ module.exports = {
           currentFilters.push({
             key: 'customerEmail',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
 
@@ -69,7 +68,7 @@ module.exports = {
           currentFilters.push({
             key: 'shipmentStatus',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
 
@@ -79,7 +78,7 @@ module.exports = {
           currentFilters.push({
             key: 'paymentStatus',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
 
@@ -99,7 +98,7 @@ module.exports = {
             query.andWhere('order.grand_total', '<=', max);
             currentTotalFilter = {
               key: 'total',
-              value: `${currentTotalFilter.value}-${max}`
+              value: `${currentTotalFilter.value}-${max}`,
             };
           }
           if (currentTotalFilter) {
@@ -110,14 +109,14 @@ module.exports = {
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
       if (sortBy && sortBy.value === 'orderNumber') {
         query.orderBy('order.order_number', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('order.order_id', 'DESC'); // TODO: Fix 'order' table name should be wrapped in backticks
@@ -127,7 +126,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
       // Clone the main query for getting total right before doing the paging
@@ -140,25 +139,25 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
       return {
         items: (await query.execute(pool)).map((row) => camelCase(row)),
         total: (await cloneQuery.load(pool)).total,
-        currentFilters
+        currentFilters,
       };
     },
     shipmentStatusList: () => getConfig('order.shipmentStatus', []),
-    paymentStatusList: () => getConfig('order.paymentStatus', [])
+    paymentStatusList: () => getConfig('order.paymentStatus', []),
   },
   Order: {
     items: async ({ orderId }, _, { pool }) => {
@@ -206,12 +205,11 @@ module.exports = {
         .where('customer_id', '=', customerId)
         .load(pool);
       return customer
-        ? buildUrl('customerEdit', { id: customer['uuid'] })
+        ? buildUrl('customerEdit', { id: customer.uuid })
         : null;
-    }
+    },
   },
   Shipment: {
-    updateShipmentApi: ({ orderUuid, uuid }) =>
-      buildUrl('updateShipment', { order_id: orderUuid, shipment_id: uuid })
-  }
+    updateShipmentApi: ({ orderUuid, uuid }) => buildUrl('updateShipment', { order_id: orderUuid, shipment_id: uuid }),
+  },
 };

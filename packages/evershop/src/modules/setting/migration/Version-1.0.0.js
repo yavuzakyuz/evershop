@@ -12,6 +12,6 @@ module.exports = exports = async (connection) => {
   "is_json" boolean NOT NULL DEFAULT FALSE,
   CONSTRAINT "SETTING_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "SETTING_NAME_UNIQUE" UNIQUE ("name")
-)`
+)`,
   );
 };

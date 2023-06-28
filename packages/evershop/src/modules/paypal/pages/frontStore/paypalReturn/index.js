@@ -3,7 +3,7 @@ const { default: axios } = require('axios');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
-  getContextValue
+  getContextValue,
 } = require('../../../../graphql/services/contextHelper');
 const { getSetting } = require('../../../../setting/services/setting');
 
@@ -28,25 +28,25 @@ module.exports = async (request, response, delegate, next) => {
         // Call API using Axios to capture/authorize the payment
         const paymentIntent = await getSetting(
           'paypalPaymentIntent',
-          'CAPTURE'
+          'CAPTURE',
         );
         const responseData = await axios.post(
           `${getContextValue(request, 'homeUrl')}${buildUrl(
             paymentIntent === 'CAPTURE'
               ? 'paypalCapturePayment'
-              : 'paypalAuthorizePayment'
+              : 'paypalAuthorizePayment',
           )}`,
           {
             // eslint-disable-next-line camelcase
-            order_id
+            order_id,
           },
           {
             headers: {
               'Content-Type': 'application/json',
               // Include all cookies from the current request
-              Cookie: request.headers.cookie
-            }
-          }
+              Cookie: request.headers.cookie,
+            },
+          },
         );
         if (responseData.data.error) {
           throw new Error(responseData.data.error.message);

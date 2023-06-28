@@ -8,33 +8,30 @@ module.exports = {
         return paypalConfig.status;
       }
       const paypalPaymentStatus = setting.find(
-        (s) => s.name === 'paypalPaymentStatus'
+        (s) => s.name === 'paypalPaymentStatus',
       );
       if (paypalPaymentStatus) {
         return parseInt(paypalPaymentStatus.value, 10);
-      } else {
-        return 0;
       }
+      return 0;
     },
     paypalDislayName: (setting) => {
       const paypalDislayName = setting.find(
-        (s) => s.name === 'paypalDislayName'
+        (s) => s.name === 'paypalDislayName',
       );
       if (paypalDislayName) {
         return paypalDislayName.value;
-      } else {
-        return 'Paypal';
       }
+      return 'Paypal';
     },
     paypalPaymentIntent: (setting) => {
       const paypalPaymentIntent = setting.find(
-        (s) => s.name === 'paypalPaymentIntent'
+        (s) => s.name === 'paypalPaymentIntent',
       );
       if (paypalPaymentIntent) {
         return paypalPaymentIntent.value;
-      } else {
-        return 'CAPTURE';
       }
+      return 'CAPTURE';
     },
     paypalClientId: (setting) => {
       const paypalConfig = getConfig('system.paypal', {});
@@ -44,9 +41,8 @@ module.exports = {
       const paypalClientId = setting.find((s) => s.name === 'paypalClientId');
       if (paypalClientId) {
         return paypalClientId.value;
-      } else {
-        return null;
       }
+      return null;
     },
     paypalClientSecret: (setting, _, { userTokenPayload }) => {
       const paypalConfig = getConfig('system.paypal', {});
@@ -55,16 +51,14 @@ module.exports = {
       }
       if (userTokenPayload && userTokenPayload?.user?.uuid) {
         const paypalClientSecret = setting.find(
-          (s) => s.name === 'paypalClientSecret'
+          (s) => s.name === 'paypalClientSecret',
         );
         if (paypalClientSecret) {
           return paypalClientSecret.value;
-        } else {
-          return null;
         }
-      } else {
         return null;
       }
+      return null;
     },
     paypalWebhookSecret: (setting, _, { userTokenPayload }) => {
       const paypalConfig = getConfig('system.paypal', {});
@@ -73,16 +67,14 @@ module.exports = {
       }
       if (userTokenPayload && userTokenPayload?.user?.uuid) {
         const paypalWebhookSecret = setting.find(
-          (s) => s.name === 'paypalWebhookSecret'
+          (s) => s.name === 'paypalWebhookSecret',
         );
         if (paypalWebhookSecret) {
           return paypalWebhookSecret.value;
-        } else {
-          return null;
         }
-      } else {
         return null;
       }
+      return null;
     },
     paypalEnvironment: (setting) => {
       const paypalConfig = getConfig('system.paypal', {});
@@ -90,13 +82,12 @@ module.exports = {
         return paypalConfig.environment;
       }
       const paypalEnvironment = setting.find(
-        (s) => s.name === 'paypalEnvironment'
+        (s) => s.name === 'paypalEnvironment',
       );
       if (paypalEnvironment) {
         return paypalEnvironment.value;
-      } else {
-        return 'https://api-m.sandbox.paypal.com';
       }
-    }
-  }
+      return 'https://api-m.sandbox.paypal.com';
+    },
+  },
 };

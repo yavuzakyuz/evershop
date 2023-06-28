@@ -1,7 +1,7 @@
 const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = async (request, response, delegate, next) => {
@@ -13,7 +13,7 @@ module.exports = async (request, response, delegate, next) => {
       .on(
         'cms_page.cms_page_id',
         '=',
-        'cms_page_description.cms_page_description_cms_page_id'
+        'cms_page_description.cms_page_description_cms_page_id',
       );
 
     query.where('cms_page_description.url_key', '=', request.params.url_key);
@@ -27,7 +27,7 @@ module.exports = async (request, response, delegate, next) => {
       setContextValue(request, 'pageInfo', {
         title: page.meta_title || page.name,
         description: page.meta_description || page.meta_title,
-        url: request.url
+        url: request.url,
       });
       next();
     }

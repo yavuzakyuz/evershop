@@ -11,6 +11,6 @@ module.exports = exports = {};
 exports.productsFilters = async function productsFilters(productIds = []) {
   return {
     price: getPriceRange(productIds),
-    attributes: getFilterableAttributes(productIds)
+    attributes: getFilterableAttributes(productIds),
   };
 };

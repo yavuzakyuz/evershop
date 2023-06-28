@@ -2,15 +2,15 @@ const { existsSync, rmSync, mkdirSync } = require('fs');
 const path = require('path');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const {
-  loadModuleRoutes
+  loadModuleRoutes,
 } = require('@evershop/evershop/src/lib/router/loadModuleRoutes');
 const { getRoutes } = require('@evershop/evershop/src/lib/router/Router');
 const {
-  isBuildRequired
+  isBuildRequired,
 } = require('@evershop/evershop/src/lib/webpack/isBuildRequired');
-const { getEnabledExtensions } = require('../extension');
 const { buildEntry } = require('@evershop/evershop/bin/lib/buildEntry');
 const { getCoreModules } = require('@evershop/evershop/bin/lib/loadModules');
+const { getEnabledExtensions } = require('../extension');
 const { compile } = require('./complie');
 
 /* Loading modules and initilize routes, components */

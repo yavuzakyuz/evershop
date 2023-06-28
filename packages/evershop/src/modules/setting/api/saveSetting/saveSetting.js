@@ -1,14 +1,14 @@
 const {
   insertOnUpdate,
   commit,
-  rollback
+  rollback,
 } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { refreshSetting } = require('../../services/setting');
 
@@ -28,9 +28,9 @@ module.exports = async (request, response, delegate, next) => {
             .given({
               name: key,
               value: JSON.stringify(value),
-              is_json: 1
+              is_json: 1,
             })
-            .execute(connection, false)
+            .execute(connection, false),
         );
       } else {
         promises.push(
@@ -38,9 +38,9 @@ module.exports = async (request, response, delegate, next) => {
             .given({
               name: key,
               value,
-              is_json: 0
+              is_json: 0,
             })
-            .execute(connection, false)
+            .execute(connection, false),
         );
       }
     });
@@ -50,7 +50,7 @@ module.exports = async (request, response, delegate, next) => {
     await refreshSetting();
     response.status(OK);
     response.json({
-      data: {}
+      data: {},
     });
   } catch (error) {
     await rollback(connection);
@@ -58,8 +58,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: error.message
-      }
+        message: error.message,
+      },
     });
   }
 };

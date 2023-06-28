@@ -14,7 +14,7 @@ module.exports.parseFromFile = (path) => {
       id,
       middleware: buildMiddlewareFunction(id, path),
       after: split[1].split(',').filter((a) => a.trim() !== ''),
-      path
+      path,
     };
   } else if (/^[a-zA-Z1-9]+(\[)[a-zA-Z1-9,]+(\]).js$/.test(name)) {
     // eslint-disable-next-line no-useless-escape
@@ -24,7 +24,7 @@ module.exports.parseFromFile = (path) => {
       id,
       middleware: buildMiddlewareFunction(id, path),
       before: split[1].split(',').filter((a) => a.trim() !== ''),
-      path
+      path,
     };
   } else if (
     /^(\[)[a-zA-Z1-9,]+(\])[a-zA-Z1-9]+(\[)[a-zA-Z1-9,]+(\]).js$/.test(name)
@@ -37,7 +37,7 @@ module.exports.parseFromFile = (path) => {
       middleware: buildMiddlewareFunction(id, path),
       after: split[1].split(',').filter((a) => a.trim() !== ''),
       before: split[3].split(',').filter((a) => a.trim() !== ''),
-      path
+      path,
     };
   } else {
     const split = name.split('.');
@@ -45,7 +45,7 @@ module.exports.parseFromFile = (path) => {
     m = {
       id,
       middleware: buildMiddlewareFunction(id, path),
-      path
+      path,
     };
   }
 
@@ -66,14 +66,13 @@ module.exports.parseFromFile = (path) => {
       ...m,
       region: route.region,
       scope: route.scope,
-      routeId: r
+      routeId: r,
     }));
-  } else {
-    return [
-      {
-        ...m,
-        ...route
-      }
-    ];
   }
+  return [
+    {
+      ...m,
+      ...route,
+    },
+  ];
 };

@@ -1,7 +1,7 @@
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   getContextValue,
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = (request, response, delegate, next) => {
@@ -13,7 +13,7 @@ module.exports = (request, response, delegate, next) => {
   } else {
     setContextValue(request, 'pageInfo', {
       title: 'Account details',
-      description: 'Account details'
+      description: 'Account details',
     });
     next();
   }

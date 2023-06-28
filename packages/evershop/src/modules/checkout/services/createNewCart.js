@@ -17,14 +17,14 @@ exports.createNewCart = async (customerTokenPayload = {}) => {
     customerId: customer_id,
     email: customer_email,
     groupId: customer_group_id,
-    fullName: customer_full_name
+    fullName: customer_full_name,
   } = customer;
   const cart = new Cart({
     sid,
     customer_id,
     customer_email,
     customer_group_id,
-    customer_full_name
+    customer_full_name,
   });
   await cart.build();
   return cart;

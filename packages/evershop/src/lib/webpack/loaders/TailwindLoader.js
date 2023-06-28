@@ -14,9 +14,8 @@ module.exports = exports = function TailwindLoader(c) {
   if (this.mode === 'production') {
     if (this.resourcePath.includes('tailwind.scss')) {
       return `/*beginTailwind*/${c}/*endTailwind*/`;
-    } else {
-      return c;
     }
+    return c;
   }
   const components = this.getOptions().getComponents();
   const { route } = this.getOptions();
@@ -41,16 +40,16 @@ module.exports = exports = function TailwindLoader(c) {
       'evershop',
       'src',
       '**',
-      '[A-Z]*.jsx'
+      '[A-Z]*.jsx',
     ),
     // All file in themes folder and name is capitalized
-    join(CONSTANTS.ROOTPATH, 'themes', '**', '[A-Z]*.jsx')
+    join(CONSTANTS.ROOTPATH, 'themes', '**', '[A-Z]*.jsx'),
   ];
   // Postcss with tailwind plugin
   try {
     const tailwindCssResult = postcss([
       tailwindcss(mergedTailwindConfig),
-      autoprefixer
+      autoprefixer,
     ]).process(c);
     // get the css from the result
     const tailwindCss = tailwindCssResult.css;

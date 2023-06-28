@@ -9,15 +9,15 @@ const logger = winston.createLogger({
   transports: [
     new winston.transports.File({
       filename: path.resolve(CONSTANTS.ROOTPATH, '.log/error.log'),
-      level: 'error'
-    })
-  ]
+      level: 'error',
+    }),
+  ],
 });
 // Call exceptions.handle with a transport to handle exceptions
 logger.exceptions.handle(
   new winston.transports.File({
-    filename: path.resolve(CONSTANTS.ROOTPATH, '.log/exceptions.log')
-  })
+    filename: path.resolve(CONSTANTS.ROOTPATH, '.log/exceptions.log'),
+  }),
 );
 
 // eslint-disable-next-line no-multi-assign

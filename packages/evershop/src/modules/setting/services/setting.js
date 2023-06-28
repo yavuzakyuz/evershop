@@ -10,9 +10,8 @@ module.exports.getSetting = async (name, defaultValue) => {
   const row = setting.find((s) => s.name === name);
   if (row) {
     return row.value;
-  } else {
-    return defaultValue;
   }
+  return defaultValue;
 };
 
 module.exports.refreshSetting = async () => {

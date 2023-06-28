@@ -6,15 +6,15 @@ const {
   insertOnUpdate,
   del,
   select,
-  update
+  update,
 } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -35,39 +35,37 @@ module.exports = async (request, response, deledate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid zone id'
-        }
+          message: 'Invalid zone id',
+        },
       });
       return;
     }
     const zone = await update('shipping_zone')
       .given({
         name,
-        country
+        country,
       })
       .where('uuid', '=', id)
       .execute(connection);
 
     const zoneId = zone.updatedId;
     if (
-      !provinces ||
-      !provinces.length ||
-      (provinces.length === 1 && provinces[0] === '')
+      !provinces
+      || !provinces.length
+      || (provinces.length === 1 && provinces[0] === '')
     ) {
       // Delete all provinces
       await del('shipping_zone_province')
         .where('zone_id', '=', zoneId)
         .execute(connection);
     } else {
-      const provincePromises = provinces.map((province) => {
-        return insertOnUpdate('shipping_zone_province', ['province'])
-          .given({
-            zone_id: zoneId,
-            province
-          })
-          .where('zone_id', '=', zoneId)
-          .execute(connection);
-      });
+      const provincePromises = provinces.map((province) => insertOnUpdate('shipping_zone_province', ['province'])
+        .given({
+          zone_id: zoneId,
+          province,
+        })
+        .where('zone_id', '=', zoneId)
+        .execute(connection));
       await Promise.all(provincePromises);
       // Delete all provinces that are not in the list
       await del('shipping_zone_province')
@@ -78,7 +76,7 @@ module.exports = async (request, response, deledate, next) => {
     await commit(connection);
     response.status(OK);
     response.json({
-      data: zone
+      data: zone,
     });
   } catch (e) {
     await rollback(connection);
@@ -86,8 +84,8 @@ module.exports = async (request, response, deledate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

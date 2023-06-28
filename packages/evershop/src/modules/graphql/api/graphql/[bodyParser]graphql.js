@@ -1,10 +1,10 @@
 const { execute } = require('graphql');
 const { validate } = require('graphql/validation');
 const { parse } = require('graphql');
-let schema = require('../../services/buildSchema');
 const isDevelopmentMode = require('@evershop/evershop/src/lib/util/isDevelopmentMode');
-const { getContext } = require('../../services/contextHelper');
 const { OK } = require('@evershop/evershop/src/lib/util/httpStatus');
+let schema = require('../../services/buildSchema');
+const { getContext } = require('../../services/contextHelper');
 
 module.exports = async function graphql(request, response, delegate, next) {
   const { body } = request;
@@ -20,7 +20,7 @@ module.exports = async function graphql(request, response, delegate, next) {
 
     if (!query) {
       response.status(OK).json({
-        data: {}
+        data: {},
       });
       return;
     }
@@ -39,14 +39,14 @@ module.exports = async function graphql(request, response, delegate, next) {
         schema,
         contextValue: getContext(request),
         document,
-        variableValues: variables
+        variableValues: variables,
       });
       if (data.errors) {
         // Create an Error instance with message and stack trace
         next(new Error(data.errors[0].message));
       } else {
         response.status(OK).json({
-          data: data.data
+          data: data.data,
         });
       }
     }

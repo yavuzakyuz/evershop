@@ -2,7 +2,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   execute,
   insertOnUpdate,
-  select
+  select,
 } = require('@evershop/postgres-query-builder');
 
 module.exports = async function buildUrlReWrite(data) {
@@ -27,7 +27,7 @@ module.exports = async function buildUrlReWrite(data) {
       UNION
       SELECT c.* FROM category c
       INNER JOIN parent_categories pc ON c.category_id = pc.parent_id
-    ) SELECT * FROM parent_categories`
+    ) SELECT * FROM parent_categories`,
     );
     const parentCategories = parentCategoriesQuery.rows;
     // Build the url rewrite base on the category path, join the category_description table to get the url_key
@@ -38,7 +38,7 @@ module.exports = async function buildUrlReWrite(data) {
         .from('category_description')
         .where('category_description_category_id', '=', category.category_id)
         .load(pool);
-      path = `/${urlKey.url_key}` + path;
+      path = `/${urlKey.url_key}${path}`;
     }
     // Save the current path
     const currentPath = await select('request_path')
@@ -53,7 +53,7 @@ module.exports = async function buildUrlReWrite(data) {
         entity_type: 'category',
         entity_uuid: categoryUUid,
         request_path: path,
-        target_path: `/category/${categoryUUid}`
+        target_path: `/category/${categoryUUid}`,
       })
       .execute(pool);
 
@@ -61,7 +61,7 @@ module.exports = async function buildUrlReWrite(data) {
     if (currentPath) {
       await execute(
         pool,
-        `UPDATE url_rewrite SET request_path = REPLACE(request_path, '${currentPath.request_path}', '${path}') WHERE entity_type IN ('category', 'product') AND entity_uuid != '${categoryUUid}'`
+        `UPDATE url_rewrite SET request_path = REPLACE(request_path, '${currentPath.request_path}', '${path}') WHERE entity_type IN ('category', 'product') AND entity_uuid != '${categoryUUid}'`,
       );
     }
   } catch (error) {

@@ -17,14 +17,14 @@ module.exports.createConfigClient = function createConfigClient(route) {
       {
         loader: path.resolve(
           CONSTANTS.LIBPATH,
-          'webpack/loaders/AreaLoader.js'
+          'webpack/loaders/AreaLoader.js',
         ),
         options: {
           getComponents: () => getComponentsByRoute(route),
-          routeId: route.id
-        }
-      }
-    ]
+          routeId: route.id,
+        },
+      },
+    ],
   });
 
   loaders.push({
@@ -32,26 +32,26 @@ module.exports.createConfigClient = function createConfigClient(route) {
     use: [
       {
         loader: 'style-loader',
-        options: {}
+        options: {},
       },
       {
         loader: 'css-loader',
         options: {
-          url: false
-        }
+          url: false,
+        },
       },
       {
         loader: path.resolve(
           CONSTANTS.LIBPATH,
-          'webpack/loaders/TailwindLoader.js'
+          'webpack/loaders/TailwindLoader.js',
         ),
         options: {
           getComponents: () => getComponentsByRoute(route),
-          route
-        }
+          route,
+        },
       },
-      'sass-loader'
-    ]
+      'sass-loader',
+    ],
   });
 
   loaders.push({
@@ -60,13 +60,13 @@ module.exports.createConfigClient = function createConfigClient(route) {
       {
         loader: path.resolve(
           CONSTANTS.LIBPATH,
-          'webpack/loaders/GraphQLAPILoader.js'
+          'webpack/loaders/GraphQLAPILoader.js',
         ),
         options: {
-          isAdmin: route.isAdmin
-        }
-      }
-    ]
+          isAdmin: route.isAdmin,
+        },
+      },
+    ],
   });
 
   const { plugins } = config;
@@ -75,8 +75,8 @@ module.exports.createConfigClient = function createConfigClient(route) {
   plugins.push(new webpack.HotModuleReplacementPlugin());
   plugins.push(
     new ReactRefreshWebpackPlugin({
-      overlay: false
-    })
+      overlay: false,
+    }),
   );
 
   config.entry = () => {
@@ -85,16 +85,16 @@ module.exports.createConfigClient = function createConfigClient(route) {
       ...getComponentsByRoute(route),
       path.resolve(
         CONSTANTS.MOLDULESPATH,
-        '../components/common/react/client/Index.jsx'
+        '../components/common/react/client/Index.jsx',
       ),
-      `webpack-hot-middleware/client?path=/eHot/${route.id}&reload=true&overlay=true`
+      `webpack-hot-middleware/client?path=/eHot/${route.id}&reload=true&overlay=true`,
     ];
 
     return entry;
   };
   config.watchOptions = {
     aggregateTimeout: 300,
-    poll: 1000
+    poll: 1000,
   };
 
   return config;

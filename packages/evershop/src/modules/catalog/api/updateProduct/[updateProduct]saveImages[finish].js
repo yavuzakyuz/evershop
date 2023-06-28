@@ -31,7 +31,7 @@ module.exports = async (request, response, delegate) => {
           .resize(
             config.get('catalog.product.image.thumbnail.width'),
             config.get('catalog.product.image.thumbnail.height'),
-            { fit: 'inside' }
+            { fit: 'inside' },
           )
           .toFile(mediaPath.replace(ext, `-thumb${ext}`));
 
@@ -40,7 +40,7 @@ module.exports = async (request, response, delegate) => {
           .resize(
             config.get('catalog.product.image.listing.width'),
             config.get('catalog.product.image.listing.height'),
-            { fit: 'inside' }
+            { fit: 'inside' },
           )
           .toFile(mediaPath.replace(ext, `-list${ext}`));
 
@@ -49,7 +49,7 @@ module.exports = async (request, response, delegate) => {
           .resize(
             config.get('catalog.product.image.single.width'),
             config.get('catalog.product.image.single.height'),
-            { fit: 'inside' }
+            { fit: 'inside' },
           )
           .toFile(mediaPath.replace(ext, `-single${ext}`));
       }
@@ -61,44 +61,42 @@ module.exports = async (request, response, delegate) => {
     }
 
     await Promise.all(
-      gallery.map((f) =>
-        (async () => {
-          const mediaPath = path.join(CONSTANTS.MEDIAPATH, f);
-          const ext = path.extname(path.resolve(CONSTANTS.MEDIAPATH, f));
-          if (existsSync(mediaPath)) {
-            // Generate thumbnail
-            await sharp(mediaPath)
-              .resize(
-                config.get('catalog.product.image.thumbnail.width'),
-                config.get('catalog.product.image.thumbnail.height'),
-                { fit: 'inside' }
-              )
-              .toFile(mediaPath.replace(ext, `-thumb${ext}`));
+      gallery.map((f) => (async () => {
+        const mediaPath = path.join(CONSTANTS.MEDIAPATH, f);
+        const ext = path.extname(path.resolve(CONSTANTS.MEDIAPATH, f));
+        if (existsSync(mediaPath)) {
+          // Generate thumbnail
+          await sharp(mediaPath)
+            .resize(
+              config.get('catalog.product.image.thumbnail.width'),
+              config.get('catalog.product.image.thumbnail.height'),
+              { fit: 'inside' },
+            )
+            .toFile(mediaPath.replace(ext, `-thumb${ext}`));
 
-            // Generate listing
-            await sharp(mediaPath)
-              .resize(
-                config.get('catalog.product.image.listing.width'),
-                config.get('catalog.product.image.listing.height'),
-                { fit: 'inside' }
-              )
-              .toFile(mediaPath.replace(ext, `-list${ext}`));
+          // Generate listing
+          await sharp(mediaPath)
+            .resize(
+              config.get('catalog.product.image.listing.width'),
+              config.get('catalog.product.image.listing.height'),
+              { fit: 'inside' },
+            )
+            .toFile(mediaPath.replace(ext, `-list${ext}`));
 
-            // Generate single
-            await sharp(mediaPath)
-              .resize(
-                config.get('catalog.product.image.single.width'),
-                config.get('catalog.product.image.single.height'),
-                { fit: 'inside' }
-              )
-              .toFile(mediaPath.replace(ext, `-single${ext}`));
-          }
-          await insert('product_image')
-            .given({ image: f })
-            .prime('product_image_product_id', productId)
-            .execute(connection);
-        })()
-      )
+          // Generate single
+          await sharp(mediaPath)
+            .resize(
+              config.get('catalog.product.image.single.width'),
+              config.get('catalog.product.image.single.height'),
+              { fit: 'inside' },
+            )
+            .toFile(mediaPath.replace(ext, `-single${ext}`));
+        }
+        await insert('product_image')
+          .given({ image: f })
+          .prime('product_image_product_id', productId)
+          .execute(connection);
+      })()),
     );
   } catch (e) {
     // TODO: Log an error here

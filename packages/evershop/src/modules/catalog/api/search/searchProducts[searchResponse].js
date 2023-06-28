@@ -21,7 +21,7 @@ module.exports = async (request, response) => {
   const products = (await query.execute(pool)).map((p) => ({
     name: p.name,
     url: buildUrl('productEdit', { id: p.product_id }),
-    description: `Sku ${p.sku}`
+    description: `Sku ${p.sku}`,
   }));
   if (products.length > 0) {
     response.payload = response.payload || [];

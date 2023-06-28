@@ -4,7 +4,7 @@ const { buildResolvers } = require('./buildResolvers');
 
 const schema = makeExecutableSchema({
   typeDefs: buildTypeDefs(),
-  resolvers: buildResolvers()
+  resolvers: buildResolvers(),
 });
 
 module.exports = schema;

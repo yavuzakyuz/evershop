@@ -3,14 +3,14 @@ const { mkdir, writeFile } = require('fs').promises;
 const path = require('path');
 const { inspect } = require('util');
 const {
-  getComponentsByRoute
+  getComponentsByRoute,
 } = require('@evershop/evershop/src/lib/componee/getComponentsByRoute');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const {
-  getRouteBuildPath
+  getRouteBuildPath,
 } = require('@evershop/evershop/src/lib/webpack/getRouteBuildPath');
 const {
-  parseGraphql
+  parseGraphql,
 } = require('@evershop/evershop/src/lib/webpack/util/parseGraphql');
 const JSON5 = require('json5');
 /**
@@ -18,7 +18,7 @@ const JSON5 = require('json5');
  */
 module.exports.buildEntry = async function buildEntry(
   routes,
-  clientOnly = false
+  clientOnly = false,
 ) {
   await Promise.all(
     routes.map(async (route) => {
@@ -35,8 +35,7 @@ module.exports.buildEntry = async function buildEntry(
         }
         const source = fs.readFileSync(module, 'utf8');
         // Regex matching 'export const layout = { ... }'
-        const layoutRegex =
-          /export\s+const\s+layout\s*=\s*{\s*areaId\s*:\s*['"]([^'"]+)['"],\s*sortOrder\s*:\s*(\d+)\s*,*\s*}/;
+        const layoutRegex = /export\s+const\s+layout\s*=\s*{\s*areaId\s*:\s*['"]([^'"]+)['"],\s*sortOrder\s*:\s*(\d+)\s*,*\s*}/;
         const match = source.match(layoutRegex);
         if (match) {
           // Remove everything before '{' from the beginning of the match
@@ -46,13 +45,13 @@ module.exports.buildEntry = async function buildEntry(
           try {
             const layout = JSON5.parse(check);
             const id = Buffer.from(
-              module.replace(CONSTANTS.ROOTPATH, '')
+              module.replace(CONSTANTS.ROOTPATH, ''),
             ).toString('base64');
             areas[layout.areaId] = areas[layout.areaId] || {};
             areas[layout.areaId][id] = {
-              id: id,
+              id,
               sortOrder: layout.sortOrder,
-              component: `---require('${module}')---`
+              component: `---require('${module}')---`,
             };
           } catch (e) {
             console.log(`Error parsing layout from ${module}`);
@@ -66,12 +65,12 @@ module.exports.buildEntry = async function buildEntry(
       import ReactDOM from 'react-dom';
       import Area from '@evershop/evershop/src/components/common/Area';
       import Hydrate from '@evershop/evershop/src/components/common/react/client/${
-        route.isAdmin ? 'HydrateAdmin' : 'HydrateFrontStore'
-      }';
+  route.isAdmin ? 'HydrateAdmin' : 'HydrateFrontStore'
+}';
       `;
       contentClient += '\r\n';
       contentClient += `Area.defaultProps.components = ${inspect(areas, {
-        depth: 5
+        depth: 5,
       })
         .replace(/"---/g, '')
         .replace(/---"/g, '')} `;
@@ -85,21 +84,21 @@ module.exports.buildEntry = async function buildEntry(
       }
       await writeFile(
         path.resolve(subPath, 'client', 'entry.jsx'),
-        contentClient
+        contentClient,
       );
 
       if (!clientOnly) {
-        /** Build query*/
+        /** Build query */
         const query = `${JSON.stringify(parseGraphql(components))}`;
 
-        let contentServer = `import React from 'react'; `;
+        let contentServer = 'import React from \'react\'; ';
         contentServer += '\r\n';
-        contentServer += `import ReactDOM from 'react-dom'; `;
+        contentServer += 'import ReactDOM from \'react-dom\'; ';
         contentServer += '\r\n';
-        contentServer += `import Area from '@evershop/evershop/src/components/common/Area';`;
+        contentServer += 'import Area from \'@evershop/evershop/src/components/common/Area\';';
         contentServer += '\r\n';
         contentServer += `Area.defaultProps.components = ${inspect(areas, {
-          depth: 5
+          depth: 5,
         })
           .replace(/"---/g, '')
           .replace(/---"/g, '')} `;
@@ -109,13 +108,13 @@ module.exports.buildEntry = async function buildEntry(
         }
         await writeFile(
           path.resolve(subPath, 'server', 'entry.jsx'),
-          contentServer
+          contentServer,
         );
         await writeFile(
           path.resolve(subPath, 'server', 'query.graphql'),
-          query
+          query,
         );
       }
-    })
+    }),
   );
 };

@@ -5,10 +5,10 @@ const { broadcash } = require('./broadcash');
 module.exports.watchMF = function (event, path) {
   // Check if path include graphql/types
   if (
-    !path.includes(normalize('pages/admin')) &&
-    !path.includes(normalize('pages/frontStore')) &&
-    !path.includes(normalize('pages/global')) &&
-    !path.includes(normalize('api/'))
+    !path.includes(normalize('pages/admin'))
+    && !path.includes(normalize('pages/frontStore'))
+    && !path.includes(normalize('pages/global'))
+    && !path.includes(normalize('api/'))
   ) {
     return;
   }

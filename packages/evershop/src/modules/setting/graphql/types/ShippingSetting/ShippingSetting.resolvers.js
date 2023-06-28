@@ -4,16 +4,13 @@ module.exports = {
   Setting: {
     allowedCountries: (setting) => {
       const allowedCountries = setting.find(
-        (s) => s.name === 'allowedCountries'
+        (s) => s.name === 'allowedCountries',
       );
       if (allowedCountries && allowedCountries.value) {
         return JSON.parse(allowedCountries.value);
-      } else {
-        return ['US'];
       }
+      return ['US'];
     },
-    weightUnit: () => {
-      return getConfig('shop.weightUnit', 'kg');
-    }
-  }
+    weightUnit: () => getConfig('shop.weightUnit', 'kg'),
+  },
 };

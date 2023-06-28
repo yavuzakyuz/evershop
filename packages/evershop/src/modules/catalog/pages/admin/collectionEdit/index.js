@@ -1,7 +1,7 @@
 const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = async (request, response, delegate, next) => {
@@ -18,7 +18,7 @@ module.exports = async (request, response, delegate, next) => {
       setContextValue(request, 'collectionUuid', collection.uuid);
       setContextValue(request, 'pageInfo', {
         title: collection.name,
-        description: collection.description
+        description: collection.description,
       });
       next();
     }

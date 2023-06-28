@@ -2,7 +2,7 @@ const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = async (request, response, delegate, next) => {
@@ -19,7 +19,7 @@ module.exports = async (request, response, delegate, next) => {
       setContextValue(request, 'couponUuid', coupon.uuid);
       setContextValue(request, 'pageInfo', {
         title: coupon.coupon,
-        description: coupon.coupon
+        description: coupon.coupon,
       });
       next();
     }

@@ -12,7 +12,7 @@ module.exports = {
         .on(
           'product.product_id',
           '=',
-          'product_description.product_description_product_id'
+          'product_description.product_description_product_id',
         );
       query
         .leftJoin('order_item')
@@ -26,6 +26,6 @@ module.exports = {
       query.groupBy('order_item.product_id').orderBy('qty', 'DESC').limit(0, 5);
       const results = await query.execute(pool);
       return results.map((p) => camelCase(p));
-    }
-  }
+    },
+  },
 };

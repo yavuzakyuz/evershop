@@ -12,7 +12,7 @@ module.exports = exports = async (connection) => {
   "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "CMS_PAGE_UUID" UNIQUE ("uuid")
-)`
+)`,
   );
 
   await execute(
@@ -29,10 +29,10 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "PAGE_ID_UNIQUE" UNIQUE ("cms_page_description_cms_page_id"),
   CONSTRAINT "URL_KEY_UNIQUE" UNIQUE ("url_key"),
   CONSTRAINT "FK_CMS_PAGE_DESCRIPTION" FOREIGN KEY ("cms_page_description_cms_page_id") REFERENCES "cms_page" ("cms_page_id") ON DELETE CASCADE ON UPDATE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CMS_PAGE_DESCRIPTION" ON "cms_page_description" ("cms_page_description_cms_page_id")`
+    'CREATE INDEX "FK_CMS_PAGE_DESCRIPTION" ON "cms_page_description" ("cms_page_description_cms_page_id")',
   );
 };

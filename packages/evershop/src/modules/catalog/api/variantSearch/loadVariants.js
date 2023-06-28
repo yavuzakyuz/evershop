@@ -24,7 +24,7 @@ module.exports = async (request, response, stack, next) => {
     .on(
       'product.product_id',
       '=',
-      'product_description.product_description_product_id'
+      'product_description.product_description_product_id',
     );
 
   // Only return item that not assigned to any group
@@ -41,31 +41,31 @@ module.exports = async (request, response, stack, next) => {
   const variants = [];
   results.forEach((variant) => {
     const index = variants.findIndex(
-      (v) => v.variant_product_id === variant.variant_product_id
+      (v) => v.variant_product_id === variant.variant_product_id,
     );
     if (index === -1) {
       variants.push({
         ...variant,
         image: {
-          url: variant.image
+          url: variant.image,
         },
         images: [
           variant.image ? { url: variant.image, path: variant.image } : null,
           variant.gallery
             ? {
-                url: variant.gallery,
-                path: variant.gallery
-              }
-            : null
-        ].filter((i) => i !== null)
+              url: variant.gallery,
+              path: variant.gallery,
+            }
+            : null,
+        ].filter((i) => i !== null),
       });
     } else {
       variants[index] = {
         ...variants[index],
         images: variants[index].images.concat({
           url: variant.gallery,
-          path: variant.gallery
-        })
+          path: variant.gallery,
+        }),
       };
     }
   });
@@ -77,12 +77,12 @@ module.exports = async (request, response, stack, next) => {
         await select()
           .from('product_attribute_value_index')
           .where('product_id', '=', variants[i].variant_product_id)
-          .execute(pool)
-      )
+          .execute(pool),
+      ),
     );
   }
 
   response.status(OK).json({
-    data: { variants }
+    data: { variants },
   });
 };

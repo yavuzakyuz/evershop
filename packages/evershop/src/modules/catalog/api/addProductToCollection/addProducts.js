@@ -1,17 +1,17 @@
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   INVALID_PAYLOAD,
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const {
   insert,
   startTransaction,
   rollback,
   commit,
-  select
+  select,
 } = require('@evershop/postgres-query-builder');
 
 module.exports = async (request, response, delegate, next) => {
@@ -29,7 +29,7 @@ module.exports = async (request, response, delegate, next) => {
       response.status(INVALID_PAYLOAD);
       return response.json({
         success: false,
-        message: 'Collection does not exists'
+        message: 'Collection does not exists',
       });
     }
 
@@ -42,7 +42,7 @@ module.exports = async (request, response, delegate, next) => {
       response.status(INVALID_PAYLOAD);
       return response.json({
         success: false,
-        message: 'Product does not exists'
+        message: 'Product does not exists',
       });
     }
     // Check if the product is already assigned to the collection
@@ -55,7 +55,7 @@ module.exports = async (request, response, delegate, next) => {
       response.status(OK);
       return response.json({
         success: true,
-        message: 'Product is assigned to the collection'
+        message: 'Product is assigned to the collection',
       });
     }
 
@@ -63,7 +63,7 @@ module.exports = async (request, response, delegate, next) => {
     await insert('product_collection')
       .given({
         collection_id: collection.collection_id,
-        product_id: product.product_id
+        product_id: product.product_id,
       })
       .execute(connection);
     await commit(connection);
@@ -72,8 +72,8 @@ module.exports = async (request, response, delegate, next) => {
       success: true,
       data: {
         product_id: product.product_id,
-        collection_id: collection.collection_id
-      }
+        collection_id: collection.collection_id,
+      },
     });
   } catch (e) {
     await rollback(connection);
@@ -81,7 +81,7 @@ module.exports = async (request, response, delegate, next) => {
     response.status(INTERNAL_SERVER_ERROR);
     return response.json({
       success: false,
-      message: e.message
+      message: e.message,
     });
   }
 };

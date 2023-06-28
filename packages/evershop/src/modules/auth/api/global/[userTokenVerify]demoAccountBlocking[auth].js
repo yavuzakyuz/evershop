@@ -13,8 +13,8 @@ module.exports = (request, response, delegate, next) => {
       response.status(UNAUTHORIZED).json({
         error: {
           status: UNAUTHORIZED,
-          message: 'The demo account is not allowed to make changes'
-        }
+          message: 'The demo account is not allowed to make changes',
+        },
       });
     } else {
       next();

@@ -6,7 +6,7 @@ module.exports = async (request, response, delegate, next) => {
   } else {
     setContextValue(request, 'pageInfo', {
       title: 'Not found',
-      description: 'Page not found'
+      description: 'Page not found',
     });
     next();
   }

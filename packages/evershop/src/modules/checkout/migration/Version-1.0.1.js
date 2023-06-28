@@ -11,17 +11,17 @@ module.exports = exports = async (connection) => {
   "country" varchar NOT NULL,
   CONSTRAINT "SHIPPING_ZONE_UUID_UNIQUE" UNIQUE ("uuid")
 )
-`
+`,
   );
 
   // Add foreign key from table cart (shipping_zone_id) to table shipping_zone (shipping_zone_id)
   await execute(
     connection,
-    `ALTER TABLE "cart" ADD CONSTRAINT "FK_CART_SHIPPING_ZONE" FOREIGN KEY ("shipping_zone_id") REFERENCES "shipping_zone" ("shipping_zone_id") ON DELETE SET NULL`
+    'ALTER TABLE "cart" ADD CONSTRAINT "FK_CART_SHIPPING_ZONE" FOREIGN KEY ("shipping_zone_id") REFERENCES "shipping_zone" ("shipping_zone_id") ON DELETE SET NULL',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CART_SHIPPING_ZONE" ON "cart" ("shipping_zone_id")`
+    'CREATE INDEX "FK_CART_SHIPPING_ZONE" ON "cart" ("shipping_zone_id")',
   );
 
   await execute(
@@ -35,12 +35,12 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "SHIPPING_ZONE_PROVINCE_PROVINCE_UNIQUE" UNIQUE ("province"),
   CONSTRAINT "FK_SHIPPING_ZONE_PROVINCE" FOREIGN KEY ("zone_id") REFERENCES "shipping_zone" ("shipping_zone_id") ON DELETE CASCADE
 )
-`
+`,
   );
 
   await execute(
     connection,
-    `CREATE INDEX "FK_SHIPPING_ZONE_PROVINCE" ON "shipping_zone_province" ("zone_id")`
+    'CREATE INDEX "FK_SHIPPING_ZONE_PROVINCE" ON "shipping_zone_province" ("zone_id")',
   );
 
   await execute(
@@ -52,7 +52,7 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "SHIPPING_METHOD_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "SHIPPING_METHOD_NAME_UNIQUE" UNIQUE ("name")
 )
-`
+`,
   );
 
   await execute(
@@ -73,15 +73,15 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "FK_ZONE_METHOD" FOREIGN KEY ("zone_id") REFERENCES "shipping_zone" ("shipping_zone_id") ON DELETE CASCADE,
   CONSTRAINT "FK_METHOD_ZONE" FOREIGN KEY ("method_id") REFERENCES "shipping_method" ("shipping_method_id") ON DELETE CASCADE
 )
-`
+`,
   );
 
   await execute(
     connection,
-    `CREATE INDEX "FK_ZONE_METHOD" ON "shipping_zone_method" ("zone_id")`
+    'CREATE INDEX "FK_ZONE_METHOD" ON "shipping_zone_method" ("zone_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_METHOD_ZONE" ON "shipping_zone_method" ("method_id")`
+    'CREATE INDEX "FK_METHOD_ZONE" ON "shipping_zone_method" ("method_id")',
   );
 };

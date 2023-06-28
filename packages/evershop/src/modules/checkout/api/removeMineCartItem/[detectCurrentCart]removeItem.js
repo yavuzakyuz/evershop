@@ -1,6 +1,6 @@
 const {
   INVALID_PAYLOAD,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { getContextValue } = require('../../../graphql/services/contextHelper');
 const removeItem = require('../removeCartItem/removeItem');
@@ -13,8 +13,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           message: 'Invalid cart',
-          status: INVALID_PAYLOAD
-        }
+          status: INVALID_PAYLOAD,
+        },
       });
       return;
     }
@@ -26,8 +26,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         message: error.message,
-        status: INTERNAL_SERVER_ERROR
-      }
+        status: INTERNAL_SERVER_ERROR,
+      },
     });
   }
 };

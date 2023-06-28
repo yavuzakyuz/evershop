@@ -4,7 +4,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   INVALID_PAYLOAD,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { getCartByUUID } = require('../../services/getCartByUUID');
 const { createOrder } = require('../../services/orderCreator');
@@ -20,17 +20,17 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           message: 'Invalid cart',
-          status: INVALID_PAYLOAD
-        }
+          status: INVALID_PAYLOAD,
+        },
       });
       return;
-    } else if (cart.hasError()) {
+    } if (cart.hasError()) {
       response.status(INVALID_PAYLOAD);
       response.json({
         error: {
           message: cart.error,
-          status: INVALID_PAYLOAD
-        }
+          status: INVALID_PAYLOAD,
+        },
       });
       return;
     }
@@ -66,18 +66,18 @@ module.exports = async (request, response, delegate, next) => {
             rel: 'edit',
             href: buildUrl('orderEdit', { id: order.uuid }),
             action: 'GET',
-            types: ['text/xml']
-          }
-        ]
-      }
+            types: ['text/xml'],
+          },
+        ],
+      },
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         message: e.message,
-        status: INTERNAL_SERVER_ERROR
-      }
+        status: INTERNAL_SERVER_ERROR,
+      },
     });
   }
 };

@@ -1,10 +1,10 @@
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   INVALID_PAYLOAD,
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const {
   insert,
@@ -12,7 +12,7 @@ const {
   rollback,
   commit,
   select,
-  del
+  del,
 } = require('@evershop/postgres-query-builder');
 
 module.exports = async (request, response, delegate, next) => {
@@ -29,7 +29,7 @@ module.exports = async (request, response, delegate, next) => {
       response.status(INVALID_PAYLOAD);
       response.json({
         success: false,
-        message: 'Collection does not exists'
+        message: 'Collection does not exists',
       });
     }
 
@@ -42,14 +42,14 @@ module.exports = async (request, response, delegate, next) => {
       response.status(INVALID_PAYLOAD);
       response.json({
         success: false,
-        message: 'Product does not exists'
+        message: 'Product does not exists',
       });
     }
 
     // Remove the product from the collection
     await del('product_collection')
-      .where('collection_id', '=', collection['collection_id'])
-      .and('product_id', '=', product['product_id'])
+      .where('collection_id', '=', collection.collection_id)
+      .and('product_id', '=', product.product_id)
       .execute(connection);
     await commit(connection);
     response.status(OK);
@@ -57,15 +57,15 @@ module.exports = async (request, response, delegate, next) => {
       success: true,
       data: {
         product_id,
-        collection_id
-      }
+        collection_id,
+      },
     });
   } catch (e) {
     await rollback(connection);
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       success: false,
-      message: e.message
+      message: e.message,
     });
   }
 };

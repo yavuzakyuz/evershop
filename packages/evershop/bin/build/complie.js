@@ -1,9 +1,9 @@
 const { webpack } = require('webpack');
 const {
-  createConfigClient
+  createConfigClient,
 } = require('@evershop/evershop/src/lib/webpack/prod/createConfigClient');
 const {
-  createConfigServer
+  createConfigServer,
 } = require('@evershop/evershop/src/lib/webpack/prod/createConfigServer');
 
 module.exports.compile = async function compile(routes) {
@@ -18,8 +18,8 @@ module.exports.compile = async function compile(routes) {
         console.log(
           stats.toString({
             errorDetails: true,
-            warnings: true
-          })
+            warnings: true,
+          }),
         );
         reject(err);
       }

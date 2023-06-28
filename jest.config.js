@@ -5,8 +5,8 @@ const config = {
   coveragePathIgnorePatterns: [
     '<rootDir>/.evershop/',
     '<rootDir>/node_modules/',
-    '<rootDir>/packages/core/node_modules/'
-  ]
-}
+    '<rootDir>/packages/core/node_modules/',
+  ],
+};
 
 module.exports = config;

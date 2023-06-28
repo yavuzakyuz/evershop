@@ -32,7 +32,7 @@ function loadModuleSubscribers(modulePath) {
 
       subscribers.push({
         event: eventName,
-        subscriber: subscriberFn
+        subscriber: subscriberFn,
       });
     });
   });

@@ -13,7 +13,7 @@ exports.loadModuleRoutes = function loadModuleRoutes(modulePath) {
     const adminControllerRoutes = scanForRoutes(
       path.resolve(modulePath, 'pages', 'admin'),
       true,
-      false
+      false,
     );
     adminControllerRoutes.forEach((route) => {
       registerAdminRoute(
@@ -21,7 +21,7 @@ exports.loadModuleRoutes = function loadModuleRoutes(modulePath) {
         route.method,
         route.path,
         route.isApi,
-        route.folder
+        route.folder,
       );
     });
   }
@@ -30,7 +30,7 @@ exports.loadModuleRoutes = function loadModuleRoutes(modulePath) {
     const frontStoreControllerRoutes = scanForRoutes(
       path.resolve(modulePath, 'pages', 'frontStore'),
       false,
-      false
+      false,
     );
     frontStoreControllerRoutes.forEach((route) => {
       registerFrontStoreRoute(
@@ -38,7 +38,7 @@ exports.loadModuleRoutes = function loadModuleRoutes(modulePath) {
         route.method,
         route.path,
         route.isApi,
-        route.folder
+        route.folder,
       );
     });
   }
@@ -54,7 +54,7 @@ exports.loadModuleRoutes = function loadModuleRoutes(modulePath) {
         route.isApi,
         route.folder,
         route.payloadSchema,
-        route.access
+        route.access,
       );
     });
   }

@@ -1,5 +1,5 @@
 const {
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 module.exports = async (request, response, delegate, next) => {
@@ -7,10 +7,9 @@ module.exports = async (request, response, delegate, next) => {
     return response.status(INVALID_PAYLOAD).json({
       error: {
         message: 'Invalid coupon',
-        status: INVALID_PAYLOAD
-      }
+        status: INVALID_PAYLOAD,
+      },
     });
-  } else {
-    return next();
   }
+  return next();
 };

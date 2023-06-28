@@ -2,7 +2,7 @@ const { select, update, insert } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   INVALID_PAYLOAD,
-  OK
+  OK,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -24,8 +24,8 @@ module.exports = async (request, response, delegate, next) => {
       error: {
         status: INVALID_PAYLOAD,
         message:
-          'Requested order does not exist or is not in pending payment status'
-      }
+          'Requested order does not exist or is not in pending payment status',
+      },
     });
   } else {
     // Update order status to processing
@@ -41,7 +41,7 @@ module.exports = async (request, response, delegate, next) => {
         amount: order.grand_total,
         currency: order.currency,
         payment_action: 'capture',
-        transaction_type: 'offline'
+        transaction_type: 'offline',
       })
       .execute(pool);
 
@@ -50,13 +50,13 @@ module.exports = async (request, response, delegate, next) => {
       .given({
         order_activity_order_id: order.order_id,
         comment: 'Customer paid using cash.',
-        customer_notified: 0 // TODO: check config of SendGrid
+        customer_notified: 0, // TODO: check config of SendGrid
       })
       .execute(pool);
 
     response.status(OK);
     response.json({
-      data: {}
+      data: {},
     });
   }
 };
