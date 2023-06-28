@@ -4,7 +4,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   INVALID_PAYLOAD,
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { addressValidator } = require('../../services/addressValidator');
 const { getCartByUUID } = require('../../services/getCartByUUID');
@@ -22,8 +22,8 @@ module.exports = async (request, response, delegate, next) => {
       return response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid cart'
-        }
+          message: 'Invalid cart',
+        },
       });
     }
     // Use shipping address as a billing address
@@ -43,13 +43,13 @@ module.exports = async (request, response, delegate, next) => {
         .on(
           'shipping_zone_province.zone_id',
           '=',
-          'shipping_zone.shipping_zone_id'
+          'shipping_zone.shipping_zone_id',
         );
       shippingZoneQuery.where('shipping_zone.country', '=', address.country);
 
       const shippingZoneProvinces = await shippingZoneQuery.execute(pool);
-      let zone = shippingZoneProvinces.find(
-        (p) => p.province === address.province || p.province === null
+      const zone = shippingZoneProvinces.find(
+        (p) => p.province === address.province || p.province === null,
       );
       if (!zone) {
         await cart.setData('shipping_address_id', null);
@@ -58,14 +58,14 @@ module.exports = async (request, response, delegate, next) => {
         return response.json({
           error: {
             status: INVALID_PAYLOAD,
-            message: 'We do not ship to this address'
-          }
+            message: 'We do not ship to this address',
+          },
         });
       }
 
       await cart.setData(
         'shipping_zone_id',
-        parseInt(zone.shipping_zone_id, 10)
+        parseInt(zone.shipping_zone_id, 10),
       );
       await cart.setData('shipping_address_id', parseInt(result.insertId, 10));
     } else {
@@ -81,15 +81,15 @@ module.exports = async (request, response, delegate, next) => {
 
     response.status(OK);
     return response.json({
-      data: createdAddress
+      data: createdAddress,
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     return response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

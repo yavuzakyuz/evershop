@@ -1,13 +1,13 @@
 const { update, select } = require('@evershop/postgres-query-builder');
 const bcrypt = require('bcryptjs');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -24,8 +24,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid customer id'
-        }
+          message: 'Invalid customer id',
+        },
       });
       return;
     }
@@ -40,7 +40,7 @@ module.exports = async (request, response, delegate, next) => {
     await update('customer')
       .given({
         ...request.body,
-        group_id: 1 // TODO: fix me
+        group_id: 1, // TODO: fix me
       })
       .where('uuid', '=', request.params.id)
       .execute(connection, false);
@@ -60,24 +60,24 @@ module.exports = async (request, response, delegate, next) => {
             rel: 'customerGrid',
             href: buildUrl('customerGrid'),
             action: 'GET',
-            types: ['text/xml']
+            types: ['text/xml'],
           },
           {
             rel: 'edit',
             href: buildUrl('customerEdit', { id: customer.uuid }),
             action: 'GET',
-            types: ['text/xml']
-          }
-        ]
-      }
+            types: ['text/xml'],
+          },
+        ],
+      },
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

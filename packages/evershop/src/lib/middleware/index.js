@@ -13,20 +13,18 @@ const middlewareList = Handler.middlewares;
 exports.getAdminMiddlewares = function getAdminMiddlewares(routeId) {
   return sortMiddlewares(
     middlewareList.filter(
-      (m) =>
-        m.routeId === 'admin' || m.routeId === routeId || m.routeId === null
-    )
+      (m) => m.routeId === 'admin' || m.routeId === routeId || m.routeId === null,
+    ),
   );
 };
 
 exports.getFrontMiddlewares = function getFrontMiddlewares(routeId) {
   return sortMiddlewares(
     middlewareList.filter(
-      (m) =>
-        m.routeId === 'frontStore' ||
-        m.routeId === routeId ||
-        m.routeId === null
-    )
+      (m) => m.routeId === 'frontStore'
+        || m.routeId === routeId
+        || m.routeId === null,
+    ),
   );
 };
 
@@ -43,19 +41,19 @@ exports.getModuleMiddlewares = function getModuleMiddlewares(path) {
       scanForMiddlewareFunctions(resolve(path, 'pages', 'global')).forEach(
         (m) => {
           addMiddleware(m);
-        }
+        },
       );
     }
     // Scan for the admin level middleware
     if (existsSync(resolve(path, 'pages', 'admin'))) {
       const routes = readdirSync(resolve(path, 'pages', 'admin'), {
-        withFileTypes: true
+        withFileTypes: true,
       })
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => dirent.name);
       routes.forEach((route) => {
         scanForMiddlewareFunctions(
-          resolve(path, 'pages', 'admin', route)
+          resolve(path, 'pages', 'admin', route),
         ).forEach((m) => {
           addMiddleware(m);
         });
@@ -65,13 +63,13 @@ exports.getModuleMiddlewares = function getModuleMiddlewares(path) {
     // Scan for the frontStore level middleware
     if (existsSync(resolve(path, 'pages', 'frontStore'))) {
       const routes = readdirSync(resolve(path, 'pages', 'frontStore'), {
-        withFileTypes: true
+        withFileTypes: true,
       })
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => dirent.name);
       routes.forEach((route) => {
         scanForMiddlewareFunctions(
-          resolve(path, 'pages', 'frontStore', route)
+          resolve(path, 'pages', 'frontStore', route),
         ).forEach((m) => {
           addMiddleware(m);
         });

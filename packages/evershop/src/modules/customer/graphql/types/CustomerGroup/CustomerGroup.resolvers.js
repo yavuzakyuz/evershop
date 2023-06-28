@@ -21,7 +21,7 @@ module.exports = {
       }
       const groups = await select().from('customer_group').execute(pool);
       return groups.map((group) => camelCase(group));
-    }
+    },
   },
   CustomerGroup: {
     customers: async (group, _, { pool }) => {
@@ -31,7 +31,6 @@ module.exports = {
         .execute(pool);
       return customers.map((customer) => camelCase(customer));
     },
-    editUrl: (group) =>
-      buildUrl('customerGroupEdit', { id: group.customerGroupId })
-  }
+    editUrl: (group) => buildUrl('customerGroupEdit', { id: group.customerGroupId }),
+  },
 };

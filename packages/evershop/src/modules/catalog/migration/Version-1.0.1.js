@@ -4,7 +4,7 @@ const { execute } = require('@evershop/postgres-query-builder');
 module.exports = exports = async (connection) => {
   await execute(
     connection,
-    `DROP TRIGGER IF EXISTS "TRIGGER_PRODUCT_AFTER_UPDATE" ON "product";`
+    'DROP TRIGGER IF EXISTS "TRIGGER_PRODUCT_AFTER_UPDATE" ON "product";',
   );
 
   await execute(
@@ -22,7 +22,7 @@ module.exports = exports = async (connection) => {
         RETURN NEW;
       END;
       $$;
-      `
+      `,
   );
 
   await execute(
@@ -31,12 +31,12 @@ module.exports = exports = async (connection) => {
     DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW
     EXECUTE PROCEDURE update_attribute_index_and_variant_group_visibility();
-    `
+    `,
   );
 
   // Drop column uuid from product_attribute_value_index
   await execute(
     connection,
-    `ALTER TABLE product_attribute_value_index DROP COLUMN uuid;`
+    'ALTER TABLE product_attribute_value_index DROP COLUMN uuid;',
   );
 };

@@ -7,9 +7,8 @@ module.exports = async (request, response) => {
   if (parseInt(codStatus, 10) === 1) {
     return {
       methodCode: 'cod',
-      methodName: await getSetting('codDislayName', 'Cash On Delivery')
+      methodName: await getSetting('codDislayName', 'Cash On Delivery'),
     };
-  } else {
-    return null;
   }
+  return null;
 };

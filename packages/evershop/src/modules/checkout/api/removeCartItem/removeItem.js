@@ -2,7 +2,7 @@
 const {
   INVALID_PAYLOAD,
   INTERNAL_SERVER_ERROR,
-  OK
+  OK,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { getCartByUUID } = require('../../services/getCartByUUID');
 const { saveCart } = require('../../services/saveCart');
@@ -16,8 +16,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           message: 'Invalid cart',
-          status: INVALID_PAYLOAD
-        }
+          status: INVALID_PAYLOAD,
+        },
       });
       return;
     }
@@ -27,8 +27,8 @@ module.exports = async (request, response, delegate, next) => {
     response.status(OK);
     response.$body = {
       data: {
-        item: item.export()
-      }
+        item: item.export(),
+      },
     };
     next();
   } catch (error) {
@@ -36,8 +36,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         message: error.message,
-        status: INTERNAL_SERVER_ERROR
-      }
+        status: INTERNAL_SERVER_ERROR,
+      },
     });
   }
 };

@@ -3,11 +3,11 @@ const { resolve, sep, normalize } = require('path');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const { Componee } = require('@evershop/evershop/src/lib/componee/Componee');
 const {
-  createComponents
+  createComponents,
 } = require('@evershop/evershop/bin/lib/createComponents');
 const { getRoutes } = require('@evershop/evershop/src/lib/router/Router');
 const {
-  isBuildRequired
+  isBuildRequired,
 } = require('@evershop/evershop/src/lib/webpack/isBuildRequired');
 
 function watchComponents() {
@@ -15,20 +15,20 @@ function watchComponents() {
     .watch('**/**/pages/*.js', {
       ignored: /node_modules[\\/]/,
       ignoreInitial: true,
-      persistent: true
+      persistent: true,
     })
     .on('all', (event, path) => {
       const modulePath = resolve(CONSTANTS.ROOTPATH, path).split(
-        normalize('/views/')
+        normalize('/views/'),
       )[0];
       Componee.updateModuleComponents({
         name: modulePath.split(sep).reverse()[0],
-        path: modulePath
+        path: modulePath,
       });
       const routes = getRoutes();
       createComponents(
         routes.filter((r) => isBuildRequired(r)),
-        true
+        true,
       );
     });
 }

@@ -1,7 +1,7 @@
 const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
-  getProductsByCategoryBaseQuery
+  getProductsByCategoryBaseQuery,
 } = require('./getProductsByCategoryBaseQuery');
 
 module.exports.getFilterableAttributes = async (categoryId) => {
@@ -11,7 +11,7 @@ module.exports.getFilterableAttributes = async (categoryId) => {
   // Base on this list, we will find all attribute,
   // category and price can be appeared in the filter table
   const allIds = (await productsQuery.execute(pool)).map(
-    (row) => row.product_id
+    (row) => row.product_id,
   );
 
   // Filterable attributes
@@ -28,7 +28,7 @@ module.exports.getFilterableAttributes = async (categoryId) => {
     .on(
       'attribute.attribute_id',
       '=',
-      'product_attribute_value_index.attribute_id'
+      'product_attribute_value_index.attribute_id',
     );
 
   query
@@ -42,7 +42,7 @@ module.exports.getFilterableAttributes = async (categoryId) => {
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < attributeData.length; i++) {
     const index = attributes.findIndex(
-      (a) => a.attributeCode === attributeData[i].attribute_code
+      (a) => a.attributeCode === attributeData[i].attribute_code,
     );
     if (index === -1) {
       attributes.push({
@@ -52,19 +52,18 @@ module.exports.getFilterableAttributes = async (categoryId) => {
         options: [
           {
             optionId: attributeData[i].option_id,
-            optionText: attributeData[i].option_text
-          }
-        ]
+            optionText: attributeData[i].option_text,
+          },
+        ],
       });
     } else {
       const idx = attributes[index].options.findIndex(
-        (o) =>
-          parseInt(o.optionId, 10) === parseInt(attributeData[i].option_id, 10)
+        (o) => parseInt(o.optionId, 10) === parseInt(attributeData[i].option_id, 10),
       );
       if (idx === -1) {
         attributes[index].options = attributes[index].options.concat({
           optionId: attributeData[i].option_id,
-          optionText: attributeData[i].option_text
+          optionText: attributeData[i].option_text,
         });
       } else {
         // eslint-disable-next-line no-plusplus

@@ -17,14 +17,14 @@ module.exports = async function themePubliStatic(request, response, next) {
       }
       // Asynchoronously check if the path is a file and exists in the public folder
       const test = await fs.stat(
-        join(CONSTANTS.THEMEPATH, theme, 'public', path)
+        join(CONSTANTS.THEMEPATH, theme, 'public', path),
       );
       if (test.isFile()) {
         // If it is a file, serve it
         staticMiddleware(join(CONSTANTS.THEMEPATH, theme, 'public'))(
           request,
           response,
-          next
+          next,
         );
       }
     } catch (e) {

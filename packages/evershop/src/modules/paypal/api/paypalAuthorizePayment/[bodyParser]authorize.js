@@ -1,13 +1,13 @@
 const { select, update, insert } = require('@evershop/postgres-query-builder');
 const { default: axios } = require('axios');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
-const { getContextValue } = require('../../../graphql/services/contextHelper');
-const { getApiBaseUrl } = require('../../services/getApiBaseUrl');
 const {
   INVALID_PAYLOAD,
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
+const { getContextValue } = require('../../../graphql/services/contextHelper');
+const { getApiBaseUrl } = require('../../services/getApiBaseUrl');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = async (request, response) => {
@@ -27,8 +27,8 @@ module.exports = async (request, response) => {
     response.json({
       error: {
         status: INVALID_PAYLOAD,
-        message: 'Invalid order'
-      }
+        message: 'Invalid order',
+      },
     });
   } else {
     // Call API to authorize the paypal order using axios
@@ -42,10 +42,10 @@ module.exports = async (request, response) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${getContextValue(
             request,
-            'paypalAccessToken'
-          )}`
-        }
-      }
+            'paypalAccessToken',
+          )}`,
+        },
+      },
     );
 
     if (responseData.data.status === 'COMPLETED') {
@@ -72,7 +72,7 @@ module.exports = async (request, response) => {
               .status,
           payment_action: 'authorize',
           transaction_type: 'online',
-          additional_information: JSON.stringify(responseData.data)
+          additional_information: JSON.stringify(responseData.data),
         })
         .execute(pool);
 
@@ -81,21 +81,21 @@ module.exports = async (request, response) => {
         .given({
           order_activity_order_id: order.order_id,
           comment: `Customer authorized the payment using PayPal. Transaction ID: ${responseData.data.purchase_units[0].payments.authorizations[0].id}`,
-          customer_notified: 0 // TODO: check config of SendGrid
+          customer_notified: 0, // TODO: check config of SendGrid
         })
         .execute(pool);
 
       response.status(OK);
       response.json({
-        data: {}
+        data: {},
       });
     } else {
       response.status(INTERNAL_SERVER_ERROR);
       response.json({
         error: {
           status: INTERNAL_SERVER_ERROR,
-          message: responseData.data.message
-        }
+          message: responseData.data.message,
+        },
       });
     }
   }

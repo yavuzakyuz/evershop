@@ -1,6 +1,6 @@
 const { startTransaction } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 
 // eslint-disable-next-line no-unused-vars

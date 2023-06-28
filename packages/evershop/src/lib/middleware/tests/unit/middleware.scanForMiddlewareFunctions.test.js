@@ -7,14 +7,14 @@ describe('Test scanForMiddlewareFunctions function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'home'
-          }
+            routeId: 'home',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -24,14 +24,14 @@ describe('Test scanForMiddlewareFunctions function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'admin'
-          }
+            routeId: 'admin',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'admin'
-        }
-      )
+          routeId: 'admin',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -41,14 +41,14 @@ describe('Test scanForMiddlewareFunctions function', () => {
         [
           {
             id: 'routeOne',
-            routeId: null
-          }
+            routeId: null,
+          },
         ],
         {
           id: 'routeOne',
-          routeId: null
-        }
-      )
+          routeId: null,
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -58,14 +58,14 @@ describe('Test scanForMiddlewareFunctions function', () => {
         [
           {
             id: 'routeOne',
-            routeId: null
-          }
+            routeId: null,
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -75,14 +75,14 @@ describe('Test scanForMiddlewareFunctions function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'admin'
-          }
+            routeId: 'admin',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -92,14 +92,14 @@ describe('Test scanForMiddlewareFunctions function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'frontStore'
-          }
+            routeId: 'frontStore',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'home'
-        }
-      )
+          routeId: 'home',
+        },
+      ),
     ).toEqual(false);
   });
 
@@ -109,14 +109,14 @@ describe('Test scanForMiddlewareFunctions function', () => {
         [
           {
             id: 'routeOne',
-            routeId: 'home'
-          }
+            routeId: 'home',
+          },
         ],
         {
           id: 'routeOne',
-          routeId: 'category'
-        }
-      )
+          routeId: 'category',
+        },
+      ),
     ).toEqual(true);
   });
 });

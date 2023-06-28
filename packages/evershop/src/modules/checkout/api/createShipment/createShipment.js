@@ -5,17 +5,17 @@ const {
   commit,
   select,
   update,
-  startTransaction
+  startTransaction,
 } = require('@evershop/postgres-query-builder');
 const config = require('config');
 const {
   getConnection,
-  pool
+  pool,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -35,8 +35,8 @@ module.exports = async (request, response, deledate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid order id'
-        }
+          message: 'Invalid order id',
+        },
       });
       return;
     }
@@ -50,8 +50,8 @@ module.exports = async (request, response, deledate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Shipment was created'
-        }
+          message: 'Shipment was created',
+        },
       });
       return;
     }
@@ -59,7 +59,7 @@ module.exports = async (request, response, deledate, next) => {
       .given({
         shipment_order_id: order.order_id,
         carrier_name,
-        tracking_number
+        tracking_number,
       })
       .execute(connection);
     /* Update Shipment status to fullfilled */
@@ -76,7 +76,7 @@ module.exports = async (request, response, deledate, next) => {
       .given({
         order_activity_order_id: order.order_id,
         comment: 'Order was fullfilled',
-        customer_notified: 0
+        customer_notified: 0,
       })
       .execute(connection);
 
@@ -89,7 +89,7 @@ module.exports = async (request, response, deledate, next) => {
 
     response.status(OK);
     response.json({
-      data: shipmentData
+      data: shipmentData,
     });
   } catch (e) {
     await rollback(connection);
@@ -97,8 +97,8 @@ module.exports = async (request, response, deledate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

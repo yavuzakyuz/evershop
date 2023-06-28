@@ -17,16 +17,16 @@ function assign(object, data) {
 
   Object.keys(data).forEach((key) => {
     if (
-      data[key] &&
-      data[key].constructor === Array &&
-      object[key] &&
-      object[key].constructor === Array
+      data[key]
+      && data[key].constructor === Array
+      && object[key]
+      && object[key].constructor === Array
     ) {
       object[key] = object[key].concat(data[key]);
     } else if (
-      typeof object[key] !== 'object' ||
-      typeof data[key] !== 'object' ||
-      object[key] === null
+      typeof object[key] !== 'object'
+      || typeof data[key] !== 'object'
+      || object[key] === null
     ) {
       object[key] = data[key];
     } else {

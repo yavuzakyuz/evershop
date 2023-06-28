@@ -21,7 +21,7 @@ exports.getCustomerCart = async (customerTokenPayload) => {
     customerId: customer_id,
     email: customer_email,
     groupId: customer_group_id,
-    fullName: customer_full_name
+    fullName: customer_full_name,
   } = customer;
 
   // Try to get the cart by the session id first
@@ -38,7 +38,7 @@ exports.getCustomerCart = async (customerTokenPayload) => {
       customer_email,
       customer_group_id,
       customer_full_name,
-      ...cartBySid
+      ...cartBySid,
     });
   } else {
     // Try to get the cart by the customer id
@@ -55,7 +55,7 @@ exports.getCustomerCart = async (customerTokenPayload) => {
         customer_email,
         customer_group_id,
         customer_full_name,
-        ...cartByCustomerId
+        ...cartByCustomerId,
       });
     } else {
       // Create a new cart
@@ -64,7 +64,7 @@ exports.getCustomerCart = async (customerTokenPayload) => {
         customer_id,
         customer_email,
         customer_group_id,
-        customer_full_name
+        customer_full_name,
       });
     }
   }

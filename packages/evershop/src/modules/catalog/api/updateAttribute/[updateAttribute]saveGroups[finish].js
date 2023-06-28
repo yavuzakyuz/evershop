@@ -4,7 +4,7 @@
 const {
   del,
   select,
-  insertOnUpdate
+  insertOnUpdate,
 } = require('@evershop/postgres-query-builder');
 const { get } = require('@evershop/evershop/src/lib/util/get');
 

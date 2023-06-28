@@ -7,14 +7,14 @@ describe('resolveAlias', () => {
       [
         {
           path: path.resolve(__dirname, 'extensions/extensionA'),
-          priority: 1
+          priority: 1,
         },
         {
           path: path.resolve(__dirname, 'extensions/extensionB'),
-          priority: 2
-        }
+          priority: 2,
+        },
       ],
-      path.resolve(__dirname, 'theme')
+      path.resolve(__dirname, 'theme'),
     );
     expect(resolves[path.join('@components', 'a', 'A')])
       .toString()

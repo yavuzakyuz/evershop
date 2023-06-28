@@ -1,9 +1,9 @@
 const { execute } = require('graphql');
 const { parse } = require('graphql');
 const { validate } = require('graphql/validation');
+const isDevelopmentMode = require('@evershop/evershop/src/lib/util/isDevelopmentMode');
 let schema = require('../../services/buildSchema');
 const { getContext } = require('../../services/contextHelper');
-const isDevelopmentMode = require('@evershop/evershop/src/lib/util/isDevelopmentMode');
 
 module.exports = async function graphql(request, response, delegate, next) {
   // TODO: Should we wait for previous async middlewares?
@@ -33,14 +33,14 @@ module.exports = async function graphql(request, response, delegate, next) {
             schema,
             contextValue: getContext(request),
             document,
-            variableValues: graphqlVariables
+            variableValues: graphqlVariables,
           });
           if (data.errors) {
             next(data.errors[0]);
           } else {
             response.locals = response.locals || {};
             response.locals.graphqlResponse = JSON.parse(
-              JSON.stringify(data.data)
+              JSON.stringify(data.data),
             );
             // Get id and props from the queryRaw object and assign to response.locals.propsMap
             response.locals.propsMap = propsMap;

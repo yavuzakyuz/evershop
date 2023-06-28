@@ -2,7 +2,7 @@
 const levels = {
   critical: '\x1b[31m',
   warning: '\x1b[33m',
-  info: '\x1b[34m'
+  info: '\x1b[34m',
 };
 
 // Define logger function

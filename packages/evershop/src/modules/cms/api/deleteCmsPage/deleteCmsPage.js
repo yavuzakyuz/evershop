@@ -3,7 +3,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -15,7 +15,7 @@ module.exports = async (request, response, delegate, next) => {
       .on(
         'cms_page_description.cms_page_description_cms_page_id',
         '=',
-        'cms_page.cms_page_id'
+        'cms_page.cms_page_id',
       );
 
     const page = await query.where('uuid', '=', request.params.id).load(pool);
@@ -25,8 +25,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid page id'
-        }
+          message: 'Invalid page id',
+        },
       });
       return;
     }
@@ -36,16 +36,16 @@ module.exports = async (request, response, delegate, next) => {
     response.status(OK);
     response.json({
       data: {
-        ...page
-      }
+        ...page,
+      },
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

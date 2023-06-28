@@ -23,8 +23,8 @@ function getAllFilesInFolder(folderPath) {
     } else {
       // Add the file path to the results array if it is a Component or SCSS file
       if (
-        (/.js$/.test(item) && /^[A-Z]/.test(item[0])) ||
-        /.scss$/.test(item)
+        (/.js$/.test(item) && /^[A-Z]/.test(item[0]))
+        || /.scss$/.test(item)
       ) {
         const pathParts = itemPath.split(path.sep);
 
@@ -46,7 +46,7 @@ function getAllFilesInFolder(folderPath) {
 
 exports.resolveAlias = function resolveAlias(
   extensions = [],
-  themePath = null
+  themePath = null,
 ) {
   let resolves = {};
 
@@ -57,7 +57,7 @@ exports.resolveAlias = function resolveAlias(
   // loop through the extensions and get the files
   extensions.forEach((extension) => {
     const extensionFiles = getAllFilesInFolder(
-      path.resolve(extension.path, 'components')
+      path.resolve(extension.path, 'components'),
     );
 
     resolves = { ...extensionFiles, ...resolves };

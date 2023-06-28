@@ -1,13 +1,13 @@
 const {
   commit,
   rollback,
-  select
+  select,
 } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -46,16 +46,16 @@ module.exports = async (request, response, delegate, next) => {
             rel: 'attributeGrid',
             href: buildUrl('attributeGrid'),
             action: 'GET',
-            types: ['text/xml']
+            types: ['text/xml'],
           },
           {
             rel: 'edit',
             href: buildUrl('attributeEdit', { id: attribute.uuid }),
             action: 'GET',
-            types: ['text/xml']
-          }
-        ]
-      }
+            types: ['text/xml'],
+          },
+        ],
+      },
     });
   } else {
     await rollback(connection);
@@ -64,8 +64,8 @@ module.exports = async (request, response, delegate, next) => {
       data: null,
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: rejected.reason.message
-      }
+        message: rejected.reason.message,
+      },
     });
   }
 };

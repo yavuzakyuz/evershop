@@ -1,5 +1,5 @@
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../../../../../modules/graphql/services/contextHelper');
 
 module.exports = (request, response) => {
@@ -8,13 +8,13 @@ module.exports = (request, response) => {
   setContextValue(
     request,
     'homeUrl',
-    `${request.protocol}://${request.get('host')}`
+    `${request.protocol}://${request.get('host')}`,
   );
 
   setContextValue(
     request,
     'currentUrl',
-    `${request.protocol}://${request.get('host')}${request.originalUrl}`
+    `${request.protocol}://${request.get('host')}${request.originalUrl}`,
   );
   setContextValue(request, 'baseUrl', request.baseUrl);
   setContextValue(request, 'body', request.body);

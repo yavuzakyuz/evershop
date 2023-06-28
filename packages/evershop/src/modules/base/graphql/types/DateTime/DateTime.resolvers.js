@@ -19,6 +19,6 @@ module.exports = {
         .setZone(timeZone)
         .toFormat(format);
       return date;
-    }
-  }
+    },
+  },
 };

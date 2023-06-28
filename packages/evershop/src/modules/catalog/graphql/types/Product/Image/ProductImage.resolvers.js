@@ -12,28 +12,28 @@ function getUrls(image) {
   const thumb = fs.existsSync(path.join(CONSTANTS.MEDIAPATH, thumbVersion))
     ? `/assets${thumbVersion}`
     : `/assets/theme/frontStore${getConfig(
-        'catalog.product.image.placeHolder'
-      )}`;
+      'catalog.product.image.placeHolder',
+    )}`;
   const single = fs.existsSync(path.join(CONSTANTS.MEDIAPATH, singleVersion))
     ? `/assets${singleVersion}`
     : `/assets/theme/frontStore${getConfig(
-        'catalog.product.image.placeHolder'
-      )}`;
+      'catalog.product.image.placeHolder',
+    )}`;
   const listing = fs.existsSync(path.join(CONSTANTS.MEDIAPATH, listingVersion))
     ? `/assets${listingVersion}`
     : `/assets/theme/frontStore${getConfig(
-        'catalog.product.image.placeHolder'
-      )}`;
+      'catalog.product.image.placeHolder',
+    )}`;
   const origin = fs.existsSync(path.join(CONSTANTS.MEDIAPATH, image))
     ? `/assets${image}`
     : `/assets/theme/frontStore${getConfig(
-        'catalog.product.image.placeHolder'
-      )}`;
+      'catalog.product.image.placeHolder',
+    )}`;
   return {
     thumb,
     single,
     listing,
-    origin
+    origin,
   };
 }
 
@@ -44,11 +44,11 @@ module.exports = {
       const urls = getUrls(mainImage);
       return mainImage
         ? {
-            ...urls,
-            alt: product.name,
-            path: mainImage,
-            uniqueId: uniqid()
-          }
+          ...urls,
+          alt: product.name,
+          path: mainImage,
+          uniqueId: uniqid(),
+        }
         : null;
     },
     gallery: async (product, _, { pool }) => {
@@ -63,9 +63,9 @@ module.exports = {
           ...urls,
           alt: product.name,
           path: image.image,
-          uniqueId: uniqid()
+          uniqueId: uniqid(),
         };
       });
-    }
-  }
+    },
+  },
 };

@@ -2,19 +2,19 @@ const {
   select,
   node,
   execute,
-  value
+  value,
 } = require('@evershop/postgres-query-builder');
 const uniqid = require('uniqid');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const { camelCase } = require('@evershop/evershop/src/lib/util/camelCase');
-const {
-  getProductsByCategoryBaseQuery
-} = require('../../../services/getProductsByCategoryBaseQuery');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
-const {
-  getFilterableAttributes
-} = require('../../../services/getFilterableAttributes');
 const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
+const {
+  getProductsByCategoryBaseQuery,
+} = require('../../../services/getProductsByCategoryBaseQuery');
+const {
+  getFilterableAttributes,
+} = require('../../../services/getFilterableAttributes');
 
 module.exports = {
   Query: {
@@ -25,7 +25,7 @@ module.exports = {
         .on(
           'category_description.category_description_category_id',
           '=',
-          'category.category_id'
+          'category.category_id',
         );
       query.where('category_id', '=', id);
       const result = await query.load(pool);
@@ -38,7 +38,7 @@ module.exports = {
         .on(
           'des.category_description_category_id',
           '=',
-          'category.category_id'
+          'category.category_id',
         );
 
       const currentFilters = [];
@@ -53,7 +53,7 @@ module.exports = {
         currentFilters.push({
           key: 'parent',
           operation: '=',
-          value: parentFilter.value
+          value: parentFilter.value,
         });
       }
 
@@ -64,7 +64,7 @@ module.exports = {
         currentFilters.push({
           key: 'name',
           operation: '=',
-          value: nameFilter.value
+          value: nameFilter.value,
         });
       }
 
@@ -75,7 +75,7 @@ module.exports = {
         currentFilters.push({
           key: 'status',
           operation: '=',
-          value: statusFilter.value
+          value: statusFilter.value,
         });
       }
 
@@ -86,20 +86,20 @@ module.exports = {
         currentFilters.push({
           key: 'includeInNav',
           operation: '=',
-          value: includeInNav.value
+          value: includeInNav.value,
         });
       }
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
       if (sortBy && sortBy.value === 'name') {
         query.orderBy('des.name', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('category.category_id', 'DESC');
@@ -108,7 +108,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
       // Clone the main query for getting total right before doing the paging
@@ -121,21 +121,21 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
       return {
         items: (await query.execute(pool)).map((row) => camelCase(row)),
         total: (await cloneQuery.load(pool)).total,
-        currentFilters
+        currentFilters,
       };
     },
     products: async (_, { filters = [] }, { user }) => {
@@ -145,7 +145,7 @@ module.exports = {
         .on(
           'product_inventory.product_inventory_product_id',
           '=',
-          'product.product_id'
+          'product.product_id',
         );
       query
         .leftJoin('product_description', 'des')
@@ -162,8 +162,8 @@ module.exports = {
                   'AND',
                   'product_inventory.stock_availability',
                   '=',
-                  true
-                )
+                  true,
+                ),
             );
         }
       }
@@ -180,7 +180,7 @@ module.exports = {
           currentPriceFilter = {
             key: 'price',
             operation: '=',
-            value: `${min}`
+            value: `${min}`,
           };
         }
 
@@ -189,7 +189,7 @@ module.exports = {
           currentPriceFilter = {
             key: 'price',
             operation: '=',
-            value: `${currentPriceFilter.value}-${max}`
+            value: `${currentPriceFilter.value}-${max}`,
           };
         }
         if (currentPriceFilter) {
@@ -212,7 +212,7 @@ module.exports = {
           currentQtyFilter = {
             key: 'qty',
             operation: '=',
-            value: `${currentQtyFilter.value}-${max}`
+            value: `${currentQtyFilter.value}-${max}`,
           };
         }
         if (currentQtyFilter) {
@@ -227,7 +227,7 @@ module.exports = {
         currentFilters.push({
           key: 'name',
           operation: '=',
-          value: nameFilter.value
+          value: nameFilter.value,
         });
       }
 
@@ -238,7 +238,7 @@ module.exports = {
         currentFilters.push({
           key: 'sku',
           operation: '=',
-          value: skuFilter.value
+          value: skuFilter.value,
         });
       }
 
@@ -249,27 +249,27 @@ module.exports = {
         currentFilters.push({
           key: 'status',
           operation: '=',
-          value: statusFilter.value
+          value: statusFilter.value,
         });
       }
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
       if (sortBy && sortBy.value === 'price') {
         query.orderBy('product.price', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else if (sortBy && sortBy.value === 'name') {
         query.orderBy('des.name', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('product.product_id', 'DESC');
@@ -278,7 +278,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
       // Clone the main query for getting total right before doing the paging
@@ -291,32 +291,32 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
       const items = (await query.execute(pool)).map((row) => camelCase(row));
       const result = await totalQuery.load(pool);
-      const total = result.total;
+      const { total } = result;
       return {
         items,
         total,
-        currentFilters
+        currentFilters,
       };
-    }
+    },
   },
   Category: {
     products: async (category, { filters = [] }, { user }) => {
       const query = await getProductsByCategoryBaseQuery(
         category.categoryId,
-        user ? false : true
+        !user,
       );
       const currentFilters = [];
       // Price filter
@@ -327,7 +327,7 @@ module.exports = {
         currentFilters.push({
           key: 'minPrice',
           operation: '=',
-          value: minPrice.value
+          value: minPrice.value,
         });
       }
       if (maxPrice && Number.isNaN(parseFloat(maxPrice.value)) === false) {
@@ -335,7 +335,7 @@ module.exports = {
         currentFilters.push({
           key: 'maxPrice',
           operation: '=',
-          value: maxPrice.value
+          value: maxPrice.value,
         });
       }
 
@@ -345,12 +345,12 @@ module.exports = {
         query.andWhere(
           'product_description.name',
           'LIKE',
-          `%${nameFilter.value}%`
+          `%${nameFilter.value}%`,
         );
         currentFilters.push({
           key: 'name',
           operation: '=',
-          value: nameFilter.value
+          value: nameFilter.value,
         });
       }
 
@@ -363,7 +363,7 @@ module.exports = {
       // Attribute filters
       filters.forEach((filter) => {
         const attribute = filterableAttributes.find(
-          (a) => a.attribute_code === filter.key
+          (a) => a.attribute_code === filter.key,
         );
         if (!attribute) {
           return;
@@ -384,27 +384,27 @@ module.exports = {
         currentFilters.push({
           key: filter.key,
           operation: filter.operation,
-          value: values.join(',')
+          value: values.join(','),
         });
       });
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
       if (sortBy && sortBy.value === 'price') {
         query.orderBy('product.price', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else if (sortBy && sortBy.value === 'name') {
         query.orderBy('product_description.name`', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('product.product_id', sortOrder.value);
@@ -413,7 +413,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
 
@@ -438,12 +438,12 @@ module.exports = {
           copy.orderBy('product.variant_group_id', 'ASC');
           copy.having('bool_or(product.visibility)', '=', 'f');
           const invisibleIds = (await copy.execute(pool)).map(
-            (v) => v.product_id
+            (v) => v.product_id,
           );
           if (invisibleIds.length > 0) {
             const n = node('AND');
             n.addLeaf('AND', 'product.product_id', 'IN', invisibleIds).addNode(
-              node('OR').addLeaf('OR', 'product.visibility', '=', 't')
+              node('OR').addLeaf('OR', 'product.visibility', '=', 't'),
             );
             query.getWhere().addNode(n);
           } else {
@@ -464,34 +464,32 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
 
-      const items = (await query.execute(pool)).map((row) =>
-        camelCase({
-          ...row,
-          removeFromCategoryUrl: buildUrl('removeProductFromCategory', {
-            category_id: category.uuid,
-            product_id: row.uuid
-          })
-        })
-      );
+      const items = (await query.execute(pool)).map((row) => camelCase({
+        ...row,
+        removeFromCategoryUrl: buildUrl('removeProductFromCategory', {
+          category_id: category.uuid,
+          product_id: row.uuid,
+        }),
+      }));
 
       const result = await totalQuery.load(pool);
-      const total = result.total;
+      const { total } = result;
       return {
         items,
         total,
-        currentFilters
+        currentFilters,
       };
     },
     availableAttributes: async (category) => {
@@ -501,7 +499,7 @@ module.exports = {
     priceRange: async (category) => {
       const query = await getProductsByCategoryBaseQuery(
         category.categoryId,
-        true
+        true,
       );
       query
         .select('MIN(product.price)', 'min')
@@ -509,7 +507,7 @@ module.exports = {
       const result = await query.load(pool);
       return {
         min: result.min || 0,
-        max: result.max || 0
+        max: result.max || 0,
       };
     },
     url: async (category, _, { pool }) => {
@@ -521,25 +519,22 @@ module.exports = {
         .load(pool);
       if (!urlRewrite) {
         return buildUrl('categoryView', { uuid: category.uuid });
-      } else {
-        return urlRewrite.request_path;
       }
+      return urlRewrite.request_path;
     },
     editUrl: (category) => buildUrl('categoryEdit', { id: category.uuid }),
     updateApi: (category) => buildUrl('updateCategory', { id: category.uuid }),
     deleteApi: (category) => buildUrl('deleteCategory', { id: category.uuid }),
-    addProductUrl: (category) =>
-      buildUrl('addProductToCategory', { category_id: category.uuid }),
+    addProductUrl: (category) => buildUrl('addProductToCategory', { category_id: category.uuid }),
     image: (category) => {
       const { image } = category;
       if (!image) {
         return null;
-      } else {
-        return {
-          path: image,
-          url: `/assets${image}`
-        };
       }
+      return {
+        path: image,
+        url: `/assets${image}`,
+      };
     },
     children: async (category) => {
       const query = select().from('category');
@@ -548,7 +543,7 @@ module.exports = {
         .on(
           'des.category_description_category_id',
           '=',
-          'category.category_id'
+          'category.category_id',
         );
       query.where('category.parent_id', '=', category.categoryId);
       query.orderBy('category.sort_order', 'ASC');
@@ -567,7 +562,7 @@ module.exports = {
           FROM category c
           INNER JOIN category_path cp ON cp.parent_id = c.category_id
         )
-        SELECT category_id FROM category_path ORDER BY level DESC`
+        SELECT category_id FROM category_path ORDER BY level DESC`,
       );
       const categories = query.rows;
       // Loop the categories and load the category description
@@ -579,11 +574,11 @@ module.exports = {
             .on(
               'des.category_description_category_id',
               '=',
-              'category.category_id'
+              'category.category_id',
             );
           query.where('category.category_id', '=', c.category_id);
           return camelCase(await query.load(pool));
-        })
+        }),
       );
     },
     parent: async (category, _, { pool }) => {
@@ -596,10 +591,10 @@ module.exports = {
         .on(
           'des.category_description_category_id',
           '=',
-          'category.category_id'
+          'category.category_id',
         );
       query.where('category.category_id', '=', category.parentId);
       return camelCase(await query.load(pool));
-    }
-  }
+    },
+  },
 };

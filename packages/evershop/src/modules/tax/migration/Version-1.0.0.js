@@ -9,20 +9,20 @@ module.exports = exports = async (connection) => {
   "uuid" UUID NOT NULL DEFAULT gen_random_uuid (),
   "name" varchar NOT NULL,
   CONSTRAINT "TAX_CLASS_UUID_UNIQUE" UNIQUE ("uuid")
-)`
+)`,
   );
 
   // Create default tax class
   const taxClass = await insert('tax_class')
     .given({
-      name: 'Taxable Goods'
+      name: 'Taxable Goods',
     })
     .execute(connection);
 
   // Add a constraint to product table
   await execute(
     connection,
-    `ALTER TABLE "product" ADD CONSTRAINT "FK_TAX_CLASS" FOREIGN KEY ("tax_class") REFERENCES "tax_class" ("tax_class_id") ON DELETE SET NULL`
+    'ALTER TABLE "product" ADD CONSTRAINT "FK_TAX_CLASS" FOREIGN KEY ("tax_class") REFERENCES "tax_class" ("tax_class_id") ON DELETE SET NULL',
   );
 
   // Prevent deleting the default tax class
@@ -39,14 +39,14 @@ module.exports = exports = async (connection) => {
         END IF;
         RETURN OLD;
       END;
-      $$`
+      $$`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "PREVENT_DELETING_THE_DEFAULT_TAX_CLASS"
         BEFORE DELETE ON tax_class
         FOR EACH ROW
-        EXECUTE PROCEDURE prevent_delete_default_tax_class();`
+        EXECUTE PROCEDURE prevent_delete_default_tax_class();`,
   );
 
   await execute(
@@ -67,7 +67,7 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "UNSIGNED_RATE" CHECK(rate >= 0),
   CONSTRAINT "UNSIGNED_PRIORITY" CHECK(priority >= 0),
   CONSTRAINT "FK_TAX_RATE_TAX_CLASS" FOREIGN KEY ("tax_class_id") REFERENCES "tax_class" ("tax_class_id") ON DELETE CASCADE
-)`
+)`,
   );
 
   // Create default tax rate for tax class
@@ -80,7 +80,7 @@ module.exports = exports = async (connection) => {
       postcode: '*',
       rate: 0,
       is_compound: false,
-      priority: 0
+      priority: 0,
     })
     .execute(connection);
 };

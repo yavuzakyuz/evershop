@@ -244,5 +244,5 @@ module.exports.contries = [
   { code: 'YE', name: 'Yemen' },
   { code: 'ZM', name: 'Zambia' },
   { code: 'ZW', name: 'Zimbabwe' },
-  { code: 'AX', name: 'Åland Islands' }
+  { code: 'AX', name: 'Åland Islands' },
 ];

@@ -4,7 +4,7 @@ const {
   insert,
   del,
   select,
-  update
+  update,
 } = require('@evershop/postgres-query-builder');
 const { merge } = require('@evershop/evershop/src/lib/util/merge');
 
@@ -30,8 +30,7 @@ async function saveOptionValues(optionId, values, connection) {
   for (const id in values) {
     if (
       optionValues.find(
-        (v) =>
-          parseInt(v.product_custom_option_value_id, 10) === parseInt(id, 10)
+        (v) => parseInt(v.product_custom_option_value_id, 10) === parseInt(id, 10),
       )
     ) {
       await update('product_custom_option_value')
@@ -62,14 +61,14 @@ module.exports = async (request, response, deledate) => {
     const newOption = await insert('product_custom_option')
       .given({
         ...option,
-        product_custom_option_product_id: productId
+        product_custom_option_product_id: productId,
       })
       .prime('product_custom_option_product_id', productId)
       .execute(connection);
     await saveOptionValues(
       parseInt(newOption.insertId, 10),
       option.values || [],
-      connection
+      connection,
     );
   }
 };

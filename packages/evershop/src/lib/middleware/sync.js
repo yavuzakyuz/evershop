@@ -11,7 +11,7 @@ exports.syncMiddlewareWrapper = function syncMiddlewareWrapper(
   request,
   response,
   delegates,
-  next
+  next,
 ) {
   const startTime = process.hrtime();
   try {
@@ -22,7 +22,7 @@ exports.syncMiddlewareWrapper = function syncMiddlewareWrapper(
         const endTime = process.hrtime(startTime);
         response.debugMiddlewares.push({
           id,
-          time: endTime[1] / 1000000
+          time: endTime[1] / 1000000,
         });
         next(error);
       });
@@ -31,7 +31,7 @@ exports.syncMiddlewareWrapper = function syncMiddlewareWrapper(
       const endTime = process.hrtime(startTime);
       response.debugMiddlewares.push({
         id,
-        time: endTime[1] / 1000000
+        time: endTime[1] / 1000000,
       });
     }
     setDelegate(id, delegate, request);
@@ -39,7 +39,7 @@ exports.syncMiddlewareWrapper = function syncMiddlewareWrapper(
     // Log the error
     logger.log('error', `Exception in middleware ${id}`, {
       message: e.message,
-      stack: e.stack
+      stack: e.stack,
     });
     debug('critical', `Exception in middleware ${id}`);
 

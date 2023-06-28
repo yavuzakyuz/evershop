@@ -39,14 +39,14 @@ module.exports = {
     scale: false,
     rotate: false,
     translate: false,
-    skew: false
+    skew: false,
   },
   theme: {
     fontFamily: {
-      sans: 'Helvetica,Helvetica Neue,Arial,Lucida Grande,sans-serif'
+      sans: 'Helvetica,Helvetica Neue,Arial,Lucida Grande,sans-serif',
     },
     fontSize: {
-      base: '.875rem'
+      base: '.875rem',
     },
     colors: {
       white: '#ffffff',
@@ -64,7 +64,7 @@ module.exports = {
       icon: '#5c5f62',
       divider: '#e1e3e5',
       textSubdued: '#737373',
-      button: '#3a3a3a'
+      button: '#3a3a3a',
     },
     spacing: {
       0: '0px',
@@ -79,7 +79,7 @@ module.exports = {
       25: '2.5rem',
       275: '2.75rem',
       3: '3rem',
-      4: '4rem'
+      4: '4rem',
     },
     margin: {
       0: '0px',
@@ -94,27 +94,27 @@ module.exports = {
       25: '2.5rem',
       275: '2.75rem',
       3: '3rem',
-      4: '4rem'
+      4: '4rem',
     },
     borderRadius: {
       DEFAULT: '0.25rem',
-      100: '100%'
+      100: '100%',
     },
     borderWidth: {
       0: '0px',
-      DEFAULT: '1px'
+      DEFAULT: '1px',
     },
     opacity: {},
     boxShadow: {
-      DEFAULT: '0 0 0 1px rgba(63,63,68,.05),0 1px 3px 0 rgba(63,63,68,.15)'
-    }
+      DEFAULT: '0 0 0 1px rgba(63,63,68,.05),0 1px 3px 0 rgba(63,63,68,.15)',
+    },
   },
   variants: {
     extend: {
       borderWidth: ['first', 'last'],
       margin: ['first', 'last'],
-      padding: ['first', 'last']
-    }
+      padding: ['first', 'last'],
+    },
   },
-  plugins: []
+  plugins: [],
 };

@@ -166,5 +166,5 @@ module.exports.currencies = [
   { code: 'CHW', name: 'WIR Franc' },
   { code: 'YER', name: 'Yemeni Rial' },
   { code: 'ZMK', name: 'Zambian Kwacha' },
-  { code: 'ZWD', name: 'Zimbabwean Dollar' }
+  { code: 'ZWD', name: 'Zimbabwean Dollar' },
 ];

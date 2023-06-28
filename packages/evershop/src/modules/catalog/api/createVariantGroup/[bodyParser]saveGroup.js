@@ -5,7 +5,7 @@ const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -17,8 +17,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'No attributes provided'
-        }
+          message: 'No attributes provided',
+        },
       });
       return;
     }
@@ -28,8 +28,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'We only support up to 5 attributes'
-        }
+          message: 'We only support up to 5 attributes',
+        },
       });
       return;
     }
@@ -45,8 +45,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Attribute must be of type select'
-        }
+          message: 'Attribute must be of type select',
+        },
       });
       return;
     }
@@ -57,7 +57,7 @@ module.exports = async (request, response, delegate, next) => {
       .and(
         'attribute_id',
         'in',
-        attributes.map((a) => a.attribute_id)
+        attributes.map((a) => a.attribute_id),
       )
       .execute(pool);
 
@@ -66,8 +66,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Attribute must be assigned to the group'
-        }
+          message: 'Attribute must be assigned to the group',
+        },
       });
       return;
     }
@@ -113,7 +113,7 @@ module.exports = async (request, response, delegate, next) => {
         .execute(pool);
       return {
         ...attribute,
-        options
+        options,
       };
     });
 
@@ -124,15 +124,15 @@ module.exports = async (request, response, delegate, next) => {
 
     response.status(OK);
     response.json({
-      data: group
+      data: group,
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

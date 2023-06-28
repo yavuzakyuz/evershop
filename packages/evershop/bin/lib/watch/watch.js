@@ -6,9 +6,9 @@ const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
 
 function watch(calbacks = []) {
   const watcher = chokidar.watch(resolve(CONSTANTS.ROOTPATH, 'extensions/**'), {
-    //ignored: /node_modules[\\/]/,
+    // ignored: /node_modules[\\/]/,
     ignoreInitial: true,
-    persistent: true
+    persistent: true,
   });
 
   if (existsSync(resolve(CONSTANTS.ROOTPATH, 'packages'))) {

@@ -13,20 +13,20 @@ module.exports.getTailwindConfig = function getTailwindConfig(route) {
     // Get the current theme
     const theme = getConfig('system.theme');
     if (
-      theme &&
-      fs.existsSync(join(CONSTANTS.THEMEPATH, theme, 'tailwind.config.js'))
+      theme
+      && fs.existsSync(join(CONSTANTS.THEMEPATH, theme, 'tailwind.config.js'))
     ) {
       tailwindConfig = require(join(
         CONSTANTS.THEMEPATH,
         theme,
-        'tailwind.config.js'
+        'tailwind.config.js',
       ));
     }
   }
   // Merge defaultTailwindConfig with tailwindConfigJs
   const mergedTailwindConfig = Object.assign(
     defaultTailwindConfig,
-    tailwindConfig
+    tailwindConfig,
   );
 
   return mergedTailwindConfig;

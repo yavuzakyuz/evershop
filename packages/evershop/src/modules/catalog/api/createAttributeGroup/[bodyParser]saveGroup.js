@@ -3,15 +3,15 @@ const {
   insert,
   commit,
   rollback,
-  select
+  select,
 } = require('@evershop/postgres-query-builder');
 const {
   getConnection,
-  pool
+  pool,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -33,8 +33,8 @@ module.exports = async (request, response, delegate, next) => {
     response.status(OK);
     response.json({
       data: {
-        ...group
-      }
+        ...group,
+      },
     });
   } catch (e) {
     await rollback(connection);
@@ -42,8 +42,8 @@ module.exports = async (request, response, delegate, next) => {
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

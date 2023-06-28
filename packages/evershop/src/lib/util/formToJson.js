@@ -52,7 +52,6 @@ exports.serializeForm = function serializeForm(formDataEntries, dataFilter) {
   // Check if dataFilter is a function
   if (typeof dataFilter === 'function') {
     return dataFilter(data);
-  } else {
-    return data;
   }
+  return data;
 };

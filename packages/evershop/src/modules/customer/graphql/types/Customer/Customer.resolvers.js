@@ -27,7 +27,7 @@ module.exports = {
           currentFilters.push({
             key: 'full_name',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
         if (filter.key === 'status') {
@@ -35,7 +35,7 @@ module.exports = {
           currentFilters.push({
             key: 'status',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
         if (filter.key === 'email') {
@@ -43,21 +43,21 @@ module.exports = {
           currentFilters.push({
             key: 'email',
             operation: '=',
-            value: filter.value
+            value: filter.value,
           });
         }
       });
 
       const sortBy = filters.find((f) => f.key === 'sortBy');
       const sortOrder = filters.find(
-        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value)
+        (f) => f.key === 'sortOrder' && ['ASC', 'DESC'].includes(f.value),
       ) || { value: 'ASC' };
       if (sortBy && sortBy.value === 'full_name') {
         query.orderBy('customer.full_name', sortOrder.value);
         currentFilters.push({
           key: 'sortBy',
           operation: '=',
-          value: sortBy.value
+          value: sortBy.value,
         });
       } else {
         query.orderBy('customer.customer_id', 'DESC');
@@ -67,7 +67,7 @@ module.exports = {
         currentFilters.push({
           key: 'sortOrder',
           operation: '=',
-          value: sortOrder.value
+          value: sortOrder.value,
         });
       }
       // Clone the main query for getting total right before doing the paging
@@ -80,23 +80,23 @@ module.exports = {
       currentFilters.push({
         key: 'page',
         operation: '=',
-        value: page.value
+        value: page.value,
       });
       currentFilters.push({
         key: 'limit',
         operation: '=',
-        value: limit.value
+        value: limit.value,
       });
       query.limit(
         (page.value - 1) * parseInt(limit.value, 10),
-        parseInt(limit.value, 10)
+        parseInt(limit.value, 10),
       );
       return {
         items: (await query.execute(pool)).map((row) => camelCase(row)),
         total: (await cloneQuery.load(pool)).total,
-        currentFilters
+        currentFilters,
       };
-    }
+    },
   },
   Customer: {
     url: ({ urlKey }) => buildUrl('customerView', { url_key: urlKey }),
@@ -117,6 +117,6 @@ module.exports = {
         .where('order.customer_id', '=', customerId)
         .execute(pool);
       return orders.map((row) => camelCase(row));
-    }
-  }
+    },
+  },
 };

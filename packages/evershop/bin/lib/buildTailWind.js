@@ -2,15 +2,15 @@ const fs = require('fs');
 const { mkdir, writeFile } = require('fs').promises;
 const path = require('path');
 const {
-  getComponentsByRoute
+  getComponentsByRoute,
 } = require('@evershop/evershop/src/lib/componee/getComponentsByRoute');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const {
-  getRouteBuildPath
+  getRouteBuildPath,
 } = require('@evershop/evershop/src/lib/webpack/getRouteBuildPath');
 const dependencyTree = require('dependency-tree');
 const {
-  isBuildRequired
+  isBuildRequired,
 } = require('@evershop/evershop/src/lib/webpack/isBuildRequired');
 const postcss = require('postcss');
 const tailwindcss = require('tailwindcss');
@@ -21,7 +21,7 @@ const autoprefixer = require('autoprefixer');
  */
 module.exports.buildTailwind = async function buildTailwind(
   routes,
-  clientOnly = false
+  clientOnly = false,
 ) {
   await Promise.all(
     routes.map(async (route) => {
@@ -43,10 +43,9 @@ module.exports.buildTailwind = async function buildTailwind(
         const list = dependencyTree.toList({
           filename: module,
           directory: CONSTANTS.ROOTPATH,
-          filter: (path) =>
-            path.indexOf('.js') !== -1 &&
-            (path.indexOf('node_modules') === -1 ||
-              path.indexOf('@evershop') !== -1)
+          filter: (path) => path.indexOf('.js') !== -1
+            && (path.indexOf('node_modules') === -1
+              || path.indexOf('@evershop') !== -1),
         });
 
         listModules = [...listModules, ...list];
@@ -61,31 +60,29 @@ module.exports.buildTailwind = async function buildTailwind(
       if (route.isAdmin) {
         if (
           fs.existsSync(
-            path.join(CONSTANTS.ROOTPATH, 'tailwind.admin.config.js')
+            path.join(CONSTANTS.ROOTPATH, 'tailwind.admin.config.js'),
           )
         ) {
           tailwindConfig = require(path.join(
             CONSTANTS.ROOTPATH,
-            'tailwind.admin.config.js'
+            'tailwind.admin.config.js',
           ));
         }
-      } else {
-        if (
-          fs.existsSync(
-            path.join(CONSTANTS.ROOTPATH, 'tailwind.frontStore.config.js')
-          )
-        ) {
-          tailwindConfig = require(path.join(
-            CONSTANTS.ROOTPATH,
-            'tailwind.frontStore.config.js'
-          ));
-        }
+      } else if (
+        fs.existsSync(
+          path.join(CONSTANTS.ROOTPATH, 'tailwind.frontStore.config.js'),
+        )
+      ) {
+        tailwindConfig = require(path.join(
+          CONSTANTS.ROOTPATH,
+          'tailwind.frontStore.config.js',
+        ));
       }
 
       // Merge defaultTailwindConfig with tailwindConfigJs
       const mergedTailwindConfig = Object.assign(
         defaultTailwindConfig,
-        tailwindConfig
+        tailwindConfig,
       );
       // get list of modules that are used in the webpack build
 
@@ -100,7 +97,7 @@ module.exports.buildTailwind = async function buildTailwind(
 @tailwind utilities;`;
         const tailwindCssResult = postcss([
           tailwindcss(mergedTailwindConfig),
-          autoprefixer
+          autoprefixer,
         ]).process(c);
 
         // get the css from the result
@@ -110,11 +107,11 @@ module.exports.buildTailwind = async function buildTailwind(
         }
         await writeFile(
           path.resolve(subPath, 'client', 'tailwind.scss'),
-          tailwindCss
+          tailwindCss,
         );
       } catch (error) {
         throw new Error(error);
       }
-    })
+    }),
   );
 };

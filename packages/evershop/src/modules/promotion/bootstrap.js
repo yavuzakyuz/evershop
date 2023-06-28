@@ -11,25 +11,22 @@ module.exports = () => {
       key: 'coupon',
       resolvers: [
         async function resolver() {
-          const coupon =
-            this.dataSource.coupon ?? this.dataSource.coupon ?? null;
+          const coupon = this.dataSource.coupon ?? this.dataSource.coupon ?? null;
           if (coupon) {
             const validator = new Validator();
             const check = await validator.validate(
               this.dataSource.coupon,
-              this
+              this,
             );
             if (check === true) {
               return coupon;
-            } else {
-              return null;
             }
-          } else {
             return null;
           }
-        }
+          return null;
+        },
       ],
-      dependencies: ['items'] // TODO: Add customer id and customer group id as a dependency
+      dependencies: ['items'], // TODO: Add customer id and customer group id as a dependency
     },
     {
       key: 'discount_amount',
@@ -63,24 +60,24 @@ module.exports = () => {
           }
 
           return discountAmount;
-        }
+        },
       ],
-      dependencies: ['coupon']
+      dependencies: ['coupon'],
     },
     {
       key: 'grand_total',
       resolvers: [
         async function resolver(previousValue) {
           return previousValue - this.getData('discount_amount');
-        }
+        },
       ],
-      dependencies: ['discount_amount']
+      dependencies: ['discount_amount'],
     },
     {
       key: 'shipping_fee_excl_tax', // This is to make sure the shipping fee is calculated after the coupon validation
       resolvers: [],
-      dependencies: ['coupon']
-    }
+      dependencies: ['coupon'],
+    },
   ].forEach((field) => {
     Cart.addField(field.key, field.resolvers, field.dependencies);
   });
@@ -93,21 +90,20 @@ module.exports = () => {
         async function resolver() {
           if (this.dataSource.discount_amount) {
             return toPrice(this.dataSource.discount_amount);
-          } else {
-            return 0;
           }
-        }
-      ]
+          return 0;
+        },
+      ],
     },
     {
       key: 'total',
       resolvers: [
         async function resolver(previousValue) {
           return previousValue - this.getData('discount_amount');
-        }
+        },
       ],
-      dependencies: ['discount_amount']
-    }
+      dependencies: ['discount_amount'],
+    },
   ].forEach((field) => {
     Item.addField(field.key, field.resolvers, field.dependencies);
   });

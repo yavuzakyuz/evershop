@@ -10,7 +10,7 @@ const {
   execute,
   startTransaction,
   commit,
-  rollback
+  rollback,
 } = require('@evershop/postgres-query-builder');
 const { prompt } = require('enquirer');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
@@ -22,7 +22,6 @@ function error(e) {
   if (typeof e === 'string') {
     // eslint-disable-next-line no-console
     console.log(`\n❌ ${red(e)}\n`);
-    return;
   } else {
     // eslint-disable-next-line no-console
     console.log(`\n❌ ${red(e.message)}\n${e.stack}`);
@@ -42,8 +41,8 @@ async function install() {
       titleAlignment: 'center',
       padding: 1,
       margin: 1,
-      borderColor: 'green'
-    })
+      borderColor: 'green',
+    }),
   );
 
   const dbQuestions = [
@@ -51,32 +50,32 @@ async function install() {
       type: 'input',
       name: 'databaseHost',
       message: 'MySql Database Host (localhost)',
-      initial: 'localhost'
+      initial: 'localhost',
     },
     {
       type: 'input',
       name: 'databasePort',
       message: 'MySql Database Port (5432)',
-      initial: 5432
+      initial: 5432,
     },
     {
       type: 'input',
       name: 'databaseName',
       message: 'MySql Database Name (evershop)',
-      initial: 'evershop'
+      initial: 'evershop',
     },
     {
       type: 'input',
       name: 'databaseUser',
       message: 'MySql Database User (postgres)',
-      initial: 'postgres'
+      initial: 'postgres',
     },
     {
       type: 'input',
       name: 'databasePassword',
       message: 'PostgreSQL Database Password (<empty>)',
-      initial: ''
-    }
+      initial: '',
+    },
   ];
 
   try {
@@ -95,13 +94,13 @@ async function install() {
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
     ssl: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+    },
   });
 
   // Test the secure connection
   try {
-    await pool.query(`SELECT 1`);
+    await pool.query('SELECT 1');
   } catch (e) {
     if (e.message.includes('does not support SSL')) {
       pool = new Pool({
@@ -111,7 +110,7 @@ async function install() {
         password: db.databasePassword,
         database: db.databaseName,
         dateStrings: true,
-        connectionLimit: 10
+        connectionLimit: 10,
       });
     } else {
       error(e);
@@ -121,10 +120,10 @@ async function install() {
 
   // Check postgres database version
   try {
-    const { rows } = await execute(pool, `SHOW SERVER_VERSION;`);
+    const { rows } = await execute(pool, 'SHOW SERVER_VERSION;');
     if (rows[0].server_version < '13.0') {
       error(
-        `Your database server version(${rows[0].server_version}) is not supported. Please upgrade to PostgreSQL version 13.0 or higher`
+        `Your database server version(${rows[0].server_version}) is not supported. Please upgrade to PostgreSQL version 13.0 or higher`,
       );
       process.exit(0);
     }
@@ -137,7 +136,7 @@ async function install() {
     {
       type: 'input',
       name: 'fullName',
-      message: 'Your full name'
+      message: 'Your full name',
     },
     {
       type: 'input',
@@ -147,13 +146,13 @@ async function install() {
         if (
           !value.match(
             // eslint-disable-next-line no-useless-escape
-            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
           )
         ) {
           return 'Invalid email';
         }
         return true;
-      }
+      },
     },
     {
       type: 'password',
@@ -170,8 +169,8 @@ async function install() {
           return 'Your password must contain at least one digit.';
         }
         return true;
-      }
-    }
+      },
+    },
   ];
 
   try {
@@ -186,14 +185,14 @@ async function install() {
   messages.push('Creating configuration file');
   const spinner = ora({
     text: green(messages.join('\n')),
-    spinner: 'dots12'
+    spinner: 'dots12',
   }).start();
   spinner.start();
 
   /* Create folders */
   await mkdir(path.resolve(CONSTANTS.ROOTPATH, 'config'), { recursive: true });
   const configuration = JSON.parse(
-    readFileSync(path.resolve(__dirname, './templates/config.json'), 'utf-8')
+    readFileSync(path.resolve(__dirname, './templates/config.json'), 'utf-8'),
   );
 
   // Update databse information
@@ -202,13 +201,13 @@ async function install() {
     port: db.databasePort,
     database: db.databaseName,
     user: db.databaseUser,
-    password: db.databasePassword
+    password: db.databasePassword,
   };
 
   // Create a configuration file
   await writeFile(
     path.resolve(CONSTANTS.ROOTPATH, 'config', 'default.json'),
-    JSON.stringify(configuration, null, 4)
+    JSON.stringify(configuration, null, 4),
   );
 
   // Reload configuration
@@ -239,52 +238,52 @@ async function install() {
   const modules = [
     {
       name: 'auth',
-      resolve: path.resolve(__dirname, '../../src/modules/auth')
+      resolve: path.resolve(__dirname, '../../src/modules/auth'),
     },
     {
       name: 'base',
-      resolve: path.resolve(__dirname, '../../src/modules/base')
+      resolve: path.resolve(__dirname, '../../src/modules/base'),
     },
     {
       name: 'catalog',
-      resolve: path.resolve(__dirname, '../../src/modules/catalog')
+      resolve: path.resolve(__dirname, '../../src/modules/catalog'),
     },
     {
       name: 'checkout',
-      resolve: path.resolve(__dirname, '../../src/modules/checkout')
+      resolve: path.resolve(__dirname, '../../src/modules/checkout'),
     },
     {
       name: 'cms',
-      resolve: path.resolve(__dirname, '../../src/modules/cms')
+      resolve: path.resolve(__dirname, '../../src/modules/cms'),
     },
     {
       name: 'cod',
-      resolve: path.resolve(__dirname, '../../src/modules/cod')
+      resolve: path.resolve(__dirname, '../../src/modules/cod'),
     },
     {
       name: 'customer',
-      resolve: path.resolve(__dirname, '../../src/modules/customer')
+      resolve: path.resolve(__dirname, '../../src/modules/customer'),
     },
     {
       name: 'graphql',
-      resolve: path.resolve(__dirname, '../../src/modules/graphql')
+      resolve: path.resolve(__dirname, '../../src/modules/graphql'),
     },
     {
       name: 'paypal',
-      resolve: path.resolve(__dirname, '../../src/modules/paypal')
+      resolve: path.resolve(__dirname, '../../src/modules/paypal'),
     },
     {
       name: 'promotion',
-      resolve: path.resolve(__dirname, '../../src/modules/promotion')
+      resolve: path.resolve(__dirname, '../../src/modules/promotion'),
     },
     {
       name: 'setting',
-      resolve: path.resolve(__dirname, '../../src/modules/setting')
+      resolve: path.resolve(__dirname, '../../src/modules/setting'),
     },
     {
       name: 'stripe',
-      resolve: path.resolve(__dirname, '../../src/modules/stripe')
-    }
+      resolve: path.resolve(__dirname, '../../src/modules/stripe'),
+    },
   ];
 
   try {
@@ -304,16 +303,16 @@ async function install() {
   console.log(
     boxen(
       green(
-        'Installation completed!. Run `npm run build` and `npm run start` to launch your store'
+        'Installation completed!. Run `npm run build` and `npm run start` to launch your store',
       ),
       {
         title: 'EverShop',
         titleAlignment: 'center',
         padding: 1,
         margin: 1,
-        borderColor: 'green'
-      }
-    )
+        borderColor: 'green',
+      },
+    ),
   );
   process.exit(0);
 }

@@ -6,5 +6,5 @@ fs.copyFile(
   path.resolve(__dirname, './README.md'),
   (err) => {
     if (err) throw err;
-  }
+  },
 );

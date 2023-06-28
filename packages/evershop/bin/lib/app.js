@@ -3,15 +3,15 @@
 /* eslint-disable global-require */
 const express = require('express');
 const {
-  getModuleMiddlewares
+  getModuleMiddlewares,
 } = require('@evershop/evershop/src/lib/middleware');
 const { getRoutes } = require('@evershop/evershop/src/lib/router/Router');
-const { getCoreModules } = require('./loadModules');
-const { addDefaultMiddlewareFuncs } = require('./addDefaultMiddlewareFuncs');
 const {
-  loadModuleRoutes
+  loadModuleRoutes,
 } = require('@evershop/evershop/src/lib/router/loadModuleRoutes');
 const { Handler } = require('@evershop/evershop/src/lib/middleware/Handler');
+const { getCoreModules } = require('./loadModules');
+const { addDefaultMiddlewareFuncs } = require('./addDefaultMiddlewareFuncs');
 const { getEnabledExtensions } = require('../extension');
 
 module.exports.createApp = () => {
@@ -54,15 +54,15 @@ module.exports.createApp = () => {
   // Adding default middlewares
   addDefaultMiddlewareFuncs(app, routes);
 
-  /** Hack for 'no route' case*/
+  /** Hack for 'no route' case */
   routes.push({
     id: 'noRoute',
     path: '/*',
-    method: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+    method: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   });
 
   routes.forEach((route) => {
-    //app.all(route.path, Handler.middleware());
+    // app.all(route.path, Handler.middleware());
     route.method.forEach((method) => {
       switch (method.toUpperCase()) {
         case 'GET':

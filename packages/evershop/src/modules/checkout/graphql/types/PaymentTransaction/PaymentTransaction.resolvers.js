@@ -9,6 +9,6 @@ module.exports = {
         .where('payment_transaction_order_id', '=', orderId)
         .execute(pool);
       return items.map((item) => camelCase(item));
-    }
-  }
+    },
+  },
 };

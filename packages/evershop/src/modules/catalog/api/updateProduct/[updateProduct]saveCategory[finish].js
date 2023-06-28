@@ -7,7 +7,7 @@ const {
   select,
   del,
   update,
-  execute
+  execute,
 } = require('@evershop/postgres-query-builder');
 const { get } = require('@evershop/evershop/src/lib/util/get');
 
@@ -25,20 +25,20 @@ module.exports = async (request, response, delegate) => {
     .where('uuid', '=', request.params.id)
     .load(connection);
 
-  if (product['variant_group_id']) {
+  if (product.variant_group_id) {
     const promises = [];
     const variants = await select()
       .from('product')
-      .where('variant_group_id', '=', product['variant_group_id'])
+      .where('variant_group_id', '=', product.variant_group_id)
       .execute(connection);
 
     for (let i = 0; i < variants.length; i += 1) {
       promises.push(
         await update('product')
           .given({ category_id: categoryId })
-          .where('variant_group_id', '=', product['variant_group_id'])
+          .where('variant_group_id', '=', product.variant_group_id)
           .and('product_id', '!=', productId)
-          .execute(connection, false)
+          .execute(connection, false),
       );
     }
     await Promise.all(promises);
@@ -53,7 +53,7 @@ async function saveProductCategory(productId, category, connection) {
       UNION
       SELECT c.* FROM category c
       INNER JOIN parent_categories pc ON c.category_id = pc.parent_id
-    ) SELECT * FROM parent_categories`
+    ) SELECT * FROM parent_categories`,
   );
 
   // Delete all the product_category records
@@ -66,7 +66,7 @@ async function saveProductCategory(productId, category, connection) {
     await insertOnUpdate('product_category')
       .given({
         product_id: productId,
-        category_id: parentCategories[i].category_id
+        category_id: parentCategories[i].category_id,
       })
       .execute(connection);
   }

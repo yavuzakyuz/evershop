@@ -3,7 +3,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const { get } = require('@evershop/evershop/src/lib/util/get');
 const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = async (request, response, delegate, next) => {
@@ -15,14 +15,14 @@ module.exports = async (request, response, delegate, next) => {
       .on(
         'product.product_id',
         '=',
-        'product_description.product_description_product_id'
+        'product_description.product_description_product_id',
       );
     query
       .innerJoin('product_inventory')
       .on(
         'product.product_id',
         '=',
-        'product_inventory.product_inventory_product_id'
+        'product_inventory.product_inventory_product_id',
       );
     query.where('product.uuid', '=', request.params.uuid);
     query.andWhere('status', '=', 1);
@@ -34,13 +34,13 @@ module.exports = async (request, response, delegate, next) => {
     } else {
       const queries = request.query;
       if (
-        !get(product, 'variant_group_id') ||
-        Object.values(queries).length === 0
+        !get(product, 'variant_group_id')
+        || Object.values(queries).length === 0
       ) {
         setContextValue(request, 'productId', product.product_id);
         setContextValue(request, 'pageInfo', {
           title: product.meta_title || product.name,
-          description: product.meta_description || product.short_description
+          description: product.meta_description || product.short_description,
         });
       } else {
         const group = await select()
@@ -58,7 +58,7 @@ module.exports = async (request, response, delegate, next) => {
           .where(
             'attribute_id',
             'IN',
-            Object.values(group).filter((v) => v != null)
+            Object.values(group).filter((v) => v != null),
           )
           .and('attribute_code', 'IN', Object.keys(queries))
           .execute(pool);
@@ -74,7 +74,7 @@ module.exports = async (request, response, delegate, next) => {
             .on(
               'p.product_id',
               '=',
-              'product_inventory.product_inventory_product_id'
+              'product_inventory.product_inventory_product_id',
             );
           vsQuery
             .innerJoin('product_attribute_value_index', 'a')
@@ -93,20 +93,20 @@ module.exports = async (request, response, delegate, next) => {
                     'AND',
                     'product_inventory.stock_availability',
                     '=',
-                    true
-                  )
+                    true,
+                  ),
               );
           }
           vsQuery
             .andWhere(
               'a.attribute_id',
               'IN',
-              attributes.map((a) => a.attribute_id)
+              attributes.map((a) => a.attribute_id),
             )
             .and(
               'a.option_id',
               'IN',
-              attributes.map((a) => queries[a.attribute_code])
+              attributes.map((a) => queries[a.attribute_code]),
             );
           vsQuery.groupBy('p.product_id');
           vsQuery.having('COUNT(p.product_id)', '>=', attributes.length);
@@ -120,34 +120,34 @@ module.exports = async (request, response, delegate, next) => {
               .on(
                 'product.product_id',
                 '=',
-                'product_description.product_description_product_id'
+                'product_description.product_description_product_id',
               );
             variantQuery
               .innerJoin('product_inventory')
               .on(
                 'product.product_id',
                 '=',
-                'product_inventory.product_inventory_product_id'
+                'product_inventory.product_inventory_product_id',
               );
             variantQuery.where('product_id', '=', variants[0].product_id);
             const pv = await variantQuery.load(pool);
             setContextValue(request, 'productId', pv.product_id);
             setContextValue(request, 'pageInfo', {
               title: pv.meta_title || pv.name,
-              description: pv.meta_description || pv.short_description
+              description: pv.meta_description || pv.short_description,
             });
           } else {
             setContextValue(request, 'productId', product.product_id);
             setContextValue(request, 'pageInfo', {
               title: product.meta_title || product.name,
-              description: product.meta_description || product.short_description
+              description: product.meta_description || product.short_description,
             });
           }
         } else {
           setContextValue(request, 'productId', product.product_id);
           setContextValue(request, 'pageInfo', {
             title: product.meta_title || product.name,
-            description: product.meta_description || product.short_description
+            description: product.meta_description || product.short_description,
           });
         }
       }

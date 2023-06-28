@@ -47,7 +47,7 @@ function parse(e, t) {
         repeat: R,
         partial: y,
         asterisk: !!m,
-        pattern: v ? escapeGroup(v) : m ? '.*' : `[^${escapeString(E)}]+?`
+        pattern: v ? escapeGroup(v) : m ? '.*' : `[^${escapeString(E)}]+?`,
       });
     }
   }
@@ -59,18 +59,17 @@ function compile(e, t) {
 function encodeURIComponentPretty(e) {
   return encodeURI(e).replace(
     /[\/?#]/g,
-    (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`
+    (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`,
   );
 }
 function encodeAsterisk(e) {
   return encodeURI(e).replace(
     /[?#]/g,
-    (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`
+    (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`,
   );
 }
 function tokensToFunction(e) {
-  for (var t = new Array(e.length), r = 0; r < e.length; r++)
-    typeof e[r] === 'object' && (t[r] = new RegExp(`^(?:${e[r].pattern})$`));
+  for (var t = new Array(e.length), r = 0; r < e.length; r++) typeof e[r] === 'object' && (t[r] = new RegExp(`^(?:${e[r].pattern})$`));
   return function (r, n) {
     for (
       var o = '',
@@ -93,30 +92,33 @@ function tokensToFunction(e) {
           throw new TypeError(`Expected "${c.name}" to be defined`);
         }
         if (isarray(l)) {
-          if (!c.repeat)
+          if (!c.repeat) {
             throw new TypeError(
               `Expected "${
                 c.name
-              }" to not repeat, but received \`${JSON.stringify(l)}\``
+              }" to not repeat, but received \`${JSON.stringify(l)}\``,
             );
+          }
           if (l.length === 0) {
             if (c.optional) continue;
             throw new TypeError(`Expected "${c.name}" to not be empty`);
           }
           for (let g = 0; g < l.length; g++) {
-            if (((u = p(l[g])), !t[s].test(u)))
+            if (((u = p(l[g])), !t[s].test(u))) {
               throw new TypeError(
                 `Expected all "${c.name}" to match "${
                   c.pattern
-                }", but received \`${JSON.stringify(u)}\``
+                }", but received \`${JSON.stringify(u)}\``,
               );
+            }
             o += (g === 0 ? c.prefix : c.delimiter) + u;
           }
         } else {
-          if (((u = c.asterisk ? encodeAsterisk(l) : p(l)), !t[s].test(u)))
+          if (((u = c.asterisk ? encodeAsterisk(l) : p(l)), !t[s].test(u))) {
             throw new TypeError(
-              `Expected "${c.name}" to match "${c.pattern}", but received "${u}"`
+              `Expected "${c.name}" to match "${c.pattern}", but received "${u}"`,
             );
+          }
           o += c.prefix + u;
         }
       } else o += c;
@@ -148,15 +150,14 @@ function regexpToRegexp(e, t) {
         repeat: !1,
         partial: !1,
         asterisk: !1,
-        pattern: null
+        pattern: null,
       });
     }
   }
   return attachKeys(e, t);
 }
 function arrayToRegexp(e, t, r) {
-  for (var n = [], o = 0; o < e.length; o++)
-    n.push(pathToRegexp(e[o], t, r).source);
+  for (var n = [], o = 0; o < e.length; o++) n.push(pathToRegexp(e[o], t, r).source);
   return attachKeys(new RegExp(`(?:${n.join('|')})`, flags(r)), t);
 }
 function stringToRegexp(e, t, r) {
@@ -171,13 +172,13 @@ function tokensToRegExp(e, t, r) {
       const s = escapeString(p.prefix);
       let c = `(?:${p.pattern})`;
       t.push(p),
-        p.repeat && (c += `(?:${s}${c})*`),
-        (c = p.optional
-          ? p.partial
-            ? `${s}(${c})?`
-            : `(?:${s}(${c}))?`
-          : `${s}(${c})`),
-        (a += c);
+      p.repeat && (c += `(?:${s}${c})*`),
+      (c = p.optional
+        ? p.partial
+          ? `${s}(${c})?`
+          : `(?:${s}(${c}))?`
+        : `${s}(${c})`),
+      (a += c);
     }
   }
   const u = escapeString(r.delimiter || '/');
@@ -195,8 +196,8 @@ function pathToRegexp(e, t, r) {
     e instanceof RegExp
       ? regexpToRegexp(e, t)
       : isarray(e)
-      ? arrayToRegexp(e, t, r)
-      : stringToRegexp(e, t, r)
+        ? arrayToRegexp(e, t, r)
+        : stringToRegexp(e, t, r)
   );
 }
 var isarray = require('isarray');
@@ -204,12 +205,12 @@ var isarray = require('isarray');
 var PATH_REGEXP = new RegExp(
   [
     '(\\\\.)',
-    '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^\\\\()])+)\\))?|\\(((?:\\\\.|[^\\\\()])+)\\))([+*?])?|(\\*))'
+    '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^\\\\()])+)\\))?|\\(((?:\\\\.|[^\\\\()])+)\\))([+*?])?|(\\*))',
   ].join('|'),
-  'g'
+  'g',
 );
 (module.exports = pathToRegexp),
-  (module.exports.parse = parse),
-  (module.exports.compile = compile),
-  (module.exports.tokensToFunction = tokensToFunction),
-  (module.exports.tokensToRegExp = tokensToRegExp);
+(module.exports.parse = parse),
+(module.exports.compile = compile),
+(module.exports.tokensToFunction = tokensToFunction),
+(module.exports.tokensToRegExp = tokensToRegExp);

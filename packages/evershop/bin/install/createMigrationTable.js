@@ -1,7 +1,7 @@
 const { execute } = require('@evershop/postgres-query-builder');
 
 module.exports.createMigrationTable = async function createMigrationTable(
-  connection
+  connection,
 ) {
   await execute(
     connection,
@@ -12,6 +12,6 @@ module.exports.createMigrationTable = async function createMigrationTable(
         "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT "MODULE_UNIQUE" UNIQUE ("module")
-        )`
+        )`,
   );
 };

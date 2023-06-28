@@ -16,7 +16,7 @@ module.exports.watchSchema = function (event, path) {
   // Delete buildSchema.js cache
   delete require.cache[
     require.resolve(
-      resolve(CONSTANTS.MOLDULESPATH, 'graphql/services/buildSchema')
+      resolve(CONSTANTS.MOLDULESPATH, 'graphql/services/buildSchema'),
     )
   ];
   require(resolve(CONSTANTS.MOLDULESPATH, 'graphql/services/buildSchema'));

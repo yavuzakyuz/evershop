@@ -16,7 +16,7 @@ module.exports = exports = async (connection) => {
   "is_filterable" boolean NOT NULL DEFAULT FALSE,
   CONSTRAINT "ATTRIBUTE_CODE_UNIQUE" UNIQUE ("attribute_code"),
   CONSTRAINT "ATTRIBUTE_CODE_UUID_UNIQUE" UNIQUE ("uuid")
-)`
+)`,
   );
 
   const color = await insert('attribute')
@@ -26,7 +26,7 @@ module.exports = exports = async (connection) => {
       type: 'select',
       is_required: 0,
       display_on_frontend: 1,
-      is_filterable: 1
+      is_filterable: 1,
     })
     .execute(connection);
   const size = await insert('attribute')
@@ -36,7 +36,7 @@ module.exports = exports = async (connection) => {
       type: 'select',
       is_required: 0,
       display_on_frontend: 1,
-      is_filterable: 1
+      is_filterable: 1,
     })
     .execute(connection);
   await execute(
@@ -49,19 +49,19 @@ module.exports = exports = async (connection) => {
   "option_text" varchar NOT NULL,
   CONSTRAINT "ATTRIBUTE_OPTION_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_ATTRIBUTE_OPTION" FOREIGN KEY ("attribute_id") REFERENCES "attribute" ("attribute_id") ON DELETE CASCADE
-)`
+)`,
   );
 
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_OPTION" ON "attribute_option" ("attribute_id")`
+    'CREATE INDEX "FK_ATTRIBUTE_OPTION" ON "attribute_option" ("attribute_id")',
   );
 
   await insert('attribute_option')
     .given({
       attribute_id: color.insertId,
       attribute_code: 'color',
-      option_text: 'White'
+      option_text: 'White',
     })
     .execute(connection);
 
@@ -69,7 +69,7 @@ module.exports = exports = async (connection) => {
     .given({
       attribute_id: color.insertId,
       attribute_code: 'color',
-      option_text: 'Black'
+      option_text: 'Black',
     })
     .execute(connection);
 
@@ -77,7 +77,7 @@ module.exports = exports = async (connection) => {
     .given({
       attribute_id: color.insertId,
       attribute_code: 'color',
-      option_text: 'Yellow'
+      option_text: 'Yellow',
     })
     .execute(connection);
 
@@ -85,7 +85,7 @@ module.exports = exports = async (connection) => {
     .given({
       attribute_id: size.insertId,
       attribute_code: 'size',
-      option_text: 'XXL'
+      option_text: 'XXL',
     })
     .execute(connection);
 
@@ -93,7 +93,7 @@ module.exports = exports = async (connection) => {
     .given({
       attribute_id: size.insertId,
       attribute_code: 'size',
-      option_text: 'XL'
+      option_text: 'XL',
     })
     .execute(connection);
 
@@ -101,7 +101,7 @@ module.exports = exports = async (connection) => {
     .given({
       attribute_id: size.insertId,
       attribute_code: 'size',
-      option_text: 'SM'
+      option_text: 'SM',
     })
     .execute(connection);
 
@@ -114,7 +114,7 @@ module.exports = exports = async (connection) => {
   "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "ATTRIBUTE_GROUP_UUID_UNIQUE" UNIQUE ("uuid")
-)`
+)`,
   );
 
   const defaultGroup = await insert('attribute_group')
@@ -130,28 +130,28 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "ATTRIBUTE_GROUP_LINK_UNIQUE" UNIQUE ("attribute_id","group_id"),
   CONSTRAINT "FK_ATTRIBUTE_LINK" FOREIGN KEY ("attribute_id") REFERENCES "attribute" ("attribute_id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "FK_GROUP_LINK" FOREIGN KEY ("group_id") REFERENCES "attribute_group" ("attribute_group_id") ON DELETE CASCADE
-)`
+)`,
   );
 
   await execute(
     connection,
-    `CREATE INDEX "FK_GROUP_LINK" ON "attribute_group_link" ("group_id")`
+    'CREATE INDEX "FK_GROUP_LINK" ON "attribute_group_link" ("group_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_LINK" ON "attribute_group_link" ("attribute_id")`
+    'CREATE INDEX "FK_ATTRIBUTE_LINK" ON "attribute_group_link" ("attribute_id")',
   );
 
   await insert('attribute_group_link')
     .given({
       group_id: defaultGroup.insertId,
-      attribute_id: color.insertId
+      attribute_id: color.insertId,
     })
     .execute(connection);
   await insert('attribute_group_link')
     .given({
       group_id: defaultGroup.insertId,
-      attribute_id: size.insertId
+      attribute_id: size.insertId,
     })
     .execute(connection);
 
@@ -174,32 +174,32 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "FK_ATTRIBUTE_VARIANT_ONE" FOREIGN KEY ("attribute_one") REFERENCES "attribute" ("attribute_id") ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT "FK_ATTRIBUTE_VARIANT_THREE" FOREIGN KEY ("attribute_three") REFERENCES "attribute" ("attribute_id") ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT "FK_ATTRIBUTE_VARIANT_TWO" FOREIGN KEY ("attribute_two") REFERENCES "attribute" ("attribute_id") ON DELETE CASCADE ON UPDATE NO ACTION
-)`
+)`,
   );
 
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_VARIANT_ONE" ON "variant_group" ("attribute_one")`
+    'CREATE INDEX "FK_ATTRIBUTE_VARIANT_ONE" ON "variant_group" ("attribute_one")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_VARIANT_TWO" ON "variant_group" ("attribute_two")`
+    'CREATE INDEX "FK_ATTRIBUTE_VARIANT_TWO" ON "variant_group" ("attribute_two")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_VARIANT_THREE" ON "variant_group" ("attribute_three")`
+    'CREATE INDEX "FK_ATTRIBUTE_VARIANT_THREE" ON "variant_group" ("attribute_three")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_VARIANT_FOUR" ON "variant_group" ("attribute_four")`
+    'CREATE INDEX "FK_ATTRIBUTE_VARIANT_FOUR" ON "variant_group" ("attribute_four")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_VARIANT_FIVE" ON "variant_group" ("attribute_five")`
+    'CREATE INDEX "FK_ATTRIBUTE_VARIANT_FIVE" ON "variant_group" ("attribute_five")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_GROUP_VARIANT" ON "variant_group" ("attribute_group_id")`
+    'CREATE INDEX "FK_ATTRIBUTE_GROUP_VARIANT" ON "variant_group" ("attribute_group_id")',
   );
 
   await execute(
@@ -228,16 +228,16 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "UNSIGNED_WEIGHT" CHECK(weight >= 0),
   CONSTRAINT "FK_PRODUCT_ATTRIBUTE_GROUP" FOREIGN KEY ("group_id") REFERENCES "attribute_group" ("attribute_group_id") ON DELETE SET NULL,
   CONSTRAINT "FK_PRODUCT_VARIANT_GROUP" FOREIGN KEY ("variant_group_id") REFERENCES "variant_group" ("variant_group_id") ON DELETE SET NULL
-)`
+)`,
   );
 
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_ATTRIBUTE_GROUP" ON "product" ("group_id")`
+    'CREATE INDEX "FK_PRODUCT_ATTRIBUTE_GROUP" ON "product" ("group_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_VARIANT_GROUP" ON "product" ("variant_group_id")`
+    'CREATE INDEX "FK_PRODUCT_VARIANT_GROUP" ON "product" ("variant_group_id")',
   );
 
   await execute(
@@ -254,19 +254,19 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "FK_ATTRIBUTE_OPTION_VALUE_LINK" FOREIGN KEY ("option_id") REFERENCES "attribute_option" ("attribute_option_id") ON DELETE CASCADE,
   CONSTRAINT "FK_ATTRIBUTE_VALUE_LINK" FOREIGN KEY ("attribute_id") REFERENCES "attribute" ("attribute_id") ON DELETE CASCADE,
   CONSTRAINT "FK_PRODUCT_ATTRIBUTE_LINK" FOREIGN KEY ("product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_VALUE_LINK" ON "product_attribute_value_index" ("attribute_id")`
+    'CREATE INDEX "FK_ATTRIBUTE_VALUE_LINK" ON "product_attribute_value_index" ("attribute_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_ATTRIBUTE_OPTION_VALUE_LINK" ON "product_attribute_value_index" ("option_id")`
+    'CREATE INDEX "FK_ATTRIBUTE_OPTION_VALUE_LINK" ON "product_attribute_value_index" ("option_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_ATTRIBUTE_LINK" ON "product_attribute_value_index" ("product_id")`
+    'CREATE INDEX "FK_PRODUCT_ATTRIBUTE_LINK" ON "product_attribute_value_index" ("product_id")',
   );
 
   await execute(
@@ -281,11 +281,11 @@ module.exports = exports = async (connection) => {
   "sort_order" INT DEFAULT NULL,
   CONSTRAINT "PRODUCT_CUSTOM_OPTION_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_PRODUCT_CUSTOM_OPTION" FOREIGN KEY ("product_custom_option_product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_CUSTOM_OPTION" ON "product_custom_option" ("product_custom_option_product_id")`
+    'CREATE INDEX "FK_PRODUCT_CUSTOM_OPTION" ON "product_custom_option" ("product_custom_option_product_id")',
   );
 
   await execute(
@@ -299,11 +299,11 @@ module.exports = exports = async (connection) => {
   "value" varchar NOT NULL,
   CONSTRAINT "PRODUCT_CUSTOM_OPTION_VALUE_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_CUSTOM_OPTION_VALUE" FOREIGN KEY ("option_id") REFERENCES "product_custom_option" ("product_custom_option_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CUSTOM_OPTION_VALUE" ON "product_custom_option_value" ("option_id")`
+    'CREATE INDEX "FK_CUSTOM_OPTION_VALUE" ON "product_custom_option_value" ("option_id")',
   );
 
   await execute(
@@ -321,11 +321,11 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "PRODUCT_ID_UNIQUE" UNIQUE ("product_description_product_id"),
   CONSTRAINT "PRODUCT_URL_KEY_UNIQUE" UNIQUE ("url_key"),
   CONSTRAINT "FK_PRODUCT_DESCRIPTION" FOREIGN KEY ("product_description_product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_DESCRIPTION" ON "product_description" ("product_description_product_id")`
+    'CREATE INDEX "FK_PRODUCT_DESCRIPTION" ON "product_description" ("product_description_product_id")',
   );
 
   await execute(
@@ -337,11 +337,11 @@ module.exports = exports = async (connection) => {
   "image" varchar NOT NULL,
   CONSTRAINT "PRODUCT_IMAGE_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_PRODUCT_IMAGE_LINK" FOREIGN KEY ("product_image_product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_IMAGE_LINK" ON "product_image" ("product_image_product_id")`
+    'CREATE INDEX "FK_PRODUCT_IMAGE_LINK" ON "product_image" ("product_image_product_id")',
   );
 
   await execute(
@@ -356,7 +356,7 @@ module.exports = exports = async (connection) => {
   "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
    CONSTRAINT "CATEGORY_UUID_UNIQUE" UNIQUE ("uuid")
-)`
+)`,
   );
 
   await execute(
@@ -368,15 +368,15 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "PRODUCT_CATEGORY_UNIQUE" UNIQUE ("category_id","product_id"),
   CONSTRAINT "FK_CATEGORY_PRODUCT_LINK" FOREIGN KEY ("category_id") REFERENCES "category" ("category_id") ON DELETE CASCADE,
   CONSTRAINT "FK_PRODUCT_CATEGORY_LINK" FOREIGN KEY ("product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CATEGORY_PRODUCT_LINK" ON "product_category" ("category_id")`
+    'CREATE INDEX "FK_CATEGORY_PRODUCT_LINK" ON "product_category" ("category_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_CATEGORY_LINK" ON "product_category" ("product_id")`
+    'CREATE INDEX "FK_PRODUCT_CATEGORY_LINK" ON "product_category" ("product_id")',
   );
 
   await execute(
@@ -395,11 +395,11 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "CATEGORY_ID_UNIQUE" UNIQUE ("category_description_category_id"),
   CONSTRAINT "CATEGORY_URL_KEY_UNIQUE" UNIQUE ("url_key"),
   CONSTRAINT "FK_CATEGORY_DESCRIPTION" FOREIGN KEY ("category_description_category_id") REFERENCES "category" ("category_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CATEGORY_DESCRIPTION" ON "category_description" ("category_description_category_id")`
+    'CREATE INDEX "FK_CATEGORY_DESCRIPTION" ON "category_description" ("category_description_category_id")',
   );
 
   // COLLECTION
@@ -416,7 +416,7 @@ module.exports = exports = async (connection) => {
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT "COLLECTION_CODE_UNIQUE" UNIQUE ("code"),
   CONSTRAINT "COLLECTION_UUID_UNIQUE" UNIQUE ("uuid")
-)`
+)`,
   );
 
   await execute(
@@ -428,15 +428,15 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "PRODUCT_COLLECTION_UNIQUE" UNIQUE ("collection_id","product_id"),
   CONSTRAINT "FK_COLLECTION_PRODUCT_LINK" FOREIGN KEY ("collection_id") REFERENCES "collection" ("collection_id") ON DELETE CASCADE,
   CONSTRAINT "FK_PRODUCT_COLLECTION_LINK" FOREIGN KEY ("product_id") REFERENCES "product" ("product_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_COLLECTION_PRODUCT_LINK" ON "product_collection" ("collection_id")`
+    'CREATE INDEX "FK_COLLECTION_PRODUCT_LINK" ON "product_collection" ("collection_id")',
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_PRODUCT_COLLECTION_LINK" ON "product_collection" ("product_id")`
+    'CREATE INDEX "FK_PRODUCT_COLLECTION_LINK" ON "product_collection" ("product_id")',
   );
 
   /* CREATE SOME TRIGGERS */
@@ -454,14 +454,14 @@ module.exports = exports = async (connection) => {
         END IF;
         RETURN OLD;
       END;
-      $$`
+      $$`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "PREVENT_DELETING_THE_DEFAULT_ATTRIBUTE_GROUP"
         BEFORE DELETE ON attribute_group
         FOR EACH ROW
-        EXECUTE PROCEDURE prevent_delete_default_attribute_group();`
+        EXECUTE PROCEDURE prevent_delete_default_attribute_group();`,
   );
 
   // Prevent changing product attribute group if product has variants
@@ -478,14 +478,14 @@ module.exports = exports = async (connection) => {
         END IF;
         RETURN NEW;
       END;
-      $$`
+      $$`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "PREVENT_CHANGING_ATTRIBUTE_GROUP_OF_PRODUCT_WITH_VARIANTS"
         BEFORE UPDATE ON product
         FOR EACH ROW
-        EXECUTE PROCEDURE prevent_change_attribute_group();`
+        EXECUTE PROCEDURE prevent_change_attribute_group();`,
   );
 
   //  Delete product attribute value and variant group when attribute is removed from group
@@ -501,14 +501,14 @@ module.exports = exports = async (connection) => {
         DELETE FROM variant_group WHERE variant_group.attribute_group_id = OLD.group_id AND (variant_group.attribute_one = OLD.attribute_id OR variant_group.attribute_two = OLD.attribute_id OR variant_group.attribute_three = OLD.attribute_id OR variant_group.attribute_four = OLD.attribute_id OR variant_group.attribute_five = OLD.attribute_id);
         RETURN OLD;
       END;
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "TRIGGER_AFTER_REMOVE_ATTRIBUTE_FROM_GROUP" AFTER DELETE ON "attribute_group_link"
      FOR EACH ROW 
      EXECUTE PROCEDURE remove_attribute_from_group();
-    `
+    `,
   );
 
   //  Update product attribute value option text when option is updated
@@ -524,13 +524,13 @@ module.exports = exports = async (connection) => {
         WHERE "product_attribute_value_index".option_id = NEW.attribute_option_id AND "product_attribute_value_index".attribute_id = NEW.attribute_id;
         RETURN NEW;
       END;
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "TRIGGER_AFTER_ATTRIBUTE_OPTION_UPDATE" AFTER UPDATE ON "attribute_option" FOR EACH ROW
     EXECUTE PROCEDURE update_product_attribute_option_value_text();
-    `
+    `,
   );
 
   //  Delete product attribute value index after option is deleted
@@ -545,13 +545,13 @@ module.exports = exports = async (connection) => {
         DELETE FROM "product_attribute_value_index" WHERE "product_attribute_value_index".option_id = OLD.attribute_option_id AND "product_attribute_value_index"."attribute_id" = OLD.attribute_id;
         RETURN OLD;
       END;
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "TRIGGER_AFTER_DELETE_ATTRIBUTE_OPTION" AFTER DELETE ON "attribute_option" FOR EACH ROW
     EXECUTE PROCEDURE delete_product_attribute_value_index();
-    `
+    `,
   );
 
   // Update variant group visibility after new product is added
@@ -566,14 +566,14 @@ module.exports = exports = async (connection) => {
         UPDATE "variant_group" SET visibility = (SELECT bool_or(visibility) FROM "product" WHERE "product"."variant_group_id" = NEW.variant_group_id AND "product"."status" = TRUE) WHERE "variant_group"."variant_group_id" = NEW.variant_group_id;
         RETURN NEW;
       END;
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
     `CREATE CONSTRAINT TRIGGER "TRIGGER_AFTER_INSERT_PRODUCT" AFTER INSERT ON "product" 
     DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW
-    EXECUTE PROCEDURE update_variant_group_visibility();`
+    EXECUTE PROCEDURE update_variant_group_visibility();`,
   );
 
   // Update product attribute index, variant group visibility and product visibility after product is updated
@@ -591,7 +591,7 @@ module.exports = exports = async (connection) => {
         UPDATE "variant_group" SET visibility = (SELECT bool_or(visibility) FROM "product" WHERE "product"."variant_group_id" = NEW.variant_group_id AND "product"."status" = TRUE GROUP BY "product"."variant_group_id") WHERE "variant_group"."variant_group_id" = NEW.variant_group_id;
         RETURN NEW;
       END;
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
@@ -599,7 +599,7 @@ module.exports = exports = async (connection) => {
     DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW
     EXECUTE PROCEDURE update_attribute_index_and_variant_group_visibility();
-    `
+    `,
   );
 
   // Delete variant group when attribute type is changed from select to something else
@@ -616,12 +616,12 @@ module.exports = exports = async (connection) => {
         END IF;
         RETURN NEW;
       END
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "TRIGGER_AFTER_UPDATE_ATTRIBUTE" AFTER UPDATE ON "attribute" FOR EACH ROW
     EXECUTE PROCEDURE delete_variant_group_after_attribute_type_changed();
-    `
+    `,
   );
 };

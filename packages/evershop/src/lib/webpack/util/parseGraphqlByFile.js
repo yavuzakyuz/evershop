@@ -8,7 +8,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
   const result = {
     query: {},
     fragments: {},
-    variables: {}
+    variables: {},
   };
 
   const variables = [];
@@ -16,13 +16,12 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
   const fileSource = fs.readFileSync(module, 'utf8');
   /** Process query */
   // Regex matching export const query = `...` or export const query = "" or export const query = ''
-  const queryRegex =
-    /export\s+const\s+query\s*=\s*`([^`]+)`|export\s+const\s+query\s*=\s*["']([^"']+)["']/g;
+  const queryRegex = /export\s+const\s+query\s*=\s*`([^`]+)`|export\s+const\s+query\s*=\s*["']([^"']+)["']/g;
   const queryMatch = fileSource.match(queryRegex);
   if (queryMatch) {
     let queryBody = queryMatch[0].replace(
       queryRegex,
-      (match, p1, p2) => p1 || p2
+      (match, p1, p2) => p1 || p2,
     );
     // Replace 'getContextValue("key")'
     // or getContextValue('key')
@@ -38,7 +37,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
         // const defaultValue = args[1] ? args[1].replace(/['"]/g, '') : undefined;
         const base64 = Buffer.from(p1).toString('base64');
         return `"getContextValue_${base64}"`;
-      }
+      },
     );
 
     const queryAst = parse(queryBody);
@@ -51,7 +50,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
           // eslint-disable-next-line no-param-reassign
           selection.alias = {
             kind: 'Name',
-            value: newAlias
+            value: newAlias,
           };
         } else {
           // eslint-disable-next-line no-param-reassign
@@ -60,9 +59,9 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
 
         return {
           origin: alias,
-          alias: newAlias
+          alias: newAlias,
         };
-      }
+      },
     );
 
     // Get back the new query string
@@ -82,7 +81,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
         variables.push({
           origin: name,
           type,
-          alias: `v${uniqid()}`
+          alias: `v${uniqid()}`,
         });
       });
     }
@@ -96,7 +95,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
     // Use slice function to get everything between the first '{' and the last '}' in the query
     queryBody = queryBody.slice(
       queryBody.indexOf('{') + 1,
-      queryBody.lastIndexOf('}')
+      queryBody.lastIndexOf('}'),
     );
 
     result.query.source = queryBody;
@@ -108,25 +107,24 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
 
   /** Process fragments */
   // Regex matching export const query = `...` or export const query = "" or export const query = ''
-  const fragmentsRegex =
-    /export\s+const\s+fragments\s*=\s*`([^`]+)`|export\s+const\s+fragments\s*=\s*["']([^"']+)["']/g;
+  const fragmentsRegex = /export\s+const\s+fragments\s*=\s*`([^`]+)`|export\s+const\s+fragments\s*=\s*["']([^"']+)["']/g;
   const fragmentsMatch = fileSource.match(fragmentsRegex);
   const fragmentNames = [];
   if (fragmentsMatch) {
     const fragmentsBody = fragmentsMatch[0].replace(
       fragmentsRegex,
-      (match, p1, p2) => p1 || p2
+      (match, p1, p2) => p1 || p2,
     );
     const fragmentsAst = parse(fragmentsBody);
     fragmentsAst.definitions.forEach((fragment) => {
       if (fragment.kind === 'FragmentDefinition') {
         fragmentNames.push({
           name: fragment.name.value,
-          type: fragment.typeCondition.name.value
+          type: fragment.typeCondition.name.value,
         });
       } else {
         throw new Error(
-          `Only fragments are allowed in 'export const fragments = \`...\`. Error in ${module}`
+          `Only fragments are allowed in 'export const fragments = \`...\`. Error in ${module}`,
         );
       }
     });
@@ -139,7 +137,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
   const fragmentConsumptions = (
     result.query.source.match(/\.\.\.([ ]+)?([a-zA-Z0-9_]+)/g) || []
   ).concat(
-    result.fragments.source.match(/\.\.\.([ ]+)?([a-zA-Z0-9_]+)/g) || []
+    result.fragments.source.match(/\.\.\.([ ]+)?([a-zA-Z0-9_]+)/g) || [],
   );
   if (fragmentConsumptions.length > 0) {
     fragmentConsumptions.forEach((fragmentConsumption) => {
@@ -147,7 +145,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
       const fragment = fragmentNames.find((f) => f.name === fragmentName);
       if (!fragment) {
         throw new Error(
-          `Fragment '${fragmentName}' is not defined in ${module}`
+          `Fragment '${fragmentName}' is not defined in ${module}`,
         );
       } else {
         result.fragments.pairs = result.fragments.pairs || [];
@@ -158,12 +156,12 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
         // Replace in fragment source with alias
         result.fragments.source = result.fragments.source.replace(
           regex,
-          `...${alias}`
+          `...${alias}`,
         );
         result.fragments.pairs.push({
           name: fragmentName,
           alias,
-          type: fragment.type
+          type: fragment.type,
         });
       }
     });
@@ -178,7 +176,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
   if (variablesMatch) {
     let variablesBody = variablesMatch[0].replace(
       variablesRegex,
-      (match, p1) => p1
+      (match, p1) => p1,
     );
     // Replace 'getContextValue("key")' or getContextValue('key')
     // or 'getContextValue("key", defaultValue)'
@@ -194,7 +192,7 @@ module.exports.parseGraphqlByFile = function parseGraphqlByFile(module) {
         // console.log('defaultValue', defaultValue);
         const base64 = Buffer.from(p1).toString('base64');
         return `"getContextValue_${base64}"`;
-      }
+      },
     );
 
     try {

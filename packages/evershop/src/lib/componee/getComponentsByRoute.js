@@ -1,6 +1,6 @@
 const { resolve } = require('path');
-const { getEnabledExtensions } = require('../../../bin/extension');
 const { getCoreModules } = require('@evershop/evershop/bin/lib/loadModules');
+const { getEnabledExtensions } = require('../../../bin/extension');
 const { scanRouteComponents } = require('./scanForComponents');
 const { getConfig } = require('../util/getConfig');
 const { CONSTANTS } = require('../helpers');
@@ -13,9 +13,8 @@ exports.getComponentsByRoute = function getComponentsByRoute(route) {
   const theme = getConfig('system.theme');
   if (theme) {
     return Object.values(
-      scanRouteComponents(route, modules, resolve(CONSTANTS.THEMEPATH, theme))
+      scanRouteComponents(route, modules, resolve(CONSTANTS.THEMEPATH, theme)),
     );
-  } else {
-    return Object.values(scanRouteComponents(route, modules));
   }
+  return Object.values(scanRouteComponents(route, modules));
 };

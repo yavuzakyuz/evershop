@@ -17,18 +17,18 @@ function reducer(state, action) {
 const useModal = () => {
   const [state, dispatch] = useReducer(reducer, {
     showing: false,
-    closing: false
+    closing: false,
   });
 
   const openModal = () => {
     dispatch({
-      type: 'open'
+      type: 'open',
     });
   };
 
   const closeModal = () => {
     dispatch({
-      type: 'closing'
+      type: 'closing',
     });
   };
 
@@ -44,7 +44,7 @@ const useModal = () => {
     closeModal,
     onAnimationEnd,
     className:
-      state.closing === false ? 'modal-overlay fadeIn' : 'modal-overlay fadeOut'
+      state.closing === false ? 'modal-overlay fadeIn' : 'modal-overlay fadeOut',
   };
 };
 

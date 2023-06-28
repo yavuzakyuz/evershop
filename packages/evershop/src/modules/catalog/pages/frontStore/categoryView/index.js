@@ -1,7 +1,7 @@
 const { select } = require('@evershop/postgres-query-builder');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 
 module.exports = async (request, response, stack, next) => {
@@ -13,7 +13,7 @@ module.exports = async (request, response, stack, next) => {
       .on(
         'category.category_id',
         '=',
-        'category_description.category_description_category_id'
+        'category_description.category_description_category_id',
       );
 
     query.where('category.uuid', '=', request.params.uuid);
@@ -26,7 +26,7 @@ module.exports = async (request, response, stack, next) => {
       setContextValue(request, 'pageInfo', {
         title: category.meta_title || category.name,
         description: category.meta_description || category.short_description,
-        url: request.url
+        url: request.url,
       });
       next();
     }

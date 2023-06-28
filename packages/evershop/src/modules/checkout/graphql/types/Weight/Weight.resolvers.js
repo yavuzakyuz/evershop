@@ -13,8 +13,8 @@ module.exports = {
       const language = await getSetting('storeLanguage', 'en');
       // Localize the weight
       return new Intl.NumberFormat(language, { style: 'unit', unit }).format(
-        weight
+        weight,
       );
-    }
-  }
+    },
+  },
 };

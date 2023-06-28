@@ -9,7 +9,7 @@ module.exports = {
         .where('product_id', '=', productId)
         .execute(pool);
 
-      return comments.map(comment => camelCase(comment));
-    }
-  }
-}
+      return comments.map((comment) => camelCase(comment));
+    },
+  },
+};

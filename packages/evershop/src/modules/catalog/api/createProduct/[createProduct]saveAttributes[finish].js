@@ -7,7 +7,7 @@ const {
   select,
   update,
   insertOnUpdate,
-  del
+  del,
 } = require('@evershop/postgres-query-builder');
 const { get } = require('@evershop/evershop/src/lib/util/get');
 
@@ -52,32 +52,30 @@ module.exports = async (request, response, delegate) => {
         }
       } else if (attr.type === 'multiselect') {
         await Promise.all(
-          attribute.value.map(() =>
-            (async () => {
-              const option = await select()
-                .from('attribute_option')
-                .where(
-                  'attribute_option_id',
-                  '=',
-                  parseInt(attribute.value, 10)
-                )
-                .load(connection);
+          attribute.value.map(() => (async () => {
+            const option = await select()
+              .from('attribute_option')
+              .where(
+                'attribute_option_id',
+                '=',
+                parseInt(attribute.value, 10),
+              )
+              .load(connection);
 
-              if (option === null) {
-                return;
-              }
-              await insertOnUpdate('product_attribute_value_index', [
-                'product_id',
-                'attribute_id',
-                'option_id'
-              ])
-                .prime('option_id', option.attribute_option_id)
-                .prime('product_id', productId)
-                .prime('attribute_id', attr.attribute_id)
-                .prime('option_text', option.option_text)
-                .execute(connection);
-            })()
-          )
+            if (option === null) {
+              return;
+            }
+            await insertOnUpdate('product_attribute_value_index', [
+              'product_id',
+              'attribute_id',
+              'option_id',
+            ])
+              .prime('option_id', option.attribute_option_id)
+              .prime('product_id', productId)
+              .prime('attribute_id', attr.attribute_id)
+              .prime('option_text', option.option_text)
+              .execute(connection);
+          })()),
         );
       } else if (attr.type === 'select') {
         const option = await select()
@@ -97,7 +95,7 @@ module.exports = async (request, response, delegate) => {
         await insertOnUpdate('product_attribute_value_index', [
           'product_id',
           'attribute_id',
-          'option_id'
+          'option_id',
         ])
           .prime('option_id', option.attribute_option_id)
           .prime('product_id', productId)
@@ -108,7 +106,7 @@ module.exports = async (request, response, delegate) => {
         await insertOnUpdate('product_attribute_value_index', [
           'product_id',
           'attribute_id',
-          'option_id'
+          'option_id',
         ])
           .prime('option_text', attribute.value)
           .execute(connection);

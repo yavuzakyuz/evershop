@@ -28,7 +28,7 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "VALID_PERCENTAGE_DISCOUNT" CHECK(discount_amount <= 100 OR discount_type != 'percentage'),
   CONSTRAINT "COUPON_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "COUPON_UNIQUE" UNIQUE ("coupon")
-)`
+)`,
   );
 
   await execute(
@@ -42,13 +42,13 @@ module.exports = exports = async (connection) => {
         UPDATE "coupon" SET used_time = used_time + 1 WHERE coupon = NEW.coupon;
         RETURN NEW;
       END;
-      $$;`
+      $$;`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "TRIGGER_UPDATE_COUPON_USED_TIME_AFTER_CREATE_ORDER" AFTER INSERT ON "order"
      FOR EACH ROW 
      EXECUTE PROCEDURE set_coupon_used_time();
-    `
+    `,
   );
 };

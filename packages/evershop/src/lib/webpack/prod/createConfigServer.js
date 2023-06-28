@@ -19,8 +19,8 @@ module.exports.createConfigServer = function createConfigServer(routes) {
         '../components/common/',
         'react',
         'server',
-        'render.jsx'
-      )
+        'render.jsx',
+      ),
     ];
   });
   const config = createBaseConfig(true);
@@ -34,10 +34,10 @@ module.exports.createConfigServer = function createConfigServer(routes) {
       {
         loader: path.resolve(
           CONSTANTS.LIBPATH,
-          'webpack/loaders/StyleLoader.js'
-        )
-      }
-    ]
+          'webpack/loaders/StyleLoader.js',
+        ),
+      },
+    ],
   });
   config.entry = entry;
   config.name = 'Server';

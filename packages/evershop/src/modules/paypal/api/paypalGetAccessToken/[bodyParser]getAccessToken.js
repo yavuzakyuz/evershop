@@ -1,15 +1,15 @@
 const { default: axios } = require('axios');
 const { select } = require('@evershop/postgres-query-builder');
-const { getSetting } = require('../../../setting/services/setting');
-const { setContextValue } = require('../../../graphql/services/contextHelper');
 const { getConfig } = require('@evershop/evershop/src/lib/util/getConfig');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
-const { getApiBaseUrl } = require('../../services/getApiBaseUrl');
 const {
   INVALID_PAYLOAD,
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
+const { getSetting } = require('../../../setting/services/setting');
+const { setContextValue } = require('../../../graphql/services/contextHelper');
+const { getApiBaseUrl } = require('../../services/getApiBaseUrl');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = async (request, response, delegate, next) => {
@@ -27,8 +27,8 @@ module.exports = async (request, response, delegate, next) => {
     return response.status(INVALID_PAYLOAD).json({
       error: {
         status: INVALID_PAYLOAD,
-        message: 'Invalid order'
-      }
+        message: 'Invalid order',
+      },
     });
   }
 
@@ -56,10 +56,10 @@ module.exports = async (request, response, delegate, next) => {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Basic ${Buffer.from(
-          `${clientId}:${clientSecret}`
-        ).toString('base64')}`
-      }
-    }
+          `${clientId}:${clientSecret}`,
+        ).toString('base64')}`,
+      },
+    },
   );
 
   if (paypalAccessToken.data.access_token) {
@@ -67,21 +67,20 @@ module.exports = async (request, response, delegate, next) => {
     setContextValue(
       request.app,
       'paypalAccessToken',
-      paypalAccessToken.data.access_token
+      paypalAccessToken.data.access_token,
     );
     response.status(OK);
     return response.json({
       data: {
-        paypalAccessToken: paypalAccessToken.data.access_token
-      }
-    });
-  } else {
-    response.status(INTERNAL_SERVER_ERROR);
-    return response.json({
-      error: {
-        status: INTERNAL_SERVER_ERROR,
-        message: response.data.error_description
-      }
+        paypalAccessToken: paypalAccessToken.data.access_token,
+      },
     });
   }
+  response.status(INTERNAL_SERVER_ERROR);
+  return response.json({
+    error: {
+      status: INTERNAL_SERVER_ERROR,
+      message: response.data.error_description,
+    },
+  });
 };

@@ -14,9 +14,8 @@ module.exports = async (request, response) => {
   if (parseInt(paypalStatus, 10) === 1) {
     return {
       methodCode: 'paypal',
-      methodName: await getSetting('paypalDislayName', 'Paypal')
+      methodName: await getSetting('paypalDislayName', 'Paypal'),
     };
-  } else {
-    return null;
   }
+  return null;
 };

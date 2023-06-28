@@ -27,7 +27,7 @@ exports.DiscountCalculator = class DiscountCalculator {
         }
 
         const cartDiscountAmount = toPrice(
-          (discountPercent * getCartTotalBeforeDiscount(cart)) / 100
+          (discountPercent * getCartTotalBeforeDiscount(cart)) / 100,
         );
         let distributedAmount = 0;
         const items = cart.getItems();
@@ -36,21 +36,20 @@ exports.DiscountCalculator = class DiscountCalculator {
           if (index === items.length - 1) {
             const precision = getConfig('pricing.precision', '2');
             const precisionFix = parseInt(`1${'0'.repeat(precision)}`, 10);
-            sharedDiscount =
-              (cartDiscountAmount * precisionFix -
-                distributedAmount * precisionFix) /
-              precisionFix;
+            sharedDiscount = (cartDiscountAmount * precisionFix
+                - distributedAmount * precisionFix)
+              / precisionFix;
           } else {
             const rowTotal = item.getData('final_price') * item.getData('qty');
             sharedDiscount = toPrice(
-              (rowTotal * cartDiscountAmount) /
-                getCartTotalBeforeDiscount(cart),
-              0
+              (rowTotal * cartDiscountAmount)
+                / getCartTotalBeforeDiscount(cart),
+              0,
             );
           }
           if (
-            this.discounts[item.getId()] ||
-            this.discounts[item.getId()] !== sharedDiscount
+            this.discounts[item.getId()]
+            || this.discounts[item.getId()] !== sharedDiscount
           ) {
             this.discounts[item.getId()] = sharedDiscount;
           }
@@ -58,24 +57,22 @@ exports.DiscountCalculator = class DiscountCalculator {
         });
 
         return true;
-      }
+      },
     );
 
     this.constructor.addDiscountCalculator(
       'fixed_discount_to_entire_order',
       function calculate(coupon, cart) {
-        if (coupon.discount_type !== 'fixed_discount_to_entire_order')
-          return false;
+        if (coupon.discount_type !== 'fixed_discount_to_entire_order') return false;
 
         let cartDiscountAmount = toPrice(
-          parseFloat(coupon.discount_amount) || 0
+          parseFloat(coupon.discount_amount) || 0,
         );
         if (cartDiscountAmount < 0) {
           return false;
         }
         const cartTotal = getCartTotalBeforeDiscount(cart);
-        cartDiscountAmount =
-          cartTotal > cartDiscountAmount ? cartDiscountAmount : cartTotal;
+        cartDiscountAmount = cartTotal > cartDiscountAmount ? cartDiscountAmount : cartTotal;
         let distributedAmount = 0;
         const items = cart.getItems();
         items.forEach((item, index) => {
@@ -83,21 +80,20 @@ exports.DiscountCalculator = class DiscountCalculator {
           if (index === items.length - 1) {
             const precision = getConfig('pricing.precision', '2');
             const precisionFix = parseInt(`1${'0'.repeat(precision)}`, 10);
-            sharedDiscount =
-              (cartDiscountAmount * precisionFix -
-                distributedAmount * precisionFix) /
-              precisionFix;
+            sharedDiscount = (cartDiscountAmount * precisionFix
+                - distributedAmount * precisionFix)
+              / precisionFix;
           } else {
             const rowTotal = item.getData('final_price') * item.getData('qty');
             sharedDiscount = toPrice(
-              (rowTotal * cartDiscountAmount) /
-                getCartTotalBeforeDiscount(cart),
-              0
+              (rowTotal * cartDiscountAmount)
+                / getCartTotalBeforeDiscount(cart),
+              0,
             );
           }
           if (
-            !this.discounts[item.getId()] ||
-            this.discounts[item.getId()] !== sharedDiscount
+            !this.discounts[item.getId()]
+            || this.discounts[item.getId()] !== sharedDiscount
           ) {
             this.discounts[item.getId()] = sharedDiscount;
           }
@@ -105,7 +101,7 @@ exports.DiscountCalculator = class DiscountCalculator {
         });
 
         return true;
-      }
+      },
     );
 
     this.constructor.addDiscountCalculator(
@@ -114,7 +110,7 @@ exports.DiscountCalculator = class DiscountCalculator {
         if (
           ![
             'fixed_discount_to_specific_products',
-            'percentage_discount_to_specific_products'
+            'percentage_discount_to_specific_products',
           ].includes(coupon.discount_type)
         ) {
           return false;
@@ -161,10 +157,9 @@ exports.DiscountCalculator = class DiscountCalculator {
               const attributeGroupIds = value
                 .split(',')
                 .map((id) => parseInt(id.trim(), 10));
-              flag =
-                operator === 'IN'
-                  ? attributeGroupIds.includes(item.getData('group_id'))
-                  : !attributeGroupIds.includes(item.getData('group_id'));
+              flag = operator === 'IN'
+                ? attributeGroupIds.includes(item.getData('group_id'))
+                : !attributeGroupIds.includes(item.getData('group_id'));
             }
 
             // Check category
@@ -183,10 +178,9 @@ exports.DiscountCalculator = class DiscountCalculator {
                 .split(',')
                 .map((id) => parseInt(id.trim(), 10));
               const e = categories.find(
-                (c) =>
-                  values.includes(c.category_id) &&
-                  parseInt(c.product_id, 10) ===
-                    parseInt(item.getData('product_id'), 10)
+                (c) => values.includes(c.category_id)
+                  && parseInt(c.product_id, 10)
+                    === parseInt(item.getData('product_id'), 10),
               );
               flag = operator === 'IN' ? e !== undefined : e === undefined;
             }
@@ -201,12 +195,11 @@ exports.DiscountCalculator = class DiscountCalculator {
                 if (!price) {
                   flag = false;
                   return false;
-                } else {
-                  // eslint-disable-next-line no-eval
-                  flag = eval(
-                    `${item.getData('final_price')} ${operator} ${price}`
-                  );
                 }
+                // eslint-disable-next-line no-eval
+                flag = eval(
+                  `${item.getData('final_price')} ${operator} ${price}`,
+                );
               } else {
                 // For 'price' type of condition, we do not others operators
                 flag = false;
@@ -218,10 +211,9 @@ exports.DiscountCalculator = class DiscountCalculator {
             if (key === 'sku') {
               if (['IN', 'NOT IN'].includes(operator)) {
                 const skus = value.split(',').map((v) => v.trim());
-                flag =
-                  operator === 'IN'
-                    ? skus.includes(item.getData('product_sku'))
-                    : !skus.includes(item.getData('product_sku'));
+                flag = operator === 'IN'
+                  ? skus.includes(item.getData('product_sku'))
+                  : !skus.includes(item.getData('product_sku'));
               } else {
                 // For 'sku' type of condition, we only support 'IN', 'NOT IN' operators
                 flag = false;
@@ -238,23 +230,22 @@ exports.DiscountCalculator = class DiscountCalculator {
             if (discountAmount > item.getData('final_price')) {
               discountAmount = item.getData('final_price');
             }
-            discounts[item.getId()] =
-              maxQty > item.getData('qty')
-                ? toPrice(discountAmount * item.getData('qty'))
-                : toPrice(discountAmount * maxQty);
+            discounts[item.getId()] = maxQty > item.getData('qty')
+              ? toPrice(discountAmount * item.getData('qty'))
+              : toPrice(discountAmount * maxQty);
           } else {
             const discountPercent = Math.min(discountAmount, 100);
             discounts[item.getId()] = toPrice(
-              (Math.min(item.getData('qty'), maxQty) *
-                (item.getData('final_price') * discountPercent)) /
-                100
+              (Math.min(item.getData('qty'), maxQty)
+                * (item.getData('final_price') * discountPercent))
+                / 100,
             );
           }
         });
 
         this.discounts = discounts;
         return true;
-      }
+      },
     );
 
     this.constructor.addDiscountCalculator(
@@ -285,14 +276,13 @@ exports.DiscountCalculator = class DiscountCalculator {
           for (let i = 0; i < items.length; i += 1) {
             const item = items[i];
             if (
-              item.getData('product_sku') === sku.trim() &&
-              item.getData('qty') >= buyQty + getQty
+              item.getData('product_sku') === sku.trim()
+              && item.getData('qty') >= buyQty + getQty
             ) {
               const discountPerUnit = toPrice(
-                (discount * item.getData('final_price')) / 100
+                (discount * item.getData('final_price')) / 100,
               );
-              const discountAbleUnits =
-                Math.floor(item.getData('qty') / buyQty) * getQty;
+              const discountAbleUnits = Math.floor(item.getData('qty') / buyQty) * getQty;
               let discountAmount;
               if (discountAbleUnits < maxY) {
                 discountAmount = toPrice(discountAbleUnits * discountPerUnit);
@@ -301,15 +291,15 @@ exports.DiscountCalculator = class DiscountCalculator {
               }
 
               if (
-                this.discounts[item.getId()] ||
-                this.discounts[item.getId()] !== discountAmount
+                this.discounts[item.getId()]
+                || this.discounts[item.getId()] !== discountAmount
               ) {
                 this.discounts[item.getId()] = discountAmount;
               }
             }
           }
         });
-      }
+      },
     );
   }
 
@@ -342,10 +332,10 @@ exports.DiscountCalculator = class DiscountCalculator {
           this.constructor.discountCalculators[calculatorId].call(
             this,
             coupon,
-            cart
-          )
+            cart,
+          ),
         );
-      }
+      },
     );
     await Promise.all(promises);
 

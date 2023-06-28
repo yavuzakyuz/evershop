@@ -3,21 +3,21 @@ const { join } = require('path');
 const multer = require('multer');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const {
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 const storage = multer.diskStorage({
   destination(request, file, cb) {
     const path = join(
       CONSTANTS.MEDIAPATH,
-      (request.params[0] || '').replace(/\s/g, '-')
+      (request.params[0] || '').replace(/\s/g, '-'),
     );
     mkdirSync(path, { recursive: true });
     cb(null, path);
   },
   filename(request, file, cb) {
     cb(null, file.originalname.replace(/\s/g, '-'));
-  }
+  },
 });
 
 function fileFilter(request, file, cb) {
@@ -38,8 +38,8 @@ module.exports = (request, response, delegate, next) => {
     response.status(INVALID_PAYLOAD).json({
       error: {
         status: INVALID_PAYLOAD,
-        message: 'Invalid path'
-      }
+        message: 'Invalid path',
+      },
     });
   } else {
     upload.array('images', 20)(request, response, next);

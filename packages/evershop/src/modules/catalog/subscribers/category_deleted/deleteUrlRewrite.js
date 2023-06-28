@@ -13,16 +13,16 @@ module.exports = async function deleteUrlReWrite(data) {
     // Delete all the url rewrite rule for this category
     await execute(
       pool,
-      `DELETE FROM url_rewrite WHERE entity_type = 'category' AND entity_uuid = '${categoryUuid}'`
+      `DELETE FROM url_rewrite WHERE entity_type = 'category' AND entity_uuid = '${categoryUuid}'`,
     );
 
     if (!urlRewrite) {
-      return;
+
     } else {
       // Delete all the url rewrite rule for the sub categories and products
       await execute(
         pool,
-        `DELETE FROM url_rewrite WHERE request_path LIKE '${urlRewrite.request_path}/%' AND entity_type IN ('category', 'product')`
+        `DELETE FROM url_rewrite WHERE request_path LIKE '${urlRewrite.request_path}/%' AND entity_type IN ('category', 'product')`,
       );
     }
   } catch (error) {

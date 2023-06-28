@@ -1,6 +1,6 @@
 const { update, select } = require('@evershop/postgres-query-builder');
 const {
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 module.exports = async (request, response, delegate) => {

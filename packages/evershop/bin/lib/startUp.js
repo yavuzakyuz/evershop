@@ -1,17 +1,17 @@
 const http = require('http');
+const { Handler } = require('@evershop/evershop/src/lib/middleware/Handler');
+const spawn = require('cross-spawn');
+const path = require('path');
 const { createApp } = require('./app');
 const normalizePort = require('./normalizePort');
 const onListening = require('./onListening');
 const onError = require('./onError');
-const { Handler } = require('@evershop/evershop/src/lib/middleware/Handler');
 const { getCoreModules } = require('./loadModules');
 const { migrate } = require('./bootstrap/migrate');
 const { loadBootstrapScript } = require('./bootstrap/bootstrap');
 const { getEnabledExtensions } = require('../extension');
-const spawn = require('cross-spawn');
-const path = require('path');
 
-var app = createApp();
+let app = createApp();
 /** Create a http server */
 const server = http.createServer(app);
 
@@ -55,8 +55,8 @@ module.exports.start = async function start(cb) {
     'node',
     [path.resolve(__dirname, '../../src/lib/event/event-manager.js')],
     {
-      stdio: 'inherit'
-    }
+      stdio: 'inherit',
+    },
   );
   child.on('error', (err) => {
     console.error(`Error spawning event processor: ${err}`);
@@ -67,7 +67,7 @@ module.exports.start = async function start(cb) {
 module.exports.updateApp = function updateApp(cb) {
   /** Clean up middleware */
   Handler.middlewares = [];
-  var newApp = createApp();
+  const newApp = createApp();
   server.removeListener('request', app);
   server.on('request', newApp);
   app = newApp;

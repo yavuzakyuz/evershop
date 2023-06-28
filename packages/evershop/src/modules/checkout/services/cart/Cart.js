@@ -3,16 +3,16 @@ const isEqualWith = require('lodash/isEqualWith');
 const { select, del } = require('@evershop/postgres-query-builder');
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
+const { default: axios } = require('axios');
+const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const { DataObject } = require('./DataObject');
 const { Item } = require('./Item');
 const { toPrice } = require('../toPrice');
 const { getSetting } = require('../../../setting/services/setting');
-const { default: axios } = require('axios');
-const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const { getTaxPercent } = require('../../../tax/services/getTaxPercent');
 const { getTaxRates } = require('../../../tax/services/getTaxRates');
 const {
-  calculateTaxAmount
+  calculateTaxAmount,
 } = require('../../../tax/services/calculateTaxAmount');
 // eslint-disable-next-line no-multi-assign
 module.exports = exports = {};
@@ -32,14 +32,12 @@ exports.Cart = class Cart extends DataObject {
               this.errors.cart_id = 'Cart does not exist';
               this.dataSource = {};
               return null;
-            } else {
-              return cart.cart_id;
             }
-          } else {
-            return undefined;
+            return cart.cart_id;
           }
-        }
-      ]
+          return undefined;
+        },
+      ],
     },
     {
       key: 'uuid',
@@ -50,9 +48,9 @@ exports.Cart = class Cart extends DataObject {
           return this.dataSource.uuid
             ? this.dataSource.uuid
             : key.replace(/-/g, '');
-        }
+        },
       ],
-      dependencies: ['cart_id']
+      dependencies: ['cart_id'],
     },
     {
       key: 'currency',
@@ -60,32 +58,32 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           const currency = await getSetting('storeCurrency', 'USD');
           return currency;
-        }
-      ]
+        },
+      ],
     },
     {
       key: 'user_ip',
       resolvers: [
         async function resolver() {
           return this.dataSource.user_ip ?? this.getData('user_ip') ?? null;
-        }
-      ]
+        },
+      ],
     },
     {
       key: 'sid',
       resolvers: [
         async function resolver() {
           return this.dataSource.sid;
-        }
-      ]
+        },
+      ],
     },
     {
       key: 'status',
       resolvers: [
         async function resolver() {
           return this.dataSource.status ?? this.getData('status') ?? 1;
-        }
-      ]
+        },
+      ],
     },
     {
       key: 'total_qty',
@@ -97,9 +95,9 @@ exports.Cart = class Cart extends DataObject {
             count += parseInt(i.getData('qty'), 10);
           });
           return count;
-        }
+        },
       ],
-      dependencies: ['items']
+      dependencies: ['items'],
     },
     {
       key: 'total_weight',
@@ -111,9 +109,9 @@ exports.Cart = class Cart extends DataObject {
             weight += i.getData('product_weight') * i.getData('qty');
           });
           return weight;
-        }
+        },
       ],
-      dependencies: ['items']
+      dependencies: ['items'],
     },
     {
       key: 'tax_amount',
@@ -126,9 +124,9 @@ exports.Cart = class Cart extends DataObject {
             taxAmount += i.getData('tax_amount');
           });
           return taxAmount;
-        }
+        },
       ],
-      dependencies: ['items']
+      dependencies: ['items'],
     },
     {
       key: 'sub_total',
@@ -140,22 +138,22 @@ exports.Cart = class Cart extends DataObject {
             total += i.getData('final_price') * i.getData('qty');
           });
           return toPrice(total);
-        }
+        },
       ],
-      dependencies: ['items']
+      dependencies: ['items'],
     },
     {
       key: 'grand_total',
       resolvers: [
         async function resolver() {
           return (
-            this.getData('sub_total') +
-            this.getData('shipping_fee_incl_tax') +
-            this.getData('tax_amount')
+            this.getData('sub_total')
+            + this.getData('shipping_fee_incl_tax')
+            + this.getData('tax_amount')
           );
-        }
+        },
       ],
-      dependencies: ['sub_total', 'shipping_fee_incl_tax']
+      dependencies: ['sub_total', 'shipping_fee_incl_tax'],
     },
     {
       key: 'shipping_zone_id',
@@ -163,75 +161,69 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           if (!this.dataSource.shipping_zone_id) {
             return null;
-          } else {
-            const zone = await select()
-              .from('shipping_zone')
-              .where('shipping_zone_id', '=', this.dataSource.shipping_zone_id)
-              .load(pool);
-            if (!zone) {
-              return null;
-            } else {
-              return zone.shipping_zone_id;
-            }
           }
-        }
+          const zone = await select()
+            .from('shipping_zone')
+            .where('shipping_zone_id', '=', this.dataSource.shipping_zone_id)
+            .load(pool);
+          if (!zone) {
+            return null;
+          }
+          return zone.shipping_zone_id;
+        },
       ],
-      dependencies: ['cart_id']
+      dependencies: ['cart_id'],
     },
     {
       key: 'shipping_address_id',
       resolvers: [
         async function resolver() {
           if (
-            !this.dataSource.shipping_address_id ||
-            !this.getData('shipping_zone_id')
+            !this.dataSource.shipping_address_id
+            || !this.getData('shipping_zone_id')
           ) {
             return null;
-          } else {
-            // validate country and province with shipping zone
-            const shippingAddress = await select()
-              .from('cart_address')
-              .where(
-                'cart_address_id',
-                '=',
-                this.dataSource.shipping_address_id
-              )
-              .load(pool);
-            if (!shippingAddress) {
-              return null;
-            }
-            const shippingZoneQuery = select().from('shipping_zone');
-            shippingZoneQuery
-              .leftJoin('shipping_zone_province')
-              .on(
-                'shipping_zone_province.zone_id',
-                '=',
-                'shipping_zone.shipping_zone_id'
-              );
-            shippingZoneQuery.where(
-              'shipping_zone.country',
-              '=',
-              shippingAddress.country
-            );
-
-            const shippingZoneProvinces = await shippingZoneQuery.execute(pool);
-            if (shippingZoneProvinces.length === 0) {
-              return null;
-            } else {
-              const check = shippingZoneProvinces.find(
-                (p) =>
-                  p.province === shippingAddress.province || p.province === null
-              );
-              if (!check) {
-                return null;
-              } else {
-                return shippingAddress.cart_address_id;
-              }
-            }
           }
-        }
+          // validate country and province with shipping zone
+          const shippingAddress = await select()
+            .from('cart_address')
+            .where(
+              'cart_address_id',
+              '=',
+              this.dataSource.shipping_address_id,
+            )
+            .load(pool);
+          if (!shippingAddress) {
+            return null;
+          }
+          const shippingZoneQuery = select().from('shipping_zone');
+          shippingZoneQuery
+            .leftJoin('shipping_zone_province')
+            .on(
+              'shipping_zone_province.zone_id',
+              '=',
+              'shipping_zone.shipping_zone_id',
+            );
+          shippingZoneQuery.where(
+            'shipping_zone.country',
+            '=',
+            shippingAddress.country,
+          );
+
+          const shippingZoneProvinces = await shippingZoneQuery.execute(pool);
+          if (shippingZoneProvinces.length === 0) {
+            return null;
+          }
+          const check = shippingZoneProvinces.find(
+            (p) => p.province === shippingAddress.province || p.province === null,
+          );
+          if (!check) {
+            return null;
+          }
+          return shippingAddress.cart_address_id;
+        },
       ],
-      dependencies: ['cart_id', 'shipping_zone_id']
+      dependencies: ['cart_id', 'shipping_zone_id'],
     },
     {
       key: 'shippingAddress',
@@ -239,21 +231,20 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           if (!this.getData('shipping_address_id')) {
             return undefined;
-          } else {
-            return {
-              ...(await select()
-                .from('cart_address')
-                .where(
-                  'cart_address_id',
-                  '=',
-                  this.getData('shipping_address_id')
-                )
-                .load(pool))
-            };
           }
-        }
+          return {
+            ...(await select()
+              .from('cart_address')
+              .where(
+                'cart_address_id',
+                '=',
+                this.getData('shipping_address_id'),
+              )
+              .load(pool)),
+          };
+        },
       ],
-      dependencies: ['shipping_address_id']
+      dependencies: ['shipping_address_id'],
     },
     {
       key: 'shipping_method',
@@ -273,56 +264,54 @@ exports.Cart = class Cart extends DataObject {
             .on(
               'shipping_method.shipping_method_id',
               '=',
-              'shipping_zone_method.method_id'
+              'shipping_zone_method.method_id',
             );
           shippingMethodQuery
             .where('uuid', '=', this.dataSource.shipping_method)
             .and(
               'shipping_zone_method.zone_id',
               '=',
-              this.getData('shipping_zone_id')
+              this.getData('shipping_zone_id'),
             );
           const shippingMethod = await shippingMethodQuery.load(pool);
           if (!shippingMethod) {
             return null;
-          } else {
-            // Validate shipping method using max weight and max price, min weight and min price
-            const { max, min } = shippingMethod;
-            const total_weight = this.getData('total_weight');
-            const sub_total = this.getData('sub_total');
-            let flag = false;
+          }
+          // Validate shipping method using max weight and max price, min weight and min price
+          const { max, min } = shippingMethod;
+          const total_weight = this.getData('total_weight');
+          const sub_total = this.getData('sub_total');
+          let flag = false;
 
-            if (shippingMethod.condition_type === 'weight') {
-              if (
-                total_weight >= toPrice(min) &&
-                total_weight <= toPrice(max)
-              ) {
-                flag = true;
-              }
-            }
-            if (shippingMethod.condition_type === 'price') {
-              if (sub_total >= toPrice(min) && sub_total <= toPrice(max)) {
-                flag = true;
-              }
-            }
-            if (shippingMethod.condition_type === null) {
+          if (shippingMethod.condition_type === 'weight') {
+            if (
+              total_weight >= toPrice(min)
+                && total_weight <= toPrice(max)
+            ) {
               flag = true;
             }
-            if (flag === false) {
-              this.errors.shipping_method = 'Shipping method is not valid';
-              return null;
-            } else {
-              return shippingMethod.uuid;
+          }
+          if (shippingMethod.condition_type === 'price') {
+            if (sub_total >= toPrice(min) && sub_total <= toPrice(max)) {
+              flag = true;
             }
           }
-        }
+          if (shippingMethod.condition_type === null) {
+            flag = true;
+          }
+          if (flag === false) {
+            this.errors.shipping_method = 'Shipping method is not valid';
+            return null;
+          }
+          return shippingMethod.uuid;
+        },
       ],
       dependencies: [
         'shipping_address_id',
         'sub_total',
         'total_weight',
-        'total_qty'
-      ]
+        'total_qty',
+      ],
     },
     {
       key: 'shipping_method_name',
@@ -330,16 +319,15 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           if (!this.getData('shipping_method')) {
             return null;
-          } else {
-            const shippingMethod = await select()
-              .from('shipping_method')
-              .where('uuid', '=', this.getData('shipping_method'))
-              .load(pool);
-            return shippingMethod.name;
           }
-        }
+          const shippingMethod = await select()
+            .from('shipping_method')
+            .where('uuid', '=', this.getData('shipping_method'))
+            .load(pool);
+          return shippingMethod.name;
+        },
       ],
-      dependencies: ['shipping_method']
+      dependencies: ['shipping_method'],
     },
     {
       key: 'shipping_fee_excl_tax',
@@ -347,67 +335,62 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           if (!this.getData('shipping_method')) {
             return 0;
-          } else {
-            // Check if the coupon is free shipping
-            const coupon = await select()
-              .from('coupon')
-              .where('coupon.coupon', '=', this.getData('coupon'))
-              .load(pool);
-            if (coupon && coupon.free_shipping) {
-              return 0;
-            }
-            const shippingMethodQuery = select().from('shipping_method');
-            shippingMethodQuery
-              .innerJoin('shipping_zone_method')
-              .on(
-                'shipping_method.shipping_method_id',
-                '=',
-                'shipping_zone_method.method_id'
-              );
-            shippingMethodQuery
-              .where('uuid', '=', this.dataSource.shipping_method)
-              .and(
-                'shipping_zone_method.zone_id',
-                '=',
-                this.getData('shipping_zone_id')
-              );
-            const shippingMethod = await shippingMethodQuery.load(pool);
-            // Check if the method is flat rate
-            if (shippingMethod.cost !== null) {
-              return toPrice(shippingMethod.cost);
-            } else {
-              if (shippingMethod.calculate_api) {
-                // Call the API of the shipping method to calculate the shipping fee. This is an internal API
-                // use axios to call the API
-                // Ignore http status error
-                let api = 'http://localhost:3000';
-                try {
-                  api += buildUrl(shippingMethod.calculate_api, {
-                    cart_id: this.getData('uuid'),
-                    method_id: shippingMethod.uuid
-                  });
-                } catch (e) {
-                  throw new Error(
-                    `Your shipping calculate API ${shippingMethod.calculate_api} is invalid`
-                  );
-                }
-                const response = await axios.get(api);
-                if (response.status < 400) {
-                  return toPrice(response.data.data.cost);
-                } else {
-                  this.errors.shipping_fee_excl_tax = 'response.data.message';
-                  return 0;
-                }
-              } else {
-                this.errors.shipping_fee_excl_tax =
-                  'Could not calculate shipping fee';
-                return 0;
-              }
-            }
           }
-        }
+          // Check if the coupon is free shipping
+          const coupon = await select()
+            .from('coupon')
+            .where('coupon.coupon', '=', this.getData('coupon'))
+            .load(pool);
+          if (coupon && coupon.free_shipping) {
+            return 0;
+          }
+          const shippingMethodQuery = select().from('shipping_method');
+          shippingMethodQuery
+            .innerJoin('shipping_zone_method')
+            .on(
+              'shipping_method.shipping_method_id',
+              '=',
+              'shipping_zone_method.method_id',
+            );
+          shippingMethodQuery
+            .where('uuid', '=', this.dataSource.shipping_method)
+            .and(
+              'shipping_zone_method.zone_id',
+              '=',
+              this.getData('shipping_zone_id'),
+            );
+          const shippingMethod = await shippingMethodQuery.load(pool);
+          // Check if the method is flat rate
+          if (shippingMethod.cost !== null) {
+            return toPrice(shippingMethod.cost);
+          }
+          if (shippingMethod.calculate_api) {
+            // Call the API of the shipping method to calculate the shipping fee. This is an internal API
+            // use axios to call the API
+            // Ignore http status error
+            let api = 'http://localhost:3000';
+            try {
+              api += buildUrl(shippingMethod.calculate_api, {
+                cart_id: this.getData('uuid'),
+                method_id: shippingMethod.uuid,
+              });
+            } catch (e) {
+              throw new Error(
+                `Your shipping calculate API ${shippingMethod.calculate_api} is invalid`,
+              );
+            }
+            const response = await axios.get(api);
+            if (response.status < 400) {
+              return toPrice(response.data.data.cost);
+            }
+            this.errors.shipping_fee_excl_tax = 'response.data.message';
+            return 0;
+          }
+          this.errors.shipping_fee_excl_tax = 'Could not calculate shipping fee';
+          return 0;
+        },
       ],
-      dependencies: ['shipping_method']
+      dependencies: ['shipping_method'],
     },
     {
       key: 'shipping_fee_incl_tax',
@@ -415,81 +398,77 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           let shippingTaxClass = await getSetting(
             'defaultShippingTaxClassId',
-            ''
+            '',
           );
 
           // -1: Protional allocation based on the items
           // 0: Highest tax rate based on the items
           if (shippingTaxClass === '') {
             return this.getData('shipping_fee_excl_tax');
-          } else {
-            shippingTaxClass = parseInt(shippingTaxClass, 10);
-            if (shippingTaxClass > 0) {
-              const taxClass = await select()
-                .from('tax_class')
-                .where('tax_class_id', '=', shippingTaxClass)
-                .load(pool);
-
-              if (!taxClass) {
-                return this.getData('shipping_fee_excl_tax');
-              } else {
-                const shippingAddress = this.getData('shippingAddress');
-                const percentage = getTaxPercent(
-                  await getTaxRates(
-                    shippingTaxClass,
-                    shippingAddress['country'],
-                    shippingAddress['province'],
-                    shippingAddress['postcode']
-                  )
-                );
-
-                const taxAmount = calculateTaxAmount(
-                  percentage,
-                  this.getData('shipping_fee_excl_tax'),
-                  1
-                );
-                return this.getData('shipping_fee_excl_tax') + taxAmount;
-              }
-            } else {
-              const items = this.getItems();
-              let percentage = 0;
-              if (shippingTaxClass === 0) {
-                // Highest tax rate
-                items.forEach((item) => {
-                  if (item.getData('tax_percent') > percentage) {
-                    percentage = item.getData('tax_percent');
-                  }
-                });
-              } else {
-                items.forEach((item) => {
-                  // Protional allocation
-                  const itemTotal =
-                    item.getData('final_price') * item.getData('qty');
-                  percentage +=
-                    (itemTotal / this.getData('sub_total')) *
-                    item.getData('tax_percent');
-                });
-              }
-              const taxAmount = calculateTaxAmount(
-                percentage,
-                this.getData('shipping_fee_excl_tax'),
-                1
-              );
-              return this.getData('shipping_fee_excl_tax') + taxAmount;
-            }
           }
-        }
+          shippingTaxClass = parseInt(shippingTaxClass, 10);
+          if (shippingTaxClass > 0) {
+            const taxClass = await select()
+              .from('tax_class')
+              .where('tax_class_id', '=', shippingTaxClass)
+              .load(pool);
+
+            if (!taxClass) {
+              return this.getData('shipping_fee_excl_tax');
+            }
+            const shippingAddress = this.getData('shippingAddress');
+            const percentage = getTaxPercent(
+              await getTaxRates(
+                shippingTaxClass,
+                shippingAddress.country,
+                shippingAddress.province,
+                shippingAddress.postcode,
+              ),
+            );
+
+            const taxAmount = calculateTaxAmount(
+              percentage,
+              this.getData('shipping_fee_excl_tax'),
+              1,
+            );
+            return this.getData('shipping_fee_excl_tax') + taxAmount;
+          }
+          const items = this.getItems();
+          let percentage = 0;
+          if (shippingTaxClass === 0) {
+            // Highest tax rate
+            items.forEach((item) => {
+              if (item.getData('tax_percent') > percentage) {
+                percentage = item.getData('tax_percent');
+              }
+            });
+          } else {
+            items.forEach((item) => {
+              // Protional allocation
+              const itemTotal = item.getData('final_price') * item.getData('qty');
+              percentage
+                    += (itemTotal / this.getData('sub_total'))
+                    * item.getData('tax_percent');
+            });
+          }
+          const taxAmount = calculateTaxAmount(
+            percentage,
+            this.getData('shipping_fee_excl_tax'),
+            1,
+          );
+          return this.getData('shipping_fee_excl_tax') + taxAmount;
+        },
       ],
-      dependencies: ['shippingAddress', 'shipping_fee_excl_tax', 'sub_total']
+      dependencies: ['shippingAddress', 'shipping_fee_excl_tax', 'sub_total'],
     },
     {
       key: 'billing_address_id',
       resolvers: [
         async function resolver() {
           return this.dataSource.billing_address_id;
-        }
+        },
       ],
-      dependencies: ['cart_id']
+      dependencies: ['cart_id'],
     },
     {
       key: 'billingAddress',
@@ -497,21 +476,20 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           if (!this.getData('billing_address_id')) {
             return undefined;
-          } else {
-            return {
-              ...(await select()
-                .from('cart_address')
-                .where(
-                  'cart_address_id',
-                  '=',
-                  this.getData('billing_address_id')
-                )
-                .load(pool))
-            };
           }
-        }
+          return {
+            ...(await select()
+              .from('cart_address')
+              .where(
+                'cart_address_id',
+                '=',
+                this.getData('billing_address_id'),
+              )
+              .load(pool)),
+          };
+        },
       ],
-      dependencies: ['billing_address_id']
+      dependencies: ['billing_address_id'],
     },
     {
       key: 'payment_method',
@@ -520,8 +498,8 @@ exports.Cart = class Cart extends DataObject {
           this.errors.payment_method = 'Payment method is required';
           // Each payment method should handle this field
           // by returning the payment method code and remove this error if the payment method is valid
-        }
-      ]
+        },
+      ],
     },
     {
       key: 'payment_method_name',
@@ -529,9 +507,9 @@ exports.Cart = class Cart extends DataObject {
         async function resolver() {
           // TODO: This field should be handled by each of payment method
           return this.dataSource.payment_method_name;
-        }
+        },
       ],
-      dependencies: ['payment_method']
+      dependencies: ['payment_method'],
     },
     {
       key: 'items',
@@ -543,8 +521,8 @@ exports.Cart = class Cart extends DataObject {
               this.dataSource.items.map(async (item) => {
                 // If this is just new added item, add it to the list
                 if (
-                  !/^\d+$/.test(item.getData('cart_item_id')) &&
-                  Object.keys(item.errors).length === 0
+                  !/^\d+$/.test(item.getData('cart_item_id'))
+                  && Object.keys(item.errors).length === 0
                 ) {
                   items.push(item);
                 } else if (/^\d+$/.test(item.getData('cart_item_id'))) {
@@ -552,7 +530,7 @@ exports.Cart = class Cart extends DataObject {
                   if (item.dataSource.product === undefined) await item.build();
                   items.push(item);
                 }
-              })
+              }),
             );
           } else {
             const query = select();
@@ -574,16 +552,16 @@ exports.Cart = class Cart extends DataObject {
                 let flag = true;
                 items.forEach((_item) => {
                   if (
-                    _item.getData('product_sku') ===
-                      item.getData('product_sku') &&
-                    isEqualWith(
+                    _item.getData('product_sku')
+                      === item.getData('product_sku')
+                    && isEqualWith(
                       _item.getData('product_custom_options'),
-                      item.getData('product_custom_options')
+                      item.getData('product_custom_options'),
                     )
                   ) {
                     _item.setData(
                       'qty',
-                      _item.getData('qty') + item.getData('qty')
+                      _item.getData('qty') + item.getData('qty'),
                     );
                     flag = false;
                   }
@@ -593,16 +571,16 @@ exports.Cart = class Cart extends DataObject {
                     .where('cart_item_id', '=', i.cart_item_id)
                     .execute(pool);
                 } else items.push(item);
-              })
+              }),
             );
             this.dataSource.items = items;
           }
 
           return items;
-        }
+        },
       ],
-      dependencies: ['cart_id']
-    }
+      dependencies: ['cart_id'],
+    },
   ];
 
   constructor(data = {}) {
@@ -629,16 +607,16 @@ exports.Cart = class Cart extends DataObject {
       let duplicateItem;
       for (let i = 0; i < items.length; i += 1) {
         if (
-          items[i].getData('product_sku') === item.getData('product_sku') &&
-          isEqualWith(
+          items[i].getData('product_sku') === item.getData('product_sku')
+          && isEqualWith(
             items[i].getData('product_custom_options'),
-            item.getData('product_custom_options')
+            item.getData('product_custom_options'),
           )
         ) {
           // eslint-disable-next-line no-await-in-loop
           await items[i].setData(
             'qty',
-            item.getData('qty') + items[i].getData('qty')
+            item.getData('qty') + items[i].getData('qty'),
           );
           if (Object.keys(items[i].errors).length > 0) {
             throw new Error(Object.values(items[i].errors)[0]);
@@ -667,9 +645,8 @@ exports.Cart = class Cart extends DataObject {
     if (item) {
       await this.setData('items', newItems);
       return item;
-    } else {
-      throw new Error('Item not found');
     }
+    throw new Error('Item not found');
   }
 
   getItem(id) {

@@ -16,9 +16,8 @@ exports.getCartById = async (id) => {
   const data = await query.load(pool);
   if (!data) {
     return null;
-  } else {
-    const cart = new Cart({ ...data });
-    await cart.build();
-    return cart;
   }
+  const cart = new Cart({ ...data });
+  await cart.build();
+  return cart;
 };

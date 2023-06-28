@@ -7,7 +7,7 @@ const { UNAUTHORIZED } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { setContextValue } = require('../../../graphql/services/contextHelper');
 const { generateToken } = require('../../services/generateToken');
 const {
-  getAdminTokenCookieId
+  getAdminTokenCookieId,
 } = require('../../services/getAdminTokenCookieId');
 const { getTokenSecret } = require('../../services/getTokenSecret');
 
@@ -51,8 +51,8 @@ module.exports = async (request, response, delegate, next) => {
         response.status(UNAUTHORIZED).json({
           error: {
             message,
-            status: UNAUTHORIZED
-          }
+            status: UNAUTHORIZED,
+          },
         });
       } else {
         setContextValue(request, 'userTokenPayload', decoded);

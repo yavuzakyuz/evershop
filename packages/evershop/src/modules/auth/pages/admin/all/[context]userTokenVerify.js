@@ -1,17 +1,17 @@
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { select } = require('@evershop/postgres-query-builder');
+const { get } = require('@evershop/evershop/src/lib/util/get');
+const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
+const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
 const { getTokenSecret } = require('../../../services/getTokenSecret');
 const { generateToken } = require('../../../services/generateToken');
-const { get } = require('@evershop/evershop/src/lib/util/get');
-const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const {
-  getAdminTokenCookieId
+  getAdminTokenCookieId,
 } = require('../../../services/getAdminTokenCookieId');
-const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 
 module.exports = async (request, response, delegate, next) => {
   const cookieId = getAdminTokenCookieId();
@@ -57,7 +57,7 @@ module.exports = async (request, response, delegate, next) => {
         // Set the new token in the cookies
         response.cookie(cookieId, newToken, {
           maxAge: 1.728e8,
-          httpOnly: true
+          httpOnly: true,
         });
         // Redirect to home page
         response.redirect(buildUrl('adminLogin'));

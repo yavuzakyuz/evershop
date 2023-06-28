@@ -11,7 +11,7 @@ module.exports = async (request, response, delegate, next) => {
     .on(
       'product.product_id',
       '=',
-      'product_description.product_description_product_id'
+      'product_description.product_description_product_id',
     );
   query
     .leftJoin('order_item')
@@ -30,7 +30,7 @@ module.exports = async (request, response, delegate, next) => {
     .groupBy(
       'order_item.product_id',
       'product.product_id',
-      'product_description.product_description_id'
+      'product_description.product_description_id',
     )
     .orderBy('qty', 'DESC')
     .limit(0, 5);
@@ -40,12 +40,12 @@ module.exports = async (request, response, delegate, next) => {
     results.map((p) => {
       const product = {
         ...p,
-        editUrl: buildUrl('productEdit', { id: p.uuid })
+        editUrl: buildUrl('productEdit', { id: p.uuid }),
       };
       if (p.image) {
         product.imageUrl = buildUrl('adminStaticAsset', [p.image]);
       }
       return product;
-    })
+    }),
   );
 };

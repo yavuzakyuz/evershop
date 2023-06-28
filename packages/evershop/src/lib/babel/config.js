@@ -7,10 +7,10 @@ module.exports = {
       {
         exclude: [
           '@babel/plugin-transform-regenerator',
-          '@babel/plugin-transform-async-to-generator'
-        ]
-      }
-    ]
+          '@babel/plugin-transform-async-to-generator',
+        ],
+      },
+    ],
   ],
-  ignore: ['node_modules']
+  ignore: ['node_modules'],
 };

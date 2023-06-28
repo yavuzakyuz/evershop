@@ -6,10 +6,9 @@ module.exports = function GraphqlAPILoader(source) {
   if (isAdmin) {
     const newSource = source.replace(
       "url: '/api/graphql",
-      "url: '/api/admin/graphql"
+      "url: '/api/admin/graphql",
     );
     return newSource;
-  } else {
-    return source;
   }
+  return source;
 };

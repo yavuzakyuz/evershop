@@ -4,7 +4,7 @@ const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 module.exports = async (request, response, delegate, next) => {
@@ -20,8 +20,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid attribute id'
-        }
+          message: 'Invalid attribute id',
+        },
       });
       return;
     }
@@ -29,15 +29,15 @@ module.exports = async (request, response, delegate, next) => {
 
     response.status(OK);
     response.json({
-      data: attribute
+      data: attribute,
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

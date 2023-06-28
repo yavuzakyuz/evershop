@@ -19,8 +19,8 @@ module.exports = (request, response, delegate, next) => {
     response.json({
       error: {
         status: UNAUTHORIZED,
-        message: 'Unauthorized'
-      }
+        message: 'Unauthorized',
+      },
     });
   } else {
     // Get user roles
@@ -36,8 +36,8 @@ module.exports = (request, response, delegate, next) => {
         response.json({
           error: {
             status: UNAUTHORIZED,
-            message: 'Unauthorized'
-          }
+            message: 'Unauthorized',
+          },
         });
       }
     }

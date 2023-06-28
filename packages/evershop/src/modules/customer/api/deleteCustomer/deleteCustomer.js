@@ -1,11 +1,11 @@
 const { select, del } = require('@evershop/postgres-query-builder');
 const {
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
   INTERNAL_SERVER_ERROR,
-  INVALID_PAYLOAD
+  INVALID_PAYLOAD,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 
 // eslint-disable-next-line no-unused-vars
@@ -22,8 +22,8 @@ module.exports = async (request, response, delegate, next) => {
       response.json({
         error: {
           status: INVALID_PAYLOAD,
-          message: 'Invalid customer id'
-        }
+          message: 'Invalid customer id',
+        },
       });
       return;
     }
@@ -35,16 +35,16 @@ module.exports = async (request, response, delegate, next) => {
     response.status(OK);
     response.json({
       data: {
-        ...customer
-      }
+        ...customer,
+      },
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

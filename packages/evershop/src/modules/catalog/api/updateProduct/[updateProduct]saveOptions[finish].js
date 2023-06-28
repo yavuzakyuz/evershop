@@ -4,7 +4,7 @@ const {
   insert,
   del,
   select,
-  update
+  update,
 } = require('@evershop/postgres-query-builder');
 const { merge } = require('@evershop/evershop/src/lib/util/merge');
 
@@ -30,8 +30,7 @@ async function saveOptionValues(optionId, values, connection) {
   for (const id in values) {
     if (
       optionValues.find(
-        (v) =>
-          parseInt(v.product_custom_option_value_id, 10) === parseInt(id, 10)
+        (v) => parseInt(v.product_custom_option_value_id, 10) === parseInt(id, 10),
       )
     ) {
       await update('product_custom_option_value')
@@ -60,7 +59,7 @@ module.exports = async (request, response, delegate) => {
     .and(
       'product_custom_option_id',
       'NOT IN',
-      options.map((o) => o.option_id)
+      options.map((o) => o.option_id),
     )
     .execute(connection);
 
@@ -77,15 +76,14 @@ module.exports = async (request, response, delegate) => {
     let result;
     if (
       currentOptions.find(
-        (o) =>
-          parseInt(o.product_custom_option_id, 10) ===
-          parseInt(option.option_id, 10)
+        (o) => parseInt(o.product_custom_option_id, 10)
+          === parseInt(option.option_id, 10),
       )
     ) {
       result = await update('product_custom_option')
         .given({
           ...option,
-          is_required: option.is_required || 0
+          is_required: option.is_required || 0,
         })
         .where('product_custom_option_id', '=', option.option_id)
         .execute(connection);
@@ -93,7 +91,7 @@ module.exports = async (request, response, delegate) => {
       result = await insert('product_custom_option')
         .given({
           ...option,
-          is_required: option.is_required || 0
+          is_required: option.is_required || 0,
         })
         .prime('product_custom_option_product_id', productId)
         .execute(connection);
@@ -101,7 +99,7 @@ module.exports = async (request, response, delegate) => {
     await saveOptionValues(
       parseInt(result.insertId || option.option_id, 10),
       option.values || [],
-      connection
+      connection,
     );
   }
 };

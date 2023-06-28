@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 module.exports.migrate = async function migrate(
   connection,
   modules,
-  adminUser
+  adminUser,
 ) {
   // const modules = readdirSync(path.resolve(modulePath), { withFileTypes: true })
   //   .filter((dirent) => dirent.isDirectory())
@@ -19,16 +19,13 @@ module.exports.migrate = async function migrate(
       if (existsSync(path.resolve(module.resolve, 'migration'))) {
         const migrations = readdirSync(
           path.resolve(module.resolve, 'migration'),
-          { withFileTypes: true }
+          { withFileTypes: true },
         )
           .filter(
-            (dirent) =>
-              dirent.isFile() &&
-              dirent.name.match(/^Version-+([1-9].[0-9].[0-9])+.js$/)
+            (dirent) => dirent.isFile()
+              && dirent.name.match(/^Version-+([1-9].[0-9].[0-9])+.js$/),
           )
-          .map((dirent) =>
-            dirent.name.replace('Version-', '').replace('.js', '')
-          )
+          .map((dirent) => dirent.name.replace('Version-', '').replace('.js', ''))
           .sort((first, second) => semver.lt(first, second));
         // eslint-disable-next-line no-restricted-syntax
         for (const version of migrations) {
@@ -38,13 +35,13 @@ module.exports.migrate = async function migrate(
             await require(path.resolve(
               module.resolve,
               'migration',
-              `Version-${version}.js`
+              `Version-${version}.js`,
             ))(connection);
             // eslint-disable-next-line no-await-in-loop
             await insertOnUpdate('migration', ['module'])
               .given({
                 module: module.name,
-                version
+                version,
               })
               .execute(connection);
           } catch (e) {
@@ -57,7 +54,7 @@ module.exports.migrate = async function migrate(
           await insertOnUpdate('migration', ['module'])
             .given({
               module: module.name,
-              version: '1.0.0'
+              version: '1.0.0',
             })
             .execute(connection);
         }
@@ -65,7 +62,7 @@ module.exports.migrate = async function migrate(
         await insertOnUpdate('migration', ['module'])
           .given({
             module: module.name,
-            version: '1.0.0'
+            version: '1.0.0',
           })
           .execute(connection);
       }
@@ -80,7 +77,7 @@ module.exports.migrate = async function migrate(
       status: 1,
       email: adminUser?.email || 'demo@demo.com',
       password: bcrypt.hashSync(adminUser?.password || '123456', salt),
-      full_name: adminUser?.fullName || 'Admin'
+      full_name: adminUser?.fullName || 'Admin',
     })
     .execute(connection);
 };

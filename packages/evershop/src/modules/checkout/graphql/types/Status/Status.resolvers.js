@@ -9,7 +9,7 @@ module.exports = {
     paymentStatusList: () => {
       const statusList = getConfig('order.paymentStatus', []);
       return statusList.map((status) => status.code);
-    }
+    },
   },
   ShipmentStatus: {
     code: (code) => code,
@@ -27,7 +27,7 @@ module.exports = {
       const list = getConfig('order.shipmentStatus', []);
       const status = list.find((s) => s.code === code);
       return status ? status.progress : null;
-    }
+    },
   },
   PaymentStatus: {
     code: (code) => code,
@@ -45,6 +45,6 @@ module.exports = {
       const list = getConfig('order.paymentStatus', []);
       const status = list.find((s) => s.code === code);
       return status ? status.progress : null;
-    }
-  }
+    },
+  },
 };

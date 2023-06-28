@@ -3,7 +3,7 @@ const {
   execute,
   select,
   insert,
-  insertOnUpdate
+  insertOnUpdate,
 } = require('@evershop/postgres-query-builder');
 
 module.exports = async function buildUrlReWrite(data) {
@@ -28,7 +28,7 @@ module.exports = async function buildUrlReWrite(data) {
       UNION
       SELECT c.* FROM category c
       INNER JOIN parent_categories pc ON c.category_id = pc.parent_id
-    ) SELECT * FROM parent_categories`
+    ) SELECT * FROM parent_categories`,
   );
   const parentCategories = query.rows;
 
@@ -41,7 +41,7 @@ module.exports = async function buildUrlReWrite(data) {
         .from('category_description')
         .where('category_description_category_id', '=', category.category_id)
         .load(pool);
-      path = `/${urlKey.url_key}` + path;
+      path = `/${urlKey.url_key}${path}`;
     }
     // Insert the url rewrite rule to the url_rewrite table
     await insertOnUpdate('url_rewrite', ['entity_uuid', 'language'])
@@ -49,7 +49,7 @@ module.exports = async function buildUrlReWrite(data) {
         entity_type: 'category',
         entity_uuid: categoryUuid,
         request_path: path,
-        target_path: `/category/${categoryUuid}`
+        target_path: `/category/${categoryUuid}`,
       })
       .execute(pool);
   } catch (error) {

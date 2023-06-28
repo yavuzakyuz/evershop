@@ -1,8 +1,8 @@
+const { get } = require('@evershop/evershop/src/lib/util/get');
 const {
   getContextValue,
-  setContextValue
+  setContextValue,
 } = require('../../../../graphql/services/contextHelper');
-const { get } = require('@evershop/evershop/src/lib/util/get');
 
 module.exports = (request, response, delegate, next) => {
   // Get the token Payload

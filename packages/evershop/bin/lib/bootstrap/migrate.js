@@ -6,11 +6,11 @@ const {
   select,
   startTransaction,
   commit,
-  rollback
+  rollback,
 } = require('@evershop/postgres-query-builder');
 const {
   pool,
-  getConnection
+  getConnection,
 } = require('@evershop/evershop/src/lib/postgres/connection');
 const { existsSync, readdirSync } = require('fs');
 
@@ -22,9 +22,8 @@ async function getCurrentInstalledVersion(module) {
     .load(pool);
   if (!check) {
     return '0.0.1';
-  } else {
-    return check['version'];
   }
+  return check.version;
 }
 
 module.exports.migrate = async function migrate(module) {
@@ -32,12 +31,11 @@ module.exports.migrate = async function migrate(module) {
     return;
   }
   const migrations = readdirSync(path.resolve(module.path, 'migration'), {
-    withFileTypes: true
+    withFileTypes: true,
   })
     .filter(
-      (dirent) =>
-        dirent.isFile() &&
-        dirent.name.match(/^Version-+([1-9].[0-9].[0-9])+.js$/)
+      (dirent) => dirent.isFile()
+        && dirent.name.match(/^Version-+([1-9].[0-9].[0-9])+.js$/),
     )
     .map((dirent) => dirent.name.replace('Version-', '').replace('.js', ''))
     .sort((first, second) => semver.lt(first, second));
@@ -56,13 +54,13 @@ module.exports.migrate = async function migrate(module) {
       await require(path.resolve(
         module.path,
         'migration',
-        `Version-${version}.js`
+        `Version-${version}.js`,
       ))(connection);
       // eslint-disable-next-line no-await-in-loop
       await insertOnUpdate('migration', ['module'])
         .given({
           module: module.name,
-          version
+          version,
         })
         .execute(connection, false);
       await commit(connection);
@@ -70,7 +68,7 @@ module.exports.migrate = async function migrate(module) {
       await rollback(connection);
       console.log(
         red(`Migration failed for ${module.name}, version ${version}\n`),
-        e
+        e,
       );
       process.exit(0);
     }

@@ -23,9 +23,9 @@ class Select {
   }
 
   render() {
-    var stm = 'SELECT ';
+    let stm = 'SELECT ';
     if (this._fields.length === 0) {
-      stm = stm + '*  ';
+      stm += '*  ';
     } else {
       this._fields.forEach((element) => {
         stm += `${element}, `;
@@ -35,7 +35,7 @@ class Select {
   }
 
   clone() {
-    let cp = new select();
+    const cp = new select();
     cp._fields = this._fields;
     return cp;
   }
@@ -49,17 +49,17 @@ class Leaf {
     } else {
       value = value.value;
       if (
-        operator.toUpperCase() === 'IN' ||
-        operator.toUpperCase() === 'NOT IN'
+        operator.toUpperCase() === 'IN'
+        || operator.toUpperCase() === 'NOT IN'
       ) {
         if (Array.isArray(value) && value.length > 0) {
           this._value = '(';
           value.forEach((element) => {
             const key = uniqid();
-            this._value = this._value + `:${key}, `;
+            this._value += `:${key}, `;
             this._binding[key] = element;
           });
-          this._value = this._value.slice(0, -2) + ')';
+          this._value = `${this._value.slice(0, -2)})`;
         } else if (Array.isArray(value) && value.length === 0) {
           if (operator.toUpperCase() === 'IN') {
             this._value = '(SELECT 1 WHERE 1=0)';
@@ -70,8 +70,8 @@ class Leaf {
           throw new Error(`Expect an array, got ${typeof value}`);
         }
       } else if (
-        operator.toUpperCase() === 'IS NULL' ||
-        operator.toUpperCase() === 'IS NOT NULL'
+        operator.toUpperCase() === 'IS NULL'
+        || operator.toUpperCase() === 'IS NOT NULL'
       ) {
         this._value = '';
       } else {
@@ -99,7 +99,7 @@ class Leaf {
   }
 
   clone(node) {
-    let cp = new Leaf('AND', 'dummy', '=', 'dummy'); // This is really dirty
+    const cp = new Leaf('AND', 'dummy', '=', 'dummy'); // This is really dirty
     cp._binding = this._binding;
     cp._field = this._field;
     cp._link = this._link;
@@ -129,9 +129,9 @@ class Node {
           link,
           field,
           operator,
-          { value: value, isSQL: this._defaultValueTreatment === 'sql' },
-          this
-        )
+          { value, isSQL: this._defaultValueTreatment === 'sql' },
+          this,
+        ),
       );
     }
 
@@ -168,20 +168,19 @@ class Node {
   findLeaf(link, field, operator, value) {
     this._tree.forEach((element) => {
       if (
-        element.constructor.name === 'Leaf' &&
-        element._link === link &&
-        element._field === fieldResolve(field) &&
-        element._binding[field] === value
+        element.constructor.name === 'Leaf'
+        && element._link === link
+        && element._field === fieldResolve(field)
+        && element._binding[field] === value
       ) {
         return element;
-      } else {
-        return element.findLeaf(link, field, operator, value);
       }
+      return element.findLeaf(link, field, operator, value);
     });
   }
 
   getBinding() {
-    let binding = {};
+    const binding = {};
     this._tree.forEach((element) => {
       Object.assign(binding, element.getBinding());
     });
@@ -226,15 +225,14 @@ class Node {
   }
 
   clone(query, parent) {
-    let cp = new Node(query);
+    const cp = new Node(query);
     cp._link = this._link;
     cp._parent = parent;
     cp._tree = this._tree.map((t) => {
       if (t.constructor === Leaf) {
         return t.clone(cp);
-      } else {
-        return t.clone(query, cp);
       }
+      return t.clone(query, cp);
     });
     return cp;
   }
@@ -251,7 +249,7 @@ class Join {
       type,
       table,
       alias: alias || table,
-      on: new Node(this._query, 'sql')
+      on: new Node(this._query, 'sql'),
     });
 
     return this;
@@ -262,7 +260,7 @@ class Join {
       throw new Error('Invalid call');
     }
 
-    let node = this._joins[this._joins.length - 1]['on'];
+    const node = this._joins[this._joins.length - 1].on;
     node._link = 'ON';
     node.addLeaf('AND', column, operator, referencedColumn, node);
     return node;
@@ -282,7 +280,7 @@ class Join {
   }
 
   clone(query) {
-    let cp = new Join(query);
+    const cp = new Join(query);
     cp._joins = this._joins;
     return cp;
   }
@@ -295,16 +293,15 @@ class Where extends Node {
 
   render() {
     Object.assign(this._query._binding, this.getBinding());
-    let render = super.render();
+    const render = super.render();
     if (render === '') {
       return '';
-    } else {
-      return 'WHERE ' + render.slice(4);
     }
+    return `WHERE ${render.slice(4)}`;
   }
 
   andWhere(field, operator, value) {
-    let node = new Node(this._query);
+    const node = new Node(this._query);
     node._link = 'AND';
     node._parent = this;
     node.addLeaf('AND', field, operator, value, this);
@@ -313,7 +310,7 @@ class Where extends Node {
   }
 
   orWhere(field, operator, value) {
-    let node = new Node(this._query);
+    const node = new Node(this._query);
     node._link = 'OR';
     node._parent = this;
     node.addLeaf('OR', field, operator, value, this);
@@ -322,14 +319,13 @@ class Where extends Node {
   }
 
   clone(query) {
-    let cp = new Where(query);
+    const cp = new Where(query);
     cp._link = this._link;
     cp._tree = this._tree.map((t) => {
       if (t.constructor === Leaf) {
         return t.clone(cp);
-      } else {
-        return t.clone(query, cp);
       }
+      return t.clone(query, cp);
     });
     return cp;
   }
@@ -348,13 +344,12 @@ class Having extends Node {
   }
 
   clone(query) {
-    let cp = new this.constructor(query);
+    const cp = new this.constructor(query);
     cp._tree = this._tree.map((t) => {
       if (t.constructor === Leaf) {
         return t.clone(cp);
-      } else {
-        return t.clone(query, cp);
       }
+      return t.clone(query, cp);
     });
     return cp;
   }
@@ -398,7 +393,7 @@ class GroupBy {
   }
 
   clone() {
-    let cp = new GroupBy();
+    const cp = new GroupBy();
     cp._fields = [...this._fields];
     return cp;
   }
@@ -424,7 +419,7 @@ class OrderBy {
   }
 
   clone() {
-    let cp = new this.constructor();
+    const cp = new this.constructor();
     cp._field = this._field;
     cp._direction = this._direction;
     return cp;
@@ -472,18 +467,18 @@ class Query {
 
   async execute(connection, releaseConnection = true) {
     let sql = await this.sql(connection);
-    let binding = [];
+    const binding = [];
     let id = 0;
-    for (let key in this._binding) {
+    for (const key in this._binding) {
       id += 1;
       if (this._binding.hasOwnProperty(key)) {
         sql = sql.replace(`:${key}`, `$${id}`);
         binding.push(this._binding[key]);
       }
     }
-    let { rows } = await connection.query({
+    const { rows } = await connection.query({
       text: sql,
-      values: binding
+      values: binding,
     });
     if (releaseConnection) {
       release(connection);
@@ -542,7 +537,7 @@ class SelectQuery extends Query {
   }
 
   groupBy() {
-    let args = [].slice.call(arguments);
+    const args = [].slice.call(arguments);
     args.forEach((element) => {
       this._groupBy.add(String(element));
     });
@@ -571,7 +566,7 @@ class SelectQuery extends Query {
       this._groupBy.render().trim(),
       this._having.render().trim(),
       this._orderBy.render().trim(),
-      this._limit.render().trim()
+      this._limit.render().trim(),
     ]
       .filter((e) => e !== '')
       .join(' ');
@@ -579,7 +574,7 @@ class SelectQuery extends Query {
 
   async load(connection, releaseConnection = true) {
     this.limit(0, 1);
-    let rows = await this.execute(connection, releaseConnection);
+    const rows = await this.execute(connection, releaseConnection);
     return rows[0] || null;
   }
 
@@ -588,9 +583,9 @@ class SelectQuery extends Query {
       connection = await getConnection(connection);
     }
     let sql = await this.sql(connection);
-    let binding = [];
+    const binding = [];
     let i = 0;
-    for (var key in this._binding) {
+    for (const key in this._binding) {
       i += 1;
       if (this._binding.hasOwnProperty(key)) {
         sql = sql.replace(`:${key}`, `$${i}`);
@@ -598,7 +593,7 @@ class SelectQuery extends Query {
       }
     }
     try {
-      let { rows } = await connection.query({ text: sql, values: binding });
+      const { rows } = await connection.query({ text: sql, values: binding });
       if (releaseConnection) {
         release(connection);
       }
@@ -607,20 +602,19 @@ class SelectQuery extends Query {
       if (e.code === '42703') {
         this.removeOrderBy();
         return await super.execute(connection, releaseConnection);
-      } else if (e.code.toLowerCase() === '22p02') {
+      } if (e.code.toLowerCase() === '22p02') {
         // In case of invalid input type, we consider it as empty result
         return [];
-      } else {
-        if (releaseConnection) {
-          release(connection);
-        }
-        throw e;
       }
+      if (releaseConnection) {
+        release(connection);
+      }
+      throw e;
     }
   }
 
   clone() {
-    let cp = new SelectQuery();
+    const cp = new SelectQuery();
     cp._table = this._table;
     cp._alias = this._alias;
     cp._where = this._where.clone(cp);
@@ -656,7 +650,7 @@ class UpdateQuery extends Query {
     if (typeof data !== 'object' || data === null) {
       throw new Error('Data must be an object and not null');
     }
-    let copy = {};
+    const copy = {};
     Object.keys(data).forEach((key) => {
       copy[key] = toString(data[key]);
     });
@@ -677,7 +671,7 @@ class UpdateQuery extends Query {
       throw Error('You need provide data first');
     }
 
-    let { rows } = await connection.query(
+    const { rows } = await connection.query(
       `SELECT 
         table_name, 
         column_name, 
@@ -687,33 +681,33 @@ class UpdateQuery extends Query {
         is_identity, 
         identity_generation 
       FROM information_schema.columns 
-      WHERE table_name = '${this._table}'`
+      WHERE table_name = '${this._table}'`,
     );
-    let set = [];
+    const set = [];
     rows.forEach((field) => {
-      if (['BY DEFAULT', 'ALWAYS'].includes(field['identity_generation'])) {
-        this._primaryColumn = field['column_name'];
+      if (['BY DEFAULT', 'ALWAYS'].includes(field.identity_generation)) {
+        this._primaryColumn = field.column_name;
         return;
       }
-      if (this._data[field['column_name']] === undefined) {
+      if (this._data[field.column_name] === undefined) {
         return;
       }
-      let key = uniqid();
-      set.push(`"${field['column_name']}" = :${key}`);
-      this._binding[key] = this._data[field['column_name']];
+      const key = uniqid();
+      set.push(`"${field.column_name}" = :${key}`);
+      this._binding[key] = this._data[field.column_name];
     });
 
     if (set.length === 0) {
-      throw new Error('No data was provided' + this._table);
+      throw new Error(`No data was provided${this._table}`);
     }
 
-    var sql = [
+    const sql = [
       'UPDATE',
       `"${this._table}"`,
       'SET',
       set.join(', '),
       this._where.render(),
-      'RETURNING *'
+      'RETURNING *',
     ]
       .filter((e) => e !== '')
       .join(' ');
@@ -724,7 +718,7 @@ class UpdateQuery extends Query {
     const rows = await super.execute(connection, releaseConnection);
     const updatedRow = rows[0];
     if (this._primaryColumn) {
-      updatedRow['updatedId'] = updatedRow[this._primaryColumn];
+      updatedRow.updatedId = updatedRow[this._primaryColumn];
     }
     return updatedRow;
   }
@@ -743,7 +737,7 @@ class InsertQuery extends Query {
     if (typeof data !== 'object' || data === null) {
       throw new Error('Data must be an object and not null');
     }
-    let copy = {};
+    const copy = {};
     Object.keys(data).forEach((key) => {
       copy[key] = toString(data[key]);
     });
@@ -767,7 +761,7 @@ class InsertQuery extends Query {
       throw Error('You need provide data first');
     }
 
-    let { rows } = await connection.query(
+    const { rows } = await connection.query(
       `SELECT 
         table_name, 
         column_name, 
@@ -777,25 +771,25 @@ class InsertQuery extends Query {
         is_identity, 
         identity_generation 
       FROM information_schema.columns 
-      WHERE table_name = '${this._table}'`
+      WHERE table_name = '${this._table}'`,
     );
-    let fs = [],
-      vs = [];
+    const fs = [];
+    const vs = [];
     rows.forEach((field) => {
-      if (['BY DEFAULT', 'ALWAYS'].includes(field['identity_generation'])) {
-        this._primaryColumn = field['column_name'];
+      if (['BY DEFAULT', 'ALWAYS'].includes(field.identity_generation)) {
+        this._primaryColumn = field.column_name;
         return;
       }
-      if (this._data[field['column_name']] === undefined) {
+      if (this._data[field.column_name] === undefined) {
         return;
       }
-      let key = uniqid();
-      fs.push(`"${field['column_name']}"`);
+      const key = uniqid();
+      fs.push(`"${field.column_name}"`);
       vs.push(`:${key}`);
-      this._binding[key] = this._data[field['column_name']];
+      this._binding[key] = this._data[field.column_name];
     });
 
-    let sql = [
+    const sql = [
       'INSERT INTO',
       `"${this._table}"`,
       '(',
@@ -805,7 +799,7 @@ class InsertQuery extends Query {
       '(',
       vs.join(', '),
       ')',
-      'RETURNING *'
+      'RETURNING *',
     ]
       .filter((e) => e !== '')
       .join(' ');
@@ -816,7 +810,7 @@ class InsertQuery extends Query {
     const rows = await super.execute(connection, releaseConnection);
     const insertedRow = rows[0];
     if (this._primaryColumn) {
-      insertedRow['insertId'] = insertedRow[this._primaryColumn];
+      insertedRow.insertId = insertedRow[this._primaryColumn];
     }
     return insertedRow;
   }
@@ -835,7 +829,7 @@ class InsertOnUpdateQuery extends Query {
     if (typeof data !== 'object' || data === null) {
       throw new Error('Data must be an object and not null');
     }
-    let copy = {};
+    const copy = {};
     Object.keys(data).forEach((key) => {
       copy[key] = toString(data[key]);
     });
@@ -857,7 +851,7 @@ class InsertOnUpdateQuery extends Query {
       throw Error('You need provide data first');
     }
 
-    let { rows } = await connection.query({
+    const { rows } = await connection.query({
       text: `SELECT 
         table_name, 
         column_name, 
@@ -868,32 +862,32 @@ class InsertOnUpdateQuery extends Query {
         identity_generation 
       FROM information_schema.columns 
       WHERE table_name = $1`,
-      values: [this._table]
+      values: [this._table],
     });
 
-    let fs = [],
-      vs = [],
-      us = [],
-      usp = [];
+    const fs = [];
+    const vs = [];
+    const us = [];
+    const usp = [];
     rows.forEach((field) => {
-      if (['BY DEFAULT', 'ALWAYS'].includes(field['identity_generation'])) {
+      if (['BY DEFAULT', 'ALWAYS'].includes(field.identity_generation)) {
         return;
       }
-      if (this._data[field['column_name']] === undefined) {
+      if (this._data[field.column_name] === undefined) {
         return;
       }
-      let key = uniqid();
-      let ukey = uniqid();
-      fs.push(`"${field['column_name']}"`);
+      const key = uniqid();
+      const ukey = uniqid();
+      fs.push(`"${field.column_name}"`);
       vs.push(`:${key}`);
-      us.push(`"${field['column_name']}" = :${ukey}`);
-      usp[ukey] = this._data[field['column_name']];
-      this._binding[key] = this._data[field['column_name']];
+      us.push(`"${field.column_name}" = :${ukey}`);
+      usp[ukey] = this._data[field.column_name];
+      this._binding[key] = this._data[field.column_name];
     });
 
     this._binding = { ...this._binding, ...usp };
 
-    let sql = [
+    const sql = [
       'INSERT INTO',
       `"${this._table}"`,
       '(',
@@ -905,7 +899,7 @@ class InsertOnUpdateQuery extends Query {
       ')',
       `ON CONFLICT (${this._conflictColumns.join(',')}) DO UPDATE SET`,
       us.join(', '),
-      'RETURNING *'
+      'RETURNING *',
     ]
       .filter((e) => e !== '')
       .join(' ');
@@ -916,7 +910,7 @@ class InsertOnUpdateQuery extends Query {
     const rows = await super.execute(connection, releaseConnection);
     const insertedRow = rows[0];
     if (this._primaryColumn) {
-      insertedRow['insertId'] = insertedRow[this._primaryColumn];
+      insertedRow.insertId = insertedRow[this._primaryColumn];
     }
     return insertedRow;
   }
@@ -936,7 +930,7 @@ class DeleteQuery extends Query {
     return [
       'DELETE FROM',
       `"${this._table}"`,
-      this._where.render().trim()
+      this._where.render().trim(),
     ].join(' ');
   }
 }
@@ -955,17 +949,17 @@ module.exports = {
   release,
   execute,
   sql,
-  value
+  value,
 };
 
 function select() {
-  let select = new SelectQuery();
-  let args = [...arguments];
+  const select = new SelectQuery();
+  const args = [...arguments];
   if (args[0] === '*') {
     return select;
   }
   args.forEach((arg) => {
-    if (typeof arg == 'string') select.select(arg);
+    if (typeof arg === 'string') select.select(arg);
   });
   return select;
 }
@@ -991,7 +985,7 @@ function del(table) {
 }
 
 function node(link) {
-  let node = new Node();
+  const node = new Node();
   node._link = link;
 
   return node;
@@ -1037,14 +1031,14 @@ async function execute(connection, query) {
 
 function sql(value) {
   return {
-    value: value,
-    isSQL: true
+    value,
+    isSQL: true,
   };
 }
 
 function value(val) {
   return {
     value: val,
-    isSQL: false
+    isSQL: false,
   };
 }

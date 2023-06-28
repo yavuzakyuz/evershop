@@ -13,17 +13,16 @@ describe('buildMiddlewareFunction', () => {
   it('Middleware function return desired value', async () => {
     // Visit a url
     const response = await axios.get(`http://localhost:${port}/delegateTest`, {
-      validateStatus: function (status) {
+      validateStatus(status) {
         return status >= 200 && status < 600;
-      }
+      },
     });
 
-    const test =
-      require('../app/modules/delegate/pages/frontStore/delegateTest/collection').test;
+    const { test } = require('../app/modules/delegate/pages/frontStore/delegateTest/collection');
     const delegates = test.mock.results[0].value;
-    expect(delegates['returnOne']).toEqual(1);
-    expect(delegates['returnTwo']).toEqual(undefined);
-    expect(delegates['returnThree']).toEqual(3);
+    expect(delegates.returnOne).toEqual(1);
+    expect(delegates.returnTwo).toEqual(undefined);
+    expect(delegates.returnThree).toEqual(3);
   });
 
   // it('No promising delegate left pending', async () => {

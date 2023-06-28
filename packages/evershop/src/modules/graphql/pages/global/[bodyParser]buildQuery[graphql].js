@@ -4,7 +4,7 @@ const { readFileSync } = require('fs');
 const isDevelopmentMode = require('@evershop/evershop/src/lib/util/isDevelopmentMode');
 const isProductionMode = require('@evershop/evershop/src/lib/util/isProductionMode');
 const {
-  getRouteBuildPath
+  getRouteBuildPath,
 } = require('@evershop/evershop/src/lib/webpack/getRouteBuildPath');
 const { CONSTANTS } = require('@evershop/evershop/src/lib/helpers');
 const { getRoutes } = require('@evershop/evershop/src/lib/router/Router');
@@ -32,7 +32,7 @@ module.exports = (request, response) => {
 
     query = outputFileSystem.readFileSync(
       path.join(outputPath, 'query.graphql'),
-      'utf8'
+      'utf8',
     );
   } else if (isProductionMode()) {
     const routes = getRoutes();
@@ -50,7 +50,7 @@ module.exports = (request, response) => {
     const subPath = getRouteBuildPath(route);
     query = readFileSync(
       path.resolve(CONSTANTS.BUILDPATH, subPath, 'server/query.graphql'),
-      'utf8'
+      'utf8',
     );
   }
   if (query) {

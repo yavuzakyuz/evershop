@@ -12,14 +12,14 @@ const connectionSetting = {
   database: getConfig('system.database.database'),
   max: 30,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000
+  connectionTimeoutMillis: 2000,
 };
 
 // Support SSL
 if (getConfig('system.database.ssl.ca')) {
   connectionSetting.ssl = connectionSetting.ssl || {};
   connectionSetting.ssl.ca = fs.readFileSync(
-    getConfig('system.database.ssl.ca')
+    getConfig('system.database.ssl.ca'),
   );
   connectionSetting.ssl.rejectUnauthorized = false;
 }
@@ -27,7 +27,7 @@ if (getConfig('system.database.ssl.ca')) {
 if (getConfig('system.database.ssl.cert')) {
   connectionSetting.ssl = connectionSetting.ssl || {};
   connectionSetting.ssl.cert = fs.readFileSync(
-    getConfig('system.database.ssl.cert')
+    getConfig('system.database.ssl.cert'),
   );
   connectionSetting.ssl.rejectUnauthorized = false;
 }
@@ -35,7 +35,7 @@ if (getConfig('system.database.ssl.cert')) {
 if (getConfig('system.database.ssl.key')) {
   connectionSetting.ssl = connectionSetting.ssl || {};
   connectionSetting.ssl.key = fs.readFileSync(
-    getConfig('system.database.ssl.key')
+    getConfig('system.database.ssl.key'),
   );
   connectionSetting.ssl.rejectUnauthorized = false;
 }

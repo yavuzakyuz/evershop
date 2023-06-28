@@ -12,23 +12,22 @@ function startWith(str, prefix) {
 function validateRoute(methods, path, routePath) {
   if (methods.length === 0) {
     throw new Error(
-      `Method is required. Please check the route defined at ${routePath}`
+      `Method is required. Please check the route defined at ${routePath}`,
     );
   }
   const check = methods.find(
-    (m) =>
-      ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'].includes(
-        m
-      ) === false
+    (m) => ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'].includes(
+      m,
+    ) === false,
   );
   if (check !== undefined) {
     throw new Error(
-      `Method ${check} is invalid. Please check the route defined at ${routePath}`
+      `Method ${check} is invalid. Please check the route defined at ${routePath}`,
     );
   }
   if (startWith(path, '/') === false) {
     throw new Error(
-      `Path ${path} must be started with '/'. Please check the route defined at ${routePath}`
+      `Path ${path} must be started with '/'. Please check the route defined at ${routePath}`,
     );
   }
 
@@ -71,17 +70,14 @@ exports.scanForRoutes = (path, isAdmin, isApi) => {
               isApi,
               folder: join(path, r),
               payloadSchema,
-              access: routeJson?.access || 'private'
+              access: routeJson?.access || 'private',
             };
-          } else {
-            return false;
           }
-        } else {
           return false;
         }
-      } else {
         return false;
       }
+      return false;
     })
     .filter((e) => e !== false);
 };

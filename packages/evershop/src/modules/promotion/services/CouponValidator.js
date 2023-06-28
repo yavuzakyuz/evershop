@@ -39,8 +39,8 @@ exports.Validator = class Validator {
       }
       const discountAmount = parseFloat(coupon.discount_amount);
       if (
-        (!discountAmount || discountAmount) <= 0 &&
-        coupon.discount_type !== 'buy_x_get_y'
+        (!discountAmount || discountAmount) <= 0
+        && coupon.discount_type !== 'buy_x_get_y'
       ) {
         return false;
       }
@@ -54,16 +54,15 @@ exports.Validator = class Validator {
 
       if (startDate < today && endDate > today) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     });
 
     this.constructor.addValidator('timeUsed', async (coupon, cart) => {
       if (
-        coupon.max_uses_time_per_coupon &&
-        parseInt(coupon.used_time, 10) >=
-          parseInt(coupon.max_uses_time_per_coupon, 10)
+        coupon.max_uses_time_per_coupon
+        && parseInt(coupon.used_time, 10)
+          >= parseInt(coupon.max_uses_time_per_coupon, 10)
       ) {
         return false;
       }
@@ -77,7 +76,7 @@ exports.Validator = class Validator {
             .andWhere(
               'used_time',
               '>=',
-              parseInt(coupon.max_uses_time_per_customer, 10)
+              parseInt(coupon.max_uses_time_per_customer, 10),
             )
             .execute(pool);
           if (flag) {
@@ -107,8 +106,8 @@ exports.Validator = class Validator {
         ? parseFloat(conditions.order_total)
         : null;
       if (
-        minimumSubTotal &&
-        parseFloat(getCartTotalBeforeDiscount(cart)) < minimumSubTotal
+        minimumSubTotal
+        && parseFloat(getCartTotalBeforeDiscount(cart)) < minimumSubTotal
       ) {
         return false;
       }
@@ -168,9 +167,8 @@ exports.Validator = class Validator {
               items.forEach((item) => {
                 const productId = item.getData('product_id');
                 const categoryIds = categories.filter(
-                  (category) =>
-                    parseInt(category.product_id, 10) === productId &&
-                    value.includes(parseInt(category.category_id, 10))
+                  (category) => parseInt(category.product_id, 10) === productId
+                    && value.includes(parseInt(category.category_id, 10)),
                 );
                 if (categoryIds.length > 0) {
                   qty += item.getData('qty');
@@ -181,9 +179,8 @@ exports.Validator = class Validator {
               items.forEach((item) => {
                 const productId = item.getData('product_id');
                 const categoryIds = categories.filter(
-                  (category) =>
-                    parseInt(category.product_id, 10) === productId &&
-                    value.includes(parseInt(category.category_id, 10))
+                  (category) => parseInt(category.product_id, 10) === productId
+                    && value.includes(parseInt(category.category_id, 10)),
                 );
                 if (categoryIds.length === 0) {
                   qty += item.getData('qty');
@@ -200,7 +197,7 @@ exports.Validator = class Validator {
           }
         }
         return flag;
-      }
+      },
     );
 
     this.constructor.addValidator(
@@ -253,7 +250,7 @@ exports.Validator = class Validator {
           }
         }
         return flag;
-      }
+      },
     );
 
     this.constructor.addValidator(
@@ -305,7 +302,7 @@ exports.Validator = class Validator {
           }
         }
         return flag;
-      }
+      },
     );
 
     this.constructor.addValidator(
@@ -359,7 +356,7 @@ exports.Validator = class Validator {
         }
 
         return flag;
-      }
+      },
     );
     this.constructor.addValidator('customerGroup', async () => true);
     this.constructor.addValidator('customerEmail', async (coupon, cart) => {
@@ -408,7 +405,7 @@ exports.Validator = class Validator {
           return false;
         }
         return true;
-      }
+      },
     );
   }
 
@@ -437,7 +434,7 @@ exports.Validator = class Validator {
         } catch (e) {
           flag = false;
         }
-      })
+      }),
     );
 
     return flag;

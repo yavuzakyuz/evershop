@@ -1,16 +1,16 @@
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { select } = require('@evershop/postgres-query-builder');
-const {
-  setContextValue
-} = require('../../../../graphql/services/contextHelper');
 const { get } = require('@evershop/evershop/src/lib/util/get');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
+const {
+  setContextValue,
+} = require('../../../../graphql/services/contextHelper');
 const { getTokenSecret } = require('../../../../auth/services/getTokenSecret');
 const { generateToken } = require('../../../../auth/services/generateToken');
 const {
-  getTokenCookieId
+  getTokenCookieId,
 } = require('../../../../auth/services/getTokenCookieId');
 
 module.exports = async (request, response, delegate, next) => {
@@ -57,7 +57,7 @@ module.exports = async (request, response, delegate, next) => {
         // Set the new token in the cookies
         response.cookie(cookieId, newToken, {
           maxAge: 1.728e8,
-          httpOnly: true
+          httpOnly: true,
         });
         // Redirect to home page
         response.redirect(buildUrl('homepage'));

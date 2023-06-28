@@ -14,9 +14,9 @@ describe('test middleware', () => {
 
   it('It should execute the good middleware functions', async () => {
     const response = await axios.get(`http://localhost:${port}/middleware`, {
-      validateStatus: function (status) {
+      validateStatus(status) {
         return status >= 200 && status <= 500;
-      }
+      },
     });
     const loadProductAttribute = require('../app/modules/handler/pages/frontStore/middleware/[loadProductImage]loadAttribute');
     const loadProductImage = require('../app/modules/handler/pages/frontStore/middleware/[loadProduct]loadProductImage');

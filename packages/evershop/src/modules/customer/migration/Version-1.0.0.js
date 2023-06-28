@@ -10,13 +10,13 @@ module.exports = exports = async (connection) => {
   "group_name" varchar NOT NULL,
   "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-)`
+)`,
   );
 
   // Add default customer group
   await execute(
     connection,
-    "INSERT INTO customer_group ( group_name ) VALUES ('Default')"
+    "INSERT INTO customer_group ( group_name ) VALUES ('Default')",
   );
 
   await execute(
@@ -34,11 +34,11 @@ module.exports = exports = async (connection) => {
   CONSTRAINT "EMAIL_UNIQUE" UNIQUE ("email"),
   CONSTRAINT "CUSTOMER_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_CUSTOMER_GROUP" FOREIGN KEY ("group_id") REFERENCES "customer_group" ("customer_group_id") ON DELETE SET NULL
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CUSTOMER_GROUP" ON "customer" ("group_id")`
+    'CREATE INDEX "FK_CUSTOMER_GROUP" ON "customer" ("group_id")',
   );
 
   await execute(
@@ -60,11 +60,11 @@ module.exports = exports = async (connection) => {
   "is_default" smallint DEFAULT NULL,
   CONSTRAINT "CUSTOMER_ADDRESS_UUID_UNIQUE" UNIQUE ("uuid"),
   CONSTRAINT "FK_CUSTOMER_ADDRESS" FOREIGN KEY ("customer_id") REFERENCES "customer" ("customer_id") ON DELETE CASCADE
-)`
+)`,
   );
   await execute(
     connection,
-    `CREATE INDEX "FK_CUSTOMER_ADDRESS" ON "customer_address" ("customer_id")`
+    'CREATE INDEX "FK_CUSTOMER_ADDRESS" ON "customer_address" ("customer_id")',
   );
 
   // Prevent deleting a default customer group
@@ -81,14 +81,14 @@ module.exports = exports = async (connection) => {
         END IF;
         RETURN OLD;
       END;
-      $$`
+      $$`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "PREVENT_DELETING_THE_DEFAULT_CUSTOMER_GROUP"
         BEFORE DELETE ON customer_group
         FOR EACH ROW
-        EXECUTE PROCEDURE prevent_delete_default_customer_group();`
+        EXECUTE PROCEDURE prevent_delete_default_customer_group();`,
   );
 
   // Create trigger before insert customer, set default group_id to 1
@@ -105,13 +105,13 @@ module.exports = exports = async (connection) => {
         END IF;
         RETURN NEW;
       END;
-      $$`
+      $$`,
   );
   await execute(
     connection,
     `CREATE TRIGGER "SET_DEFAULT_CUSTOMER_GROUP"
         BEFORE INSERT ON customer
         FOR EACH ROW
-        EXECUTE PROCEDURE set_default_customer_group();`
+        EXECUTE PROCEDURE set_default_customer_group();`,
   );
 };

@@ -12,15 +12,14 @@ module.exports = {
         .on(
           'des.category_description_category_id',
           '=',
-          'category.category_id'
+          'category.category_id',
         );
       query.where('category_id', '=', product.categoryId);
       const result = await query.load(pool);
       if (!result) {
         return null;
-      } else {
-        return camelCase(result);
       }
+      return camelCase(result);
     },
     url: async (product, _, { pool }) => {
       // Get the url rewrite for this product
@@ -31,13 +30,12 @@ module.exports = {
         .load(pool);
       if (!urlRewrite) {
         return buildUrl('productView', { uuid: product.uuid });
-      } else {
-        return urlRewrite.request_path;
       }
+      return urlRewrite.request_path;
     },
     editUrl: (product) => buildUrl('productEdit', { id: product.uuid }),
     updateApi: (product) => buildUrl('updateProduct', { id: product.uuid }),
-    deleteApi: (product) => buildUrl('deleteProduct', { id: product.uuid })
+    deleteApi: (product) => buildUrl('deleteProduct', { id: product.uuid }),
   },
   Query: {
     product: async (_, { id }, { pool }) => {
@@ -47,27 +45,26 @@ module.exports = {
         .on(
           'product_description.product_description_product_id',
           '=',
-          'product.product_id'
+          'product.product_id',
         );
       query
         .innerJoin('product_inventory')
         .on(
           'product_inventory.product_inventory_product_id',
           '=',
-          'product.product_id'
+          'product.product_id',
         );
       query.where('product.product_id', '=', id);
       const result = await query.load(pool);
       if (!result) {
         return null;
-      } else {
-        return camelCase(result);
       }
+      return camelCase(result);
     },
     searchProducts: async (
       _,
       { query = '', page = 1, limit = 20 },
-      { user }
+      { user },
     ) => {
       // This is a simple search, we will search in name and sku.
       // This is only for admin
@@ -89,16 +86,14 @@ module.exports = {
       totalQuery.removeOrderBy();
       // Paging
       productsQuery.limit((page - 1) * limit, limit);
-      const items = (await productsQuery.execute(pool)).map((row) =>
-        camelCase(row)
-      );
+      const items = (await productsQuery.execute(pool)).map((row) => camelCase(row));
 
       const result = await totalQuery.load(pool);
-      const total = result.total;
+      const { total } = result;
       return {
         items,
-        total
+        total,
       };
-    }
-  }
+    },
+  },
 };

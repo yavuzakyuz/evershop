@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
 const {
   OK,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
 } = require('@evershop/evershop/src/lib/util/httpStatus');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 
@@ -23,7 +23,7 @@ module.exports = async (request, response, delegate, next) => {
         full_name,
         password: hash,
         group_id: 1,
-        status: 1
+        status: 1,
       })
       .execute(pool);
 
@@ -40,24 +40,24 @@ module.exports = async (request, response, delegate, next) => {
             rel: 'customerGrid',
             href: buildUrl('customerGrid'),
             action: 'GET',
-            types: ['text/xml']
+            types: ['text/xml'],
           },
           {
             rel: 'edit',
             href: buildUrl('customerEdit', { id: customer.uuid }),
             action: 'GET',
-            types: ['text/xml']
-          }
-        ]
-      }
+            types: ['text/xml'],
+          },
+        ],
+      },
     });
   } catch (e) {
     response.status(INTERNAL_SERVER_ERROR);
     response.json({
       error: {
         status: INTERNAL_SERVER_ERROR,
-        message: e.message
-      }
+        message: e.message,
+      },
     });
   }
 };

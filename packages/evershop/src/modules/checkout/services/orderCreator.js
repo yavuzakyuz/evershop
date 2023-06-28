@@ -5,7 +5,7 @@ const {
   rollback,
   select,
   startTransaction,
-  update
+  update,
 } = require('@evershop/postgres-query-builder');
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
@@ -24,10 +24,9 @@ let validationServices = [
       if (cart.hasError()) {
         validationErrors.push(cart.error);
         return false;
-      } else {
-        return true;
       }
-    }
+      return true;
+    },
   },
   {
     id: 'checkEmpty',
@@ -42,10 +41,9 @@ let validationServices = [
       if (items.length === 0) {
         validationErrors.push('Cart is empty');
         return false;
-      } else {
-        return true;
       }
-    }
+      return true;
+    },
   },
   {
     id: 'shippingAddress',
@@ -59,10 +57,9 @@ let validationServices = [
       if (!cart.getData('shipping_address_id')) {
         validationErrors.push('Please provide a shipping address');
         return false;
-      } else {
-        return true;
       }
-    }
+      return true;
+    },
   },
   {
     id: 'shippingMethod',
@@ -76,11 +73,10 @@ let validationServices = [
       if (!cart.getData('shipping_method')) {
         validationErrors.push('Please provide a shipping method');
         return false;
-      } else {
-        return true;
       }
-    }
-  }
+      return true;
+    },
+  },
 ];
 
 const validationErrors = [];
@@ -139,7 +135,7 @@ exports.createOrder = async function createOrder(cart) {
         shipping_address_id: shipAddr.insertId,
         billing_address_id: billAddr.insertId,
         payment_status: 'pending',
-        shipment_status: 'unfullfilled' // TODO: Payment and shipment status should be provided by the method
+        shipment_status: 'unfullfilled', // TODO: Payment and shipment status should be provided by the method
       })
       .execute(connection);
 
@@ -151,10 +147,10 @@ exports.createOrder = async function createOrder(cart) {
           .given({
             ...item.export(),
             uuid: uuidv4().replace(/-/g, ''),
-            order_item_order_id: order.insertId
+            order_item_order_id: order.insertId,
           })
           .execute(connection);
-      })
+      }),
     );
 
     // Save order activities
@@ -162,7 +158,7 @@ exports.createOrder = async function createOrder(cart) {
       .given({
         order_activity_order_id: order.insertId,
         comment: 'Order created',
-        customer_notified: 0 // TODO: check config of SendGrid
+        customer_notified: 0, // TODO: check config of SendGrid
       })
       .execute(connection);
 
@@ -187,7 +183,7 @@ exports.createOrder = async function createOrder(cart) {
 
 exports.addCreateOrderValidationRule = function addCreateOrderValidationRule(
   id,
-  func
+  func,
 ) {
   if (typeof obj !== 'function') {
     throw new Error('Validator must be a function');
@@ -196,7 +192,6 @@ exports.addCreateOrderValidationRule = function addCreateOrderValidationRule(
   validationServices.push({ id, func });
 };
 
-exports.removeCreateOrderValidationRule =
-  function removeCreateOrderValidationRule(id) {
-    validationServices = validationServices.filter((r) => r.id !== id);
-  };
+exports.removeCreateOrderValidationRule = function removeCreateOrderValidationRule(id) {
+  validationServices = validationServices.filter((r) => r.id !== id);
+};

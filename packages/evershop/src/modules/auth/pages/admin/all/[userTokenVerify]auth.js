@@ -1,9 +1,9 @@
-const {
-  getContextValue,
-  setContextValue
-} = require('../../../../graphql/services/contextHelper');
 const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 const { get } = require('@evershop/evershop/src/lib/util/get');
+const {
+  getContextValue,
+  setContextValue,
+} = require('../../../../graphql/services/contextHelper');
 
 module.exports = (request, response, delegate, next) => {
   // Get the token Payload
@@ -20,7 +20,7 @@ module.exports = (request, response, delegate, next) => {
     setContextValue(
       request,
       'userId',
-      parseInt(tokenPayLoad.user.adminUserId, 10)
+      parseInt(tokenPayLoad.user.adminUserId, 10),
     );
     next();
   }

@@ -24,7 +24,7 @@ module.exports = exports = (request, response, next) => {
     staticMiddleware(join(CONSTANTS.ROOTPATH, '.evershop/build'))(
       request,
       response,
-      next
+      next,
     );
   } else if (existsSync(join(CONSTANTS.MEDIAPATH, path))) {
     staticMiddleware(CONSTANTS.MEDIAPATH)(request, response, next);
@@ -32,7 +32,7 @@ module.exports = exports = (request, response, next) => {
     staticMiddleware(join(CONSTANTS.ROOTPATH, 'public'))(
       request,
       response,
-      next
+      next,
     );
   } else {
     response.status(404).send('Not Found');
