@@ -24,7 +24,8 @@
     "start": "evershop start",
     "start:debug": "evershop start --debug",
     "test": "jest --workspace=@evershop/evershop",
-    "cypress": "cypress run"
+    "cypress": "cypress run",
+    "lint": "eslint ."
   },
   "author": "The Nguyen (https://evershop.io)",
   "license": "GNU GENERAL PUBLIC LICENSE 3.0",
